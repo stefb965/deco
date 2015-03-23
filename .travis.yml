@@ -17,4 +17,5 @@ install:
   - bower install
 
 script:
+  - grunt test
   - npm test
