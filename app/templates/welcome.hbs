@@ -1,6 +1,6 @@
 <div class="container">
     <div class="row">
-        <div class="col s10 m4 offset-m4">
+        <div class="col s10 m6 offset-m3 welcome-offset">
             <div class="card card-account">
                 <div class="card-image">
                     <img src="images/clouds-1.jpg">
@@ -8,28 +8,36 @@
                 <div class="card-content">
                     <span class="card-title grey-text text-darken-4">Storage Account</span>
                     <div class="row">
-                        <div class="col s12">
-                            <select>
-                                <option value="" disabled selected>Choose your option</option>
-                                <option value="1">Option 1</option>
-                                <option value="2">Option 2</option>
-                                <option value="3">Option 3</option>
-                            </select>
-                        </div>
-                        {{#if addNewUi}}
+                        {{#if model}}
+                            <div class="col s12">
+                                {{view "select" value=selectedAccount content=model optionValuePath="content.id" optionLabelPath="content.name"}}
+                            </div>
+                        {{/if}}
+                        {{#if "addNewUi"}}
                             <div class="input-field col s12">
-                                <i class="mdi-action-account-circle prefix"></i>
-                                <input id="icon_prefix" type="text" class="validate">
-                                <label for="icon_prefix">First Name</label>
+                                <i class="mdi-action-bookmark-outline prefix"></i>
+                                {{input value=account_name id="account_name" type="text" class="validate"}}
+                                <label for="account_name">Storage Account Name</label>
                             </div>
                             <div class="input-field col s12">
                                 <i class="mdi-communication-phone prefix"></i>
-                                <input id="icon_telephone" type="tel" class="validate">
-                                <label for="icon_telephone">Telephone</label>
+                                {{input value=account_key id="account_key" type="text" class="validate"}}
+                                <label for="account_key">Storage Account Key</label>
+                            </div>
+                            <div class="input-field col s12">
+                                <i class="mdi-hardware-security prefix"></i>
+                                {{input value=account_domain id="account_domain" type="text" class="validate"}}
+                                <label for="account_domain">Storage Endpoint Domain</label>
+                            </div>
+                            <div class="col s12">
+                                <br />
+                                <a {{action "test"}} class="waves-effect waves-light btn blue darken-1 center"><i class="mdi-action-settings-remote left"></i>Test Connection</a>
+                                <a {{action "addNew"}} class="waves-effect waves-light btn blue darken-1 center"><i class="mdi-content-add-circle left"></i>Save & Open</a>
                             </div>
                         {{else}}
                             <div class="col s12">
-                                <a class="waves-effect waves-light btn blue darken-1"><i class="mdi-file-cloud left"></i>Add New Account</a>
+                                <a {{action "toggleAddNew"}} class="waves-effect waves-light btn blue darken-1"><i class="mdi-content-add-circle left"></i>Add New</a>
+                                <a {{action "openAccount"}} class="waves-effect waves-light btn blue darken-1"><i class="mdi-action-launch right"></i>Connect</a>
                             </div>
                         {{/if}}
                     </div>
