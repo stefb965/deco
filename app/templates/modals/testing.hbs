@@ -6,6 +6,9 @@
                 <p>Connection to {{account_name}} failed. We got the follwing information from Azure:</p>
                 {{result.error}}
             {{/if}}
+            {{#if result.success}}
+                <p>Success! The storage account key works.</p>
+            {{/if}}
         {{else}}
             <p>We're testing the connection to storage account {{account_name}}.</p>
             <div class="progress blue lighten-4">
@@ -15,5 +18,8 @@
     </div>
     <div class="modal-footer">
         <a href="#" class="waves-effect waves-green btn-flat modal-action modal-close">Close</a>
+        {{#if result.success}}
+            <a {{action "addNew"}} class="waves-effect waves-green btn-flat modal-action modal-close">Save & Connect</a>
+        {{/if}}
     </div>
 </div>
