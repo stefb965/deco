@@ -51,6 +51,7 @@ export default Ember.Controller.extend({
         test: function () {
             var name = this.get('account_name'),
                 key = this.get('account_key'),
+
                 azureStorage = window.requireNode('azure-storage'),
                 self = this, blobService;
 
