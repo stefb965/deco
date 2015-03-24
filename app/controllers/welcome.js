@@ -40,7 +40,7 @@ export default Ember.Controller.extend({
             var azureStorage = window.requireNode('azure-storage');
             var blobService = azureStorage.createBlobService(name,
             key);
-
+            /**
             blobService.listContainersSegmented(null, function(error, result, response){
               if(error){
                 console.error('hit an error:');
@@ -49,6 +49,17 @@ export default Ember.Controller.extend({
               }
 
               this.set('result', {success: true, reason: null });
+            });
+            **/
+            this.store.account_name = this.get('account_name');
+            this.store.account_key = this.get('account_key');
+            this.store.createRecord('container', { name: 'testcontainer'}).save().then(function(container){
+                console.dir(container);
+            });
+
+            this.store.find('container', {name: 'testcontainer'}).then(function(container){
+                console.log('found container:');
+                console.dir(container);
             });
 
         }

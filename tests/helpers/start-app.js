@@ -2,7 +2,7 @@ import Ember from 'ember';
 import Application from '../../app';
 import Router from '../../router';
 import config from '../../config/environment';
-
+import containerAdapter from '../../adapters/container';
 export default function startApp(attrs) {
   var application;
 
@@ -13,6 +13,7 @@ export default function startApp(attrs) {
     application = Application.create(attributes);
     application.setupForTesting();
     application.injectTestHelpers();
+    application.ContainerAdapter = containerAdapter;
   });
 
   return application;
