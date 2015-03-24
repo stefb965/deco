@@ -2,13 +2,17 @@ import Ember from 'ember';
 
 export default Ember.Controller.extend({
 
+    needs: 'application',
+
+    activeConnection: Ember.computed.alias('controllers.application.activeConnection'),
+
     setup: function () {
         var model = this.get('model');
 
         if (!model || !model.content) {
             this.set('addNewUi', true);
         }
-    }.on('init'),
+    }.observes('model'),
 
     actions: {
         toggleAddNew: function () {
@@ -25,6 +29,23 @@ export default Ember.Controller.extend({
             });
 
             newAccount.save();
+            self.send('connect', newAccount);
+        },
+
+        connect: function (account) {
+            this.set('activeConnection', account);
+            this.transitionToRoute('explorer');
+        },
+
+        selectAndConnect: function () {
+            var selectedAccount = this.get('selectedAccount'),
+                self = this;
+
+            this.store.find('account', selectedAccount).then(function (result) {
+                if (result) {
+                    self.send('connect', result);
+                }
+            });
         },
 
         test: function () {
@@ -34,14 +55,12 @@ export default Ember.Controller.extend({
                 self = this, blobService;
 
             if (name && key) {
-                Ember.$('#modal1').openModal();
+                Ember.$('#modal-testing').openModal();
                 try {
                     blobService = azureStorage.createBlobService(name, key);
 
                     blobService.listContainersSegmented(null, function (error) {
                         if (error) {
-                            console.error('hit an error:');
-                            console.dir(error);
                             self.set('result', {success: false, reason: error});
                         }
 
