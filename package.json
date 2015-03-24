@@ -47,5 +47,8 @@
   "window": {
     "width": 960,
     "height": 600
+  },
+  "dependencies": {
+    "azure-storage": "^0.4.3"
   }
 }
