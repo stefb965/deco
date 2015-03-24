@@ -22,6 +22,7 @@ module.exports = function(environment) {
       includePaths: ['bower_components/materialize/sass']
     },
 
+    /*jshint -W109 */
     contentSecurityPolicy: {
       'default-src': "'none'",
       'script-src': "'unsafe-inline' 'self' https://cdn.mxpnl.com", // Allow scripts from https://cdn.mxpnl.com
@@ -31,15 +32,8 @@ module.exports = function(environment) {
       'style-src': "'self' 'unsafe-inline' http://fonts.googleapis.com", // Allow inline styles and loaded CSS from http://fonts.googleapis.com 
       'media-src': "'self'"
     }
+    /*jshint +W109 */
   };
-
-  if (environment === 'development') {
-    // ENV.APP.LOG_RESOLVER = true;
-    // ENV.APP.LOG_ACTIVE_GENERATION = true;
-    // ENV.APP.LOG_TRANSITIONS = true;
-    // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
-    // ENV.APP.LOG_VIEW_LOOKUPS = true;
-  }
 
   if (environment === 'test') {
     // Testem prefers this...
@@ -53,9 +47,17 @@ module.exports = function(environment) {
     ENV.APP.rootElement = '#ember-testing';
   }
 
+/*
   if (environment === 'production') {
-
   }
 
+  if (environment === 'development') {
+    ENV.APP.LOG_RESOLVER = true;
+    ENV.APP.LOG_ACTIVE_GENERATION = true;
+    ENV.APP.LOG_TRANSITIONS = true;
+    ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
+    ENV.APP.LOG_VIEW_LOOKUPS = true;
+  }
+*/
   return ENV;
 };
