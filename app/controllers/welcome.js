@@ -33,19 +33,31 @@ export default Ember.Controller.extend({
         },
 
         connect: function (account) {
-            this.set('activeConnection', account);
+            this.store.set('activeAccountId', account.id);
+            account.set('activeAccount', true);
+            account.save();
+            //this.set('activeConnection', account);
+
             this.transitionToRoute('explorer');
         },
 
         selectAndConnect: function () {
-            var selectedAccount = this.get('selectedAccount'),
-                self = this;
 
-            this.store.find('account', selectedAccount).then(function (result) {
-                if (result) {
-                    self.send('connect', result);
-                }
+            
+            var container = this.store.createRecord('container', {name: 'testcontainer'});
+
+            container.save().then(function(container){
+                console.log('got container: ' + container.get('name'));
+                console.dir(container);
+
+                //test get blobs
+                container.blobs().then(function(blobs){
+
+                    console.log('got blobs:');
+                    console.dir(blobs);
+                });
             });
+
         },
 
         test: function () {
@@ -55,6 +67,7 @@ export default Ember.Controller.extend({
                 azureStorage = window.requireNode('azure-storage'),
                 self = this, blobService;
 
+/**
             if (name && key) {
                 Ember.$('#modal-testing').openModal();
                 try {
@@ -73,6 +86,7 @@ export default Ember.Controller.extend({
             } else {
                 return toast('Please enter name and key!');
             }
+**/
         }
     }
 });
