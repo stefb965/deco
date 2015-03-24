@@ -1,0 +1,40 @@
+{{partial "navbar"}}
+<div class="explorer-container">
+    <div class="folder">
+        <div class="container">
+            <ul>
+                {{#each container in containers}}
+                <li>
+                    <i class="mdi-file-folder-open"></i> Container 1
+                    <span class="badge"><small>14</small></span>
+                </li>
+                {{/each}}
+            </ul>
+            <a class="btn-floating btn-small waves-effect waves-light"><i class="mdi-content-add"></i></a>
+        </div>
+    </div>
+    <div class="files z-depth-3">
+        <div class="container">
+            <table class="hoverable">
+            <thead>
+                <tr>
+                    <th data-field="id">Name</th>
+                    <th data-field="name">Last Modified</th>
+                    <th data-field="price">Size</th>
+                    <th data-field="price">Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each blob in blobs}}
+                    <tr>
+                        <td>{{blob.name}}</td>
+                        <td>{{blob.lastModified}}</td>
+                        <td>{{blob.size}}</td>
+                        <td>{{blob.type}}</td>
+                    </tr>
+                {{/each}}
+            </tbody>
+            </table>
+        </div>
+    </div>
+</div>
