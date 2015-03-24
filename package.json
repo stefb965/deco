@@ -45,8 +45,12 @@
   },
   "main": "dist/index.html",
   "window": {
-    "width": 960,
-    "height": 600
+    "title": "Azure Storage Explorer",
+    "width": 1000,
+    "height": 600,
+    "min_width": 800,
+    "min_height": 600,
+    "toolbar": true
   },
   "dependencies": {
     "azure-storage": "^0.4.3"

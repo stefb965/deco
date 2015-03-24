@@ -29,7 +29,7 @@ export default Ember.Controller.extend({
             });
 
             newAccount.save();
-            self.send('connect', newAccount);
+            this.send('connect', newAccount);
         },
 
         connect: function (account) {
