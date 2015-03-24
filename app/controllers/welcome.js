@@ -33,6 +33,7 @@ export default Ember.Controller.extend({
         },
 
         connect: function (account) {
+            console.log('set active account id to: ' + account.id);
             this.store.set('activeAccountId', account.id);
             account.set('activeAccount', true);
             account.save();
@@ -43,8 +44,9 @@ export default Ember.Controller.extend({
 
         selectAndConnect: function () {
 
-            
-            var container = this.store.createRecord('container', {name: 'testcontainer'});
+            console.log('account is:');
+            console.dir(this.store.get('activeAccountId'));
+            var container = this.store.createRecord('container', {name: 'asset-02c943cc-3fce-47bc-98ac-f356f3ac414b'});
 
             container.save().then(function(container){
                 console.log('got container: ' + container.get('name'));
