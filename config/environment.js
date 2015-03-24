@@ -32,13 +32,18 @@ module.exports = function(environment) {
       'media-src': "'self'"
     }
   };
-
+  
+  //TODO move into dev block
+  ENV.TEST_STORAGE_ACCOUNT = process.env['TEST_STORAGE_ACCOUNT'];
+  ENV.TEST_STORAGE_ACCOUNT_KEY = process.env['TEST_STORAGE_ACCOUNT_KEY'];
   if (environment === 'development') {
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
+    
+     
   }
 
   if (environment === 'test') {
