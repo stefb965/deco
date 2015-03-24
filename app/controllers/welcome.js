@@ -2,13 +2,17 @@ import Ember from 'ember';
 
 export default Ember.Controller.extend({
 
+    needs: 'application',
+
+    activeConnection: Ember.computed.alias('controllers.application.activeConnection'),
+
     setup: function () {
         var model = this.get('model');
 
         if (!model || !model.content) {
             this.set('addNewUi', true);
         }
-    }.on('init'),
+    }.observes('model'),
 
     actions: {
         toggleAddNew: function () {
@@ -17,51 +21,58 @@ export default Ember.Controller.extend({
 
         addNew: function () {
             var name = this.get('account_name'),
-                key = this.get('account_key'),
-                domain = this.get('account_domain');
+                key = this.get('account_key');
 
             var newAccount = this.store.createRecord('account', {
                 name: name,
-                key: key,
-                domain: domain
+                key: key
             });
 
             newAccount.save();
+            self.send('connect', newAccount);
+        },
+
+        connect: function (account) {
+            this.set('activeConnection', account);
+            this.transitionToRoute('explorer');
+        },
+
+        selectAndConnect: function () {
+            var selectedAccount = this.get('selectedAccount'),
+                self = this;
+
+            this.store.find('account', selectedAccount).then(function (result) {
+                if (result) {
+                    self.send('connect', result);
+                }
+            });
         },
 
         test: function () {
-            console.log('testing storage connection...');
-
             var name = this.get('account_name'),
                 key = this.get('account_key'),
-                domain = this.get('account_domain');
-            console.log(name);
-            console.log(key);
-            var azureStorage = window.requireNode('azure-storage');
-            var blobService = azureStorage.createBlobService(name,
-            key);
-            /**
-            blobService.listContainersSegmented(null, function(error, result, response){
-              if(error){
-                console.error('hit an error:');
-                console.dir(error)
-                this.set('result', {success: false, reason: error });
-              }
 
-              this.set('result', {success: true, reason: null });
-            });
-            **/
-            this.store.account_name = this.get('account_name');
-            this.store.account_key = this.get('account_key');
-            this.store.createRecord('container', { name: 'testcontainer'}).save().then(function(container){
-                console.dir(container);
-            });
+                azureStorage = window.requireNode('azure-storage'),
+                self = this, blobService;
 
-            this.store.find('container', {name: 'testcontainer'}).then(function(container){
-                console.log('found container:');
-                console.dir(container);
-            });
+            if (name && key) {
+                Ember.$('#modal-testing').openModal();
+                try {
+                    blobService = azureStorage.createBlobService(name, key);
 
+                    blobService.listContainersSegmented(null, function (error) {
+                        if (error) {
+                            self.set('result', {success: false, reason: error});
+                        }
+
+                        self.set('result', {success: true, reason: null});
+                    });
+                } catch (error) {
+                    toast(error, 4000);
+                }
+            } else {
+                return toast('Please enter name and key!');
+            }
         }
     }
 });

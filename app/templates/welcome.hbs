@@ -8,12 +8,7 @@
                 <div class="card-content">
                     <span class="card-title grey-text text-darken-4">Storage Account</span>
                     <div class="row">
-                        {{#if model}}
-                            <div class="col s12">
-                                {{view "select" value=selectedAccount content=model optionValuePath="content.id" optionLabelPath="content.name"}}
-                            </div>
-                        {{/if}}
-                        {{#if "addNewUi"}}
+                        {{#if addNewUi}}
                             <div class="input-field col s12">
                                 <i class="mdi-action-bookmark-outline prefix"></i>
                                 {{input value=account_name id="account_name" type="text" class="validate"}}
@@ -24,20 +19,18 @@
                                 {{input value=account_key id="account_key" type="text" class="validate"}}
                                 <label for="account_key">Storage Account Key</label>
                             </div>
-                            <div class="input-field col s12">
-                                <i class="mdi-hardware-security prefix"></i>
-                                {{input value=account_domain id="account_domain" type="text" class="validate"}}
-                                <label for="account_domain">Storage Endpoint Domain</label>
-                            </div>
                             <div class="col s12">
                                 <br />
-                                <a {{action "test"}} class="waves-effect waves-light btn blue darken-1 center"><i class="mdi-action-settings-remote left"></i>Test Connection</a>
-                                <a {{action "addNew"}} class="waves-effect waves-light btn blue darken-1 center"><i class="mdi-content-add-circle left"></i>Save & Open</a>
+                                <a {{action "test"}} class="waves-effect waves-light btn center"><i class="mdi-action-settings-remote left"></i>Test Connection</a>
+                                <a {{action "addNew"}} class="waves-effect waves-light btn center"><i class="mdi-content-add-circle left"></i>Save & Open</a>
                             </div>
                         {{else}}
                             <div class="col s12">
-                                <a {{action "toggleAddNew"}} class="waves-effect waves-light btn blue darken-1"><i class="mdi-content-add-circle left"></i>Add New</a>
-                                <a {{action "openAccount"}} class="waves-effect waves-light btn blue darken-1"><i class="mdi-action-launch right"></i>Connect</a>
+                                {{view "select" value=selectedAccount content=model optionValuePath="content.id" optionLabelPath="content.name"}}
+                            </div>
+                            <div class="col s12">
+                                <a {{action "toggleAddNew"}} class="waves-effect waves-light btn"><i class="mdi-content-add-circle left"></i>Add New</a>
+                                <a {{action "selectAndConnect"}} class="waves-effect waves-light btn"><i class="mdi-action-launch right"></i>Connect</a>
                             </div>
                         {{/if}}
                     </div>
@@ -46,3 +39,5 @@
         </div>
     </div>
 </div>
+
+{{partial "modals/testing"}}
