@@ -32,20 +32,29 @@ export default Ember.Controller.extend({
         test: function () {
             var name = this.get('account_name'),
                 key = this.get('account_key'),
-
                 azureStorage = window.requireNode('azure-storage'),
-                blobService = azureStorage.createBlobService(name, key);
+                self = this, blobService;
 
-            blobService.listContainersSegmented(null, function (error) {
-                if (error) {
-                    console.error('hit an error:');
-                    console.dir(error);
-                    this.set('result', {success: false, reason: error});
+            if (name && key) {
+                Ember.$('#modal1').openModal();
+                try {
+                    blobService = azureStorage.createBlobService(name, key);
+
+                    blobService.listContainersSegmented(null, function (error) {
+                        if (error) {
+                            console.error('hit an error:');
+                            console.dir(error);
+                            self.set('result', {success: false, reason: error});
+                        }
+
+                        self.set('result', {success: true, reason: null});
+                    });
+                } catch (error) {
+                    toast(error, 4000);
                 }
-
-                this.set('result', {success: true, reason: null});
-            });
-
+            } else {
+                return toast('Please enter name and key!');
+            }
         }
     }
 });

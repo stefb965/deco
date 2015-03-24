@@ -30,9 +30,15 @@
                                 <label for="account_domain">Storage Endpoint Domain</label>
                             </div>
                             <div class="col s12">
-                                <br />
-                                <a {{action "test"}} class="waves-effect waves-light btn blue darken-1 center"><i class="mdi-action-settings-remote left"></i>Test Connection</a>
-                                <a {{action "addNew"}} class="waves-effect waves-light btn blue darken-1 center"><i class="mdi-content-add-circle left"></i>Save & Open</a>
+                                {{#unless testLoading}}
+                                    <br />
+                                    <a {{action "test"}} class="waves-effect waves-light btn blue darken-1 center"><i class="mdi-action-settings-remote left"></i>Test Connection</a>
+                                    <a {{action "addNew"}} class="waves-effect waves-light btn blue darken-1 center"><i class="mdi-content-add-circle left"></i>Save & Open</a>
+                                {{else}}
+                                    <div class="progress">
+                                        <div class="indeterminate blue"></div>
+                                    </div>
+                                {{/unless}}
                             </div>
                         {{else}}
                             <div class="col s12">
@@ -46,3 +52,5 @@
         </div>
     </div>
 </div>
+
+{{partial "modals/testing"}}
