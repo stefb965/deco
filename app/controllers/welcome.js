@@ -17,13 +17,11 @@ export default Ember.Controller.extend({
 
         addNew: function () {
             var name = this.get('account_name'),
-                key = this.get('account_key'),
-                domain = this.get('account_domain');
+                key = this.get('account_key');
 
             var newAccount = this.store.createRecord('account', {
                 name: name,
-                key: key,
-                domain: domain
+                key: key
             });
 
             newAccount.save();
