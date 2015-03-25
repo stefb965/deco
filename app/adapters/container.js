@@ -1,36 +1,12 @@
 import DS from 'ember-data';
+import accountUtil from '../utilites/account';
 
-//TODO put this in one place
-function getActiveAccount(store){
-	return new Ember.RSVP.Promise(function(resolve, reject){
-
-		var accounts = store.all('account');
-		var length = accounts.get('length');
-		var i = 0;
-		accounts.forEach(function(account){
-
-			if(account.get('activeAccount') === true){
-
-				return Ember.run(null, resolve, account);
-			
-			}
-
-			i += 1;
-			if(i >= length){
-				return Ember.run(null, reject, 'could not find any active accounts');
-			}
-
-		});
-
-
-	});
-}
 export default DS.Adapter.extend({
 	find: function(store, type, snapshot){
 		var azureStorage = window.requireNode('azure-storage');
 
 		return new Ember.RSVP.Promise(function(resolve, reject){
-			getActiveAccount(store).then(function(account){
+			accountUtil.getActiveAccount(store).then(function(account){
 
 				var blobService = azureStorage.createBlobService(account.get('name') ,
 		            account.get('key'));
@@ -50,7 +26,7 @@ export default DS.Adapter.extend({
 		var azureStorage = window.requireNode('azure-storage');
 
 		return new Ember.RSVP.Promise(function(resolve, reject){
-			getActiveAccount(store).then(function(account){
+			accountUtil.getActiveAccount(store).then(function(account){
 				var blobService = azureStorage.createBlobService(account.get('name') ,
 		            account.get('key'));
 
@@ -74,7 +50,7 @@ export default DS.Adapter.extend({
 		var azureStorage = window.requireNode('azure-storage');
 
 		return new Ember.RSVP.Promise(function(resolve, reject){
-			getActiveAccount(store).then(function(account){
+			accountUtil.getActiveAccount(store).then(function(account){
 				var blobService = azureStorage.createBlobService(account.get('name') ,
 		            account.get('key'));
 
@@ -92,7 +68,7 @@ export default DS.Adapter.extend({
 		var azureStorage = window.requireNode('azure-storage');
 
 		return new Ember.RSVP.Promise(function(resolve, reject){
-			getActiveAccount(store).then(function(account){
+			accountUtil.getActiveAccount(store).then(function(account){
 				var blobService = azureStorage.createBlobService(account.get('name') ,
 		            account.get('key'));
 				blobService.listContainersSegmented(null, function(err, data){
@@ -123,7 +99,7 @@ export default DS.Adapter.extend({
 		var azureStorage = window.requireNode('azure-storage');
 
 		return new Ember.RSVP.Promise(function(resolve, reject){
-			getActiveAccount(store).then(function(account){
+			accountUtil.getActiveAccount(store).then(function(account){
 
 				var blobService = azureStorage.createBlobService(account.get('name') ,
 		            account.get('key'));
