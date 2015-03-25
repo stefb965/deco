@@ -33,37 +33,33 @@ export default Ember.Controller.extend({
         },
 
         connect: function (account) {
-            console.log('set active account id to: ' + account.id);
             this.store.set('activeAccountId', account.id);
             account.set('activeAccount', true);
             account.save();
-            //this.set('activeConnection', account);
+            // this.set('activeConnection', account);
 
             this.transitionToRoute('explorer');
         },
 
         selectAndConnect: function () {
-
-
             var selectedAccount = this.get('selectedAccount'),
-               self = this;
+                self = this;
 
             this.store.find('account', selectedAccount).then(function (result) {
                if (result) {
                    self.send('connect', result);
                }
-
             });
 
-            //TODO - Move these tests to a sane place to test
-            //TEST- CONTAINERS
+            // TODO - Move these tests to a sane place to test
+            // TEST - CONTAINERS
             /**
             var container = this.store.createRecord('container', {name: 'asset-02c943cc-3fce-47bc-98ac-f356f3ac414b'});
             var assert = window.requireNode('assert');
             container.save().then(function(container){
                 assert(container.get('name') !== null);
             });
-            
+
             this.store.find('container').then(function(containers){
 
                 console.log('container listing: ');
@@ -73,7 +69,6 @@ export default Ember.Controller.extend({
                     console.log(container.id);
                     console.log(container.get('name'));
                     console.log(container.get('lastModified'));
-
 
                     console.log('got container: ' + container.get('name'));
                     console.dir(container);
@@ -93,9 +88,8 @@ export default Ember.Controller.extend({
                     });
 
                 });
-                
             });
-            
+
             this.store.find('container', { name: 'asset-02c943cc-3fce-47bc-98ac-f356f3ac414b'} )
             .then(function(containers){
 
@@ -103,7 +97,6 @@ export default Ember.Controller.extend({
                     console.log(container.get('lastModified'));
                     assert(container.get('lastModified') !== undefined && container.get('lastModified') !== null );
                 });
-                
             });
             **/
         },
@@ -113,7 +106,6 @@ export default Ember.Controller.extend({
                 key = this.get('account_key'),
                 azureStorage = window.requireNode('azure-storage'),
                 self = this, blobService;
-
 
             if (name && key) {
                 Ember.$('#modal-testing').openModal();
@@ -133,7 +125,6 @@ export default Ember.Controller.extend({
             } else {
                 return toast('Please enter name and key!');
             }
-
         }
     }
 });
