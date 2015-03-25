@@ -5,5 +5,6 @@ export default DS.Model.extend({
     	return this.store.find('blob', { container: this });
     },
     name: DS.attr('string', {defaultValue: ''}),
+    lastModified: DS.attr('string', {defaultValue: ''}),
     publicAccessLevel: ('string', {defaultValue: null})
 });
