@@ -52,6 +52,7 @@ export default Ember.Controller.extend({
                if (result) {
                    self.send('connect', result);
                }
+
             });
 
             //TODO - Move these tests to a sane place to test
@@ -78,16 +79,17 @@ export default Ember.Controller.extend({
                     console.dir(container);
 
                     //TEST BLOBS
-                    container.blobs().then(function(blobs){
+                    var blobs = container.get('blobs');
+                    console.log("LENGTH: " + container.get('blobs.length'));
+                    blobs.forEach(function(blob){
 
                         console.log('got blobs:');
-                        blobs.forEach(function(blob){
-                            assert(blob !== null);
-                            console.log('BLOB:' + blob.get('container') + '/' + blob.id);
-                            console.log('size:' + blob.get('size'));
-                            console.log('Last Modified: ' + blob.get('lastModified'));
-                            console.log('Type: ' + blob.get('type'));
-                        })
+
+                        assert(blob !== null);
+                        console.log('BLOB:' + blob.get('container') + '/' + blob.id);
+                        console.log('size:' + blob.get('size'));
+                        console.log('Last Modified: ' + blob.get('lastModified'));
+                        console.log('Type: ' + blob.get('type'));
                     });
 
                 });

@@ -80,14 +80,11 @@ export default DS.Adapter.extend({
 	},
 	findQuery: function(store, type, snapshot){
 
-		
 		var azureStorage = window.requireNode('azure-storage');
 		
 
 		return new Ember.RSVP.Promise(function(resolve, reject){
 			getActiveAccount(store).then(function(account){
-				console.log('this is container:');
-				console.dir(snapshot.container.get('name'));
 				var blobService = azureStorage.createBlobService(account.get('name') ,
 		            account.get('key'));
 
