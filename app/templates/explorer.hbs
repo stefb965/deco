@@ -5,8 +5,8 @@
             <ul>
                 {{#each container in containers}}
                 <li>
-                    <i class="mdi-file-folder-open"></i> Container 1
-                    <span class="badge"><small>14</small></span>
+                    <i class="mdi-file-folder-open"></i> {{container.name}}
+                    <span class="badge"><small>{{container.blobs.length}}</small></span>
                 </li>
                 {{/each}}
             </ul>
@@ -25,7 +25,7 @@
                 </tr>
             </thead>
             <tbody>
-                {{#each blob in blobs}}
+                {{#each blob in container.blobs}}
                     <tr>
                         <td>{{blob.name}}</td>
                         <td>{{blob.lastModified}}</td>
