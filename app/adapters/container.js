@@ -8,7 +8,7 @@ function getActiveAccount(store) {
             i = 0;
 
         accounts.forEach(function (account) {
-            if (account.get('activeAccount') === true) {
+            if (account.get('active') === true) {
                 return Ember.run(null, resolve, account);
             }
 
