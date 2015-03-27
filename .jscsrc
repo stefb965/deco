@@ -61,7 +61,7 @@
         "function",
         "typeof"
     ],
-    "requireSpaceAfterLineComment": true,
+    "requireSpaceAfterLineComment": "allowSlash",
     "requireSpaceBeforeBinaryOperators": true,
     "requireSpaceBeforeBlockStatements": true,
     "requireSpacesInAnonymousFunctionExpression": {

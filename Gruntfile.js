@@ -11,6 +11,17 @@ module.exports = function (grunt) {
                 jshintrc: './.jshintrc'
             }
         },
+        js_beautify: {
+            default_options: {
+                options: {
+                    end_with_newline: true,
+                    max_preserve_newlines: 1
+                },
+                files: {
+                  'application_files': ['app/**/*.js']
+                }
+            }
+        },
         jscs: {
             files: {
                 src: files
@@ -22,7 +33,9 @@ module.exports = function (grunt) {
         }
     });
 
+    grunt.loadNpmTasks('grunt-js-beautify');
     grunt.registerTask('codestyle', ['jshint', 'jscs']);
     grunt.registerTask('test', ['codestyle']);
     grunt.registerTask('default', ['test']);
+    grunt.registerTask('beautify', ['js_beautify']);
 };

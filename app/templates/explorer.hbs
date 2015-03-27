@@ -1,19 +1,19 @@
 {{partial "navbar"}}
 <div class="explorer-container">
-    <div class="folder">
+    <div class="folder" style="float:left">
         <div class="container">
             <ul>
                 {{#each container in containers}}
-                <li>
-                    <i class="mdi-file-folder-open"></i> {{container.name}}
-                    <span class="badge"><small>{{container.blobs.length}}</small></span>
-                </li>
+                    <li>
+                        <i class="mdi-file-folder-open"></i> {{container.name}}
+                        <span class="badge"><small>{{container.blobs.length}}</small></span>
+                    </li>
                 {{/each}}
             </ul>
             <a class="btn-floating btn-small waves-effect waves-light"><i class="mdi-content-add"></i></a>
         </div>
     </div>
-    <div class="files z-depth-3">
+    <div class="files z-depth-3" style="float:left">
         <div class="container">
             <table class="hoverable">
             <thead>
