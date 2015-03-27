@@ -10,6 +10,5 @@ moduleForModel('blob', {
 
 test('it exists', function(assert) {
   var model = this.subject();
-  // var store = this.store();
   assert.ok(!!model);
 });
