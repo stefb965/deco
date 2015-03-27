@@ -40,7 +40,6 @@ export default Ember.Controller.extend({
                         }
                     }
                 }
-                console.log('active account: ' + activeAccountId);
                 self.transitionToRoute('explorer');
             });
         },

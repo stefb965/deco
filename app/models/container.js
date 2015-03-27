@@ -2,6 +2,7 @@ import DS from 'ember-data';
 export default DS.Model.extend({
     blobs: function () {
         return this.store.find('blob', {
+            container: this,
             container_id: this.get('name')
         });
     }.property(),

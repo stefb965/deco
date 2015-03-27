@@ -10,14 +10,18 @@ export default DS.Model.extend({
     container_id: DS.attr('string'),
     type: DS.attr('string'),
     // returns a stream of the blob
-    toStream: function (store) {
-        accountUtil.getActiveAccount(store).then(function (account) {
-            var azureStorage = window.requireNode('azure-storage');
-            var blobService = azureStorage.createBlobService(account.get('name'),
-                account.get('key'));
-            var memorystream = window.requireNode('memorystream');
-            return new Ember.RSVP.Promise(function (resolve, reject) {
-                blobService.getBlobToStream(this.get('container').get('name'), this.get('name'), memorystream, function (err) {
+    toStream: function () {
+
+        var self = this;
+        return new Ember.RSVP.Promise(function (resolve, reject) {
+            accountUtil.getActiveAccount(self.store).then(function (account) {
+                var azureStorage = window.requireNode('azure-storage');
+                var memorystream = window.requireNode('memorystream');
+                var blobService = azureStorage.createBlobService(account.
+                    get('name'),
+                    account.get('key'));
+
+                blobService.getBlobToStream(self.get('container_id'), self.get('name'), memorystream, function (err) {
                     if (err) {
                         return Ember.run(null, reject, err);
                     }
@@ -37,9 +41,8 @@ export default DS.Model.extend({
                 var fs = window.requireNode('fs');
                 var blobService = azureStorage.createBlobService(account.get('name'),
                     account.get('key'));
-                console.dir(self.get('container'));
-                console.dir(self.container.get('name'));
-                blobService.getBlobToStream(self.container.get('name'), self.get('name'), fs.createWriteStream(path), function (err) {
+
+                blobService.getBlobToStream(self.get('container_id'), self.get('name'), fs.createWriteStream(path), function (err) {
                     if (err) {
                         return Ember.run(null, reject, err);
                     }
