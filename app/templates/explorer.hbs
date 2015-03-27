@@ -4,10 +4,9 @@
         <div class="container">
             <ul>
                 {{#each container in model}}
-                    <li>
-                        <i class="mdi-file-folder-open"></i> {{container.name}}
-                        <span class="badge"><small>{{container.blobs.length}}</small></span>
-                    </li>
+                <li>
+                    <i class="mdi-file-folder-open"></i> {{container.name}}
+                </li>
                 {{/each}}
             </ul>
             <a class="btn-floating btn-small waves-effect waves-light"><i class="mdi-content-add"></i></a>
@@ -25,7 +24,7 @@
                 </tr>
             </thead>
             <tbody>
-                {{#each blob in model.blobs}}
+                {{#each blob in blobs}}
                     <tr>
                         <td>{{blob.name}}</td>
                         <td>{{blob.lastModified}}</td>
