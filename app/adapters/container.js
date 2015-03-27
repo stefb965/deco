@@ -13,14 +13,7 @@ export default DS.Adapter.extend({
                     if (err) {
                         return Ember.run(null, reject, err);
                     }
-                    console.log(data.name);
-                    console.log(data.lastModified);
-                    console.log('new model:');
-                    console.dir({
-                        name: data.name,
-                        id: data.name,
-                        lastModified: new Date(Date.parse(data.lastModified))
-                    });
+
                     return Ember.run(null, resolve, [{
                         name: data.name,
                         id: data.name,
@@ -98,14 +91,6 @@ export default DS.Adapter.extend({
                     if (err) {
                         return Ember.run(null, reject, err);
                     }
-                    console.log(data.name);
-                    console.log(data.lastModified);
-                    console.log('new model:');
-                    console.dir({
-                        name: data.name,
-                        id: data.name,
-                        lastModified: new Date(Date.parse(data.lastModified))
-                    });
                     return Ember.run(null, resolve, [{
                         name: data.name,
                         id: data.name,

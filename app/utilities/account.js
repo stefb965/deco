@@ -1,3 +1,5 @@
+import Ember from 'ember';
+
 export default {
     getActiveAccount: function (store) {
         return new Ember.RSVP.Promise(function (resolve, reject) {
@@ -6,6 +8,7 @@ export default {
                 i = 0;
             accounts.forEach(function (account) {
                 if (account.get('active') === true) {
+                    console.log('resolviing promise!');
                     return Ember.run(null, resolve, account);
                 }
                 i += 1;
