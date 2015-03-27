@@ -6,6 +6,12 @@
                     <img src="images/clouds-1.jpg">
                 </div>
                 <div class="card-content">
+                    {{#if loading}}
+                        <div {{bind-attr class="loading"}}></div>
+                        <div class="welcome-loading">
+                            {{ax-spinner}}
+                        </div>
+                    {{/if}}
                     <span class="card-title grey-text text-darken-4">Storage Account</span>
                     <div class="row">
                         {{#if addNewUi}}
@@ -29,8 +35,8 @@
                                 {{view "select" value=selectedAccount content=model optionValuePath="content.id" optionLabelPath="content.name"}}
                             </div>
                             <div class="col s12">
-                                <a {{action "toggleAddNew"}} class="waves-effect waves-light btn"><i class="mdi-content-add-circle left"></i>Add New</a>
-                                <a {{action "connect"}} class="waves-effect waves-light btn"><i class="mdi-action-launch right"></i>Connect</a>
+                                <a {{action "toggleAddNew"}} {{bind-attr disabed=loading}} class="waves-effect waves-light btn"><i class="mdi-content-add-circle left"></i>Add New</a>
+                                <a {{action "connect"}} {{bind-attr disabed=loading}} class="waves-effect waves-light btn"><i class="mdi-action-launch right"></i>Connect</a>
                             </div>
                         {{/if}}
                     </div>
