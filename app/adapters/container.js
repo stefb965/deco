@@ -1,7 +1,6 @@
 import DS from 'ember-data';
-import serializer from '../serializers/azure-storage'
-import accountUtils from '../utilities/account'
-
+import serializer from '../serializers/azure-storage';
+import accountUtils from '../utilities/account';
 export default DS.Adapter.extend({
     serializer: serializer.create(),
     find: function (store, type, snapshot) {

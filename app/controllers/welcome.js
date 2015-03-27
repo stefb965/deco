@@ -4,7 +4,6 @@ export default Ember.Controller.extend({
     activeConnection: Ember.computed.alias('controllers.application.activeConnection'),
     setup: function () {
         var model = this.get('model');
-
         if (!model || !model.content || model.content.length < 1) {
             this.set('addNewUi', true);
         }
@@ -25,7 +24,6 @@ export default Ember.Controller.extend({
         },
         connect: function (activeAccountId) {
             var self = this;
-
             if (!activeAccountId) {
                 activeAccountId = this.get('selectedAccount');
             }
@@ -34,7 +32,6 @@ export default Ember.Controller.extend({
                 if (accounts && accounts.content && accounts.content.length > 0) {
                     for (i = 0; i < accounts.content.length; i = i + 1) {
                         account = accounts.content[i];
-
                         if (account.get('id') === activeAccountId) {
                             self.set('activeConnection', account.get('name'));
                             account.set('active', true);
@@ -43,7 +40,6 @@ export default Ember.Controller.extend({
                         }
                     }
                 }
-
                 console.log('active account: ' + activeAccountId);
                 self.transitionToRoute('explorer');
             });
@@ -102,8 +98,8 @@ export default Ember.Controller.extend({
             var name = this.get('account_name'),
                 key = this.get('account_key'),
                 azureStorage = window.requireNode('azure-storage'),
-                self = this, blobService;
-
+                self = this,
+                blobService;
             if (name && key) {
                 Ember.$('#modal-testing').openModal();
                 try {
