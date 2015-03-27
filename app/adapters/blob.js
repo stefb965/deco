@@ -25,6 +25,8 @@ export default DS.Adapter.extend({
         var azureStorage = window.requireNode('azure-storage'),
             blobService = azureStorage.createBlobService(store.account_name, store.account_key);
 
+        console.log('blob');
+
         return new Ember.RSVP.Promise(function (resolve, reject) {
             blobService.getBlobProperties(snapshot.get('container').name, snapshot.get('name'), function (error, result) {
               if (error) {

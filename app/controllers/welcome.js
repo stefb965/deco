@@ -9,7 +9,7 @@ export default Ember.Controller.extend({
     setup: function () {
         var model = this.get('model');
 
-        if (!model || !model.content) {
+        if (!model || !model.content || model.content.length < 1) {
             this.set('addNewUi', true);
         }
     }.observes('model'),
@@ -29,28 +29,37 @@ export default Ember.Controller.extend({
             });
 
             newAccount.save();
-            this.send('connect', newAccount);
+            this.send('connect', newAccount.get('id'));
         },
 
-        connect: function (account) {
-            this.store.set('activeAccountId', account.id);
-            account.set('activeAccount', true);
-            account.save();
-            // this.set('activeConnection', account);
+        connect: function (activeAccountId) {
+            var self = this;
 
-            this.transitionToRoute('explorer');
+            if (!activeAccountId) {
+                activeAccountId = this.get('selectedAccount');
+            }
+
+            this.store.find('account').then(function (accounts) {
+                var i, account;
+
+                if (accounts && accounts.content && accounts.content.length > 0) {
+                    for (i = 0; i < accounts.content.length; i = i + 1) {
+                        account = accounts.content[i];
+
+                        if (account.get('id') === activeAccountId) {
+                            self.set('activeConnection', account.get('name'));
+                            account.set('active', true);
+                        } else {
+                            account.set('active', false);
+                        }
+                    }
+                }
+
+                self.transitionToRoute('explorer');
+            });
         },
 
         selectAndConnect: function () {
-            var selectedAccount = this.get('selectedAccount'),
-                self = this;
-
-            this.store.find('account', selectedAccount).then(function (result) {
-               if (result) {
-                   self.send('connect', result);
-               }
-            });
-
             // TODO - Move these tests to a sane place to test
             // TEST - CONTAINERS
             /**
