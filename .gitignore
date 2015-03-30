@@ -1,5 +1,8 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+# OSX Goo
+.DS_STORE
+
 # compiled output
 /dist
 /tmp
