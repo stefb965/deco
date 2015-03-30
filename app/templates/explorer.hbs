@@ -4,7 +4,7 @@
         <div class="container">
             <ul>
                 {{#each container in model}}
-                <li>
+                <li {{action "switchActiveContainer" container.id}}>
                     <i class="mdi-file-folder-open"></i> {{container.name}}
                 </li>
                 {{/each}}
