@@ -41,6 +41,19 @@ export default Ember.Controller.extend({
     actions: {
         switchActiveContainer: function (selectedContainer) {
             this.set('activeContainer', selectedContainer);
+        },
+
+        downloadBlob: function (blob, name) {
+            var nwInput = Ember.$('#nwSaveInput');
+
+            nwInput.attr('nwsaveas', name);
+
+            nwInput.change(function () {
+                blob.toFile(this.value);
+                nwInput.off('change');
+            });
+
+            nwInput.click();
         }
     }
 });
