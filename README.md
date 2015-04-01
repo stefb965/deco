@@ -18,4 +18,6 @@ You will need the following things properly installed on your computer.
 * Visit your app at [http://localhost:4200](http://localhost:4200).
 
 #### Running Tests
+All tests suites can be run with `npm test`.
+
 Functional and unit tests can be run with `ember test` and `ember test --server`. Code Style tests with JSHint and JSCS can be run with `grunt test`.
