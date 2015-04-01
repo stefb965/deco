@@ -1,24 +1,18 @@
 import Ember from 'ember';
 export default Ember.Controller.extend({
     needs: 'application',
-
     activeConnection: Ember.computed.alias('controllers.application.activeConnection'),
-
     loading: false,
-
     setup: function () {
         var model = this.get('model');
-
         if (!model || !model.content || model.content.length < 1) {
             this.set('addNewUi', true);
         }
     }.observes('model'),
-
     actions: {
         toggleAddNew: function () {
             this.toggleProperty('addNewUi');
         },
-
         addNew: function () {
             var name = this.get('account_name'),
                 key = this.get('account_key'),
@@ -26,20 +20,15 @@ export default Ember.Controller.extend({
                     name: name,
                     key: key
                 });
-
             newAccount.save();
             this.send('connect', newAccount.get('id'));
         },
-
         connect: function (activeAccountId) {
             var self = this;
-
             this.set('loading', true);
-
             if (!activeAccountId) {
                 activeAccountId = this.get('selectedAccount');
             }
-
             this.store.find('account').then(function (accounts) {
                 var i, account;
                 if (accounts && accounts.content && accounts.content.length > 0) {
@@ -53,24 +42,19 @@ export default Ember.Controller.extend({
                         }
                     }
                 }
-                //self.transitionToRoute('explorer');
+                self.transitionToRoute('explorer');
             });
         },
-
         selectAndConnect: function () {
             // TODO - Move these tests to a sane place to test
             // TEST - CONTAINERS
-            
-            
             // this.store.find('container', { name: 'asset-02c943cc-3fce-47bc-98ac-f356f3ac414b'} )
             // .then(function(containers){
-
             //     containers.forEach(function(container){
             //         console.log(container.get('lastModified'));
             //         assert(container.get('lastModified') !== undefined && container.get('lastModified') !== null );
             //     });
             // });
-
             // var container = this.store.createRecord('container', {name: 'asset-02c943cc-3fce-47bc-98ac-f356f3ac414b'});
             // var assert = window.requireNode('assert');
             // // container.save().then(function(container){
@@ -78,21 +62,16 @@ export default Ember.Controller.extend({
             // // });
             // var once = false;
             // this.store.find('container').then(function(containers){
-
             //     console.log('container listing: ');
-
             //     containers.forEach(function(container){
             //         assert(container !== null);
             //         console.log(container.get('name'));
             //         // console.log(container.id);
             //         // console.log(container.get('name'));
             //         // console.log(container.get('lastModified'));
-
             //         // console.log('got container: ' + container.get('name'));
             //         // console.dir(container);
-
             //         //TEST BLOBS
-                    
             //         container.get('blobs').then(function(blobs){
             //             blobs.forEach(function(blob){
             //                 console.log('got blob ' + blob.get('name'));
@@ -103,14 +82,12 @@ export default Ember.Controller.extend({
             //                         count += data.length;
             //                         console.log('wrote: ' + count);
             //                     });
-
             //                     writeStream.on('finish', function(){
             //                         console.log('downloaded blob!');
             //                     });
             //                     once = true;
             //                 }
             //                 // console.log('got blobs:');
-
             //                 // assert(blob !== null);
             //                 // console.log('BLOB:' + blob.get('container') + '/' + blob.id);
             //                 // console.log('size:' + blob.get('size'));
@@ -118,18 +95,15 @@ export default Ember.Controller.extend({
             //                 // console.log('Type: ' + blob.get('type'));
             //             });
             //         });
-
             //     });
             // });
         },
-
         test: function () {
             var name = this.get('account_name'),
                 key = this.get('account_key'),
                 azureStorage = window.requireNode('azure-storage'),
                 self = this,
                 blobService;
-
             if (name && key) {
                 Ember.$('#modal-testing').openModal();
                 try {
