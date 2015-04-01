@@ -60,7 +60,9 @@ export default Ember.Controller.extend({
             // // container.save().then(function(container){
             // //     assert(container.get('name') !== null);
             // // });
+
             // var once = false;
+            // var assert = window.requireNode('assert');
             // this.store.find('container').then(function(containers){
             //     console.log('container listing: ');
             //     containers.forEach(function(container){
@@ -75,24 +77,15 @@ export default Ember.Controller.extend({
             //         container.get('blobs').then(function(blobs){
             //             blobs.forEach(function(blob){
             //                 console.log('got blob ' + blob.get('name'));
-            //                 if(!once){
-            //                     var writeStream = blob.toStream('./testFile');
-            //                     var count = 0;
-            //                     writeStream.on('data', function(data){
-            //                         count += data.length;
-            //                         console.log('wrote: ' + count);
-            //                     });
-            //                     writeStream.on('finish', function(){
-            //                         console.log('downloaded blob!');
-            //                     });
-            //                     once = true;
-            //                 }
-            //                 // console.log('got blobs:');
-            //                 // assert(blob !== null);
-            //                 // console.log('BLOB:' + blob.get('container') + '/' + blob.id);
-            //                 // console.log('size:' + blob.get('size'));
-            //                 // console.log('Last Modified: ' + blob.get('lastModified'));
-            //                 // console.log('Type: ' + blob.get('type'));
+            //                 blob.get('link').then(function(link){
+            //                     console.log('link: ' + link);
+            //                 });
+            //                 console.log('got blobs:');
+            //                 assert(blob !== null);
+            //                 console.log('BLOB:' + blob.get('container') + '/' + blob.id);
+            //                 console.log('size:' + blob.get('size'));
+            //                 console.log('Last Modified: ' + blob.get('lastModified'));
+            //                 console.log('Type: ' + blob.get('type'));
             //             });
             //         });
             //     });
