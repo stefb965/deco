@@ -53,59 +53,74 @@ export default Ember.Controller.extend({
                         }
                     }
                 }
-                self.transitionToRoute('explorer');
+                //self.transitionToRoute('explorer');
             });
         },
 
         selectAndConnect: function () {
             // TODO - Move these tests to a sane place to test
             // TEST - CONTAINERS
-            /**
-            var container = this.store.createRecord('container', {name: 'asset-02c943cc-3fce-47bc-98ac-f356f3ac414b'});
-            var assert = window.requireNode('assert');
-            container.save().then(function(container){
-                assert(container.get('name') !== null);
-            });
+            
+            
+            // this.store.find('container', { name: 'asset-02c943cc-3fce-47bc-98ac-f356f3ac414b'} )
+            // .then(function(containers){
 
-            this.store.find('container').then(function(containers){
+            //     containers.forEach(function(container){
+            //         console.log(container.get('lastModified'));
+            //         assert(container.get('lastModified') !== undefined && container.get('lastModified') !== null );
+            //     });
+            // });
 
-                console.log('container listing: ');
+            // var container = this.store.createRecord('container', {name: 'asset-02c943cc-3fce-47bc-98ac-f356f3ac414b'});
+            // var assert = window.requireNode('assert');
+            // // container.save().then(function(container){
+            // //     assert(container.get('name') !== null);
+            // // });
+            // var once = false;
+            // this.store.find('container').then(function(containers){
 
-                containers.forEach(function(container){
-                    assert(container !== null);
-                    console.log(container.id);
-                    console.log(container.get('name'));
-                    console.log(container.get('lastModified'));
+            //     console.log('container listing: ');
 
-                    console.log('got container: ' + container.get('name'));
-                    console.dir(container);
+            //     containers.forEach(function(container){
+            //         assert(container !== null);
+            //         console.log(container.get('name'));
+            //         // console.log(container.id);
+            //         // console.log(container.get('name'));
+            //         // console.log(container.get('lastModified'));
 
-                    //TEST BLOBS
-                    var blobs = container.get('blobs');
-                    console.log("LENGTH: " + container.get('blobs.length'));
-                    blobs.forEach(function(blob){
+            //         // console.log('got container: ' + container.get('name'));
+            //         // console.dir(container);
 
-                        console.log('got blobs:');
+            //         //TEST BLOBS
+                    
+            //         container.get('blobs').then(function(blobs){
+            //             blobs.forEach(function(blob){
+            //                 console.log('got blob ' + blob.get('name'));
+            //                 if(!once){
+            //                     var writeStream = blob.toStream('./testFile');
+            //                     var count = 0;
+            //                     writeStream.on('data', function(data){
+            //                         count += data.length;
+            //                         console.log('wrote: ' + count);
+            //                     });
 
-                        assert(blob !== null);
-                        console.log('BLOB:' + blob.get('container') + '/' + blob.id);
-                        console.log('size:' + blob.get('size'));
-                        console.log('Last Modified: ' + blob.get('lastModified'));
-                        console.log('Type: ' + blob.get('type'));
-                    });
+            //                     writeStream.on('finish', function(){
+            //                         console.log('downloaded blob!');
+            //                     });
+            //                     once = true;
+            //                 }
+            //                 // console.log('got blobs:');
 
-                });
-            });
+            //                 // assert(blob !== null);
+            //                 // console.log('BLOB:' + blob.get('container') + '/' + blob.id);
+            //                 // console.log('size:' + blob.get('size'));
+            //                 // console.log('Last Modified: ' + blob.get('lastModified'));
+            //                 // console.log('Type: ' + blob.get('type'));
+            //             });
+            //         });
 
-            this.store.find('container', { name: 'asset-02c943cc-3fce-47bc-98ac-f356f3ac414b'} )
-            .then(function(containers){
-
-                containers.forEach(function(container){
-                    console.log(container.get('lastModified'));
-                    assert(container.get('lastModified') !== undefined && container.get('lastModified') !== null );
-                });
-            });
-            **/
+            //     });
+            // });
         },
 
         test: function () {
