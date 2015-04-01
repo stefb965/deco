@@ -44,7 +44,7 @@
     ],
     "requireDotNotation": true,
     "requireLineFeedAtFileEnd": true,
-    "requireMultipleVarDecl": "onevar",
+    "disallowMultipleVarDecl": true,
     "requireParenthesesAroundIIFE": true,
     "requireSpaceAfterBinaryOperators": true,
     "requireSpaceAfterKeywords": [
