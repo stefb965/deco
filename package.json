@@ -45,7 +45,7 @@
     "grunt-jscs": "^0.8.1",
     "load-grunt-tasks": "^1.0.0",
     "nw": "0.12.0",
-    "tar.gz": "^0.1.1"
+    "download": "^4.1.2"
   },
   "main": "dist/index.html",
   "window": {
@@ -58,8 +58,6 @@
   },
   "dependencies": {
     "azure-storage": "^0.4.3",
-    "download": "^4.1.2",
-    "grunt-contrib-copy": "^0.8.0",
     "memorystream": "^0.3.1"
   }
 }

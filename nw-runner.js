@@ -1,7 +1,5 @@
 var extractZip = require('extract-zip');
 var Download = require('download');
-var http = require('http');
-var targz = require('tar.gz');
 var exec = require('child_process').exec;
 var NW_VERSION = '0.12.0';
 var osx_64 = './bin/nw/nwjs-v' + NW_VERSION + '-osx-x64/nwjs.app/Contents/MacOS/nwjs';
