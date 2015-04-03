@@ -1,3 +1,4 @@
+// dead stupid script to format test output from nw.js to the console
 var totalTestCount = 0;
 
 if(!window._phantom){
@@ -13,7 +14,8 @@ if(!window._phantom){
       console.log("      " + details.expected);
       console.log("    message: -");
       console.log("      " + details.message);
-      console.log("    Log: >");
+      console.log("      " + details.source);
+      console.log("    Log:");
       if(details.log){
         console.log("      " + details.log);
       }
