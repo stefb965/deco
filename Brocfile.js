@@ -18,6 +18,17 @@ var app = new EmberApp();
 var Funnel = require('broccoli-funnel');
 var mergeTrees = require('broccoli-merge-trees');
 // nwjs requires a package.json in order to runu anything
+
+// these in-line vars are only used by test runs
+var app = new EmberApp({
+  inlineContent: {
+    'qunit-logger' : './tests/helpers/qunit-logger.js',
+    'test-base': {
+        'content': '<base href=\"../\"/>'
+    }
+  }
+});
+
 var tree = new Funnel('tests', {
     files: ['package.json'],
     destDir: 'tests'
