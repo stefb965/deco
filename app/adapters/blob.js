@@ -3,9 +3,9 @@ import serializer from '../serializers/azure-storage';
 import accountUtils from '../utilities/account';
 export default DS.Adapter.extend({
     serializer: serializer.create(),
+    nodeServices: Ember.inject.service(),
     find: function (store, type, snapshot) {
-        var azureStorage = window.requireNode('azure-storage'),
-            blobService = azureStorage.createBlobService(store.account_name, store.account_key);
+        var blobService = this.get('azureStorage').createBlobService(store.account_name, store.account_key);
 
         return new Ember.RSVP.Promise(function (resolve, reject) {
             blobService.getBlobProperties(snapshot.get('container').name, snapshot.get('name'), function (error, result) {
@@ -31,9 +31,10 @@ export default DS.Adapter.extend({
     findQuery: function (store, type, snapshot) {
 
         var azureStorage = window.requireNode('azure-storage');
+        self = this;
         return new Ember.RSVP.Promise(function (resolve, reject) {
             accountUtils.getActiveAccount(store).then(function (account) {
-                var blobService = azureStorage.createBlobService(account.get('name'), account.get('key'));
+                var blobService = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
                 blobService.listBlobsSegmented(snapshot.container.get('name'), null, function (error, result) {
                     var blobs = [];
                     if (error) {
@@ -57,5 +58,6 @@ export default DS.Adapter.extend({
                 });
             });
         });
-    }
+    },
+    azureStorage: Ember.computed.alias('nodeServices.azureStorage')
 });

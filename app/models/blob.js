@@ -3,8 +3,7 @@ import accountUtil from '../utilities/account';
 
 function startWriteToStream(model, stream) {
     accountUtil.getActiveAccount(model.store).then(function (account) {
-        var azureStorage = window.requireNode('azure-storage');
-        var blobService = azureStorage.createBlobService(account.
+        var blobService = model.get('azureStorage').createBlobService(account.
             get('name'),
             account.get('key'));
 
@@ -20,6 +19,8 @@ export default DS.Model.extend({
     container: DS.belongsTo('container', {
         async: true
     }),
+    nodeServices: Ember.inject.service(),
+    fileSystem: Ember.inject.service(),
     name: DS.attr('string'),
     size: DS.attr('number'),
     lastModified: DS.attr('date'),
@@ -29,8 +30,7 @@ export default DS.Model.extend({
         var self = this;
         return new Ember.RSVP.Promise(function (resolve){
                 accountUtil.getActiveAccount(self.store).then(function (account) {
-                var azureStorage = window.requireNode('azure-storage');
-                var blobService = azureStorage.createBlobService(account.
+                var blobService = self.get('azureStorage').createBlobService(account.
                     get('name'),
                     account.get('key'));
                 var startDate = new Date();
@@ -56,24 +56,15 @@ export default DS.Model.extend({
             });
         });
     }.property(),
-    // returns a memory stream of the blob
-    toStream: function () {
-        var MemoryStream = window.requireNode('memorystream');
-        var memStream = new MemoryStream([]);
-
-        // begin writing to stream
-        startWriteToStream(this, memStream);
-
-        return memStream;
-    },
     // returns stream to blob path
     toFile: function (path) {
-        var fs = window.requireNode('fs');
-        var fileStream = fs.createWriteStream(path);
+        var fileStream = this.get('fileSvc').createWriteStream(path);
 
         // begin writing to stream
         startWriteToStream(this, fileStream);
 
         return fileStream;
-    }
+    },
+    azureStorage: Ember.computed.alias('nodeServices.azureStorage'),
+    fileSvc: Ember.computed.alias('nodeServices.fs')
 });
