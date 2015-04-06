@@ -5,7 +5,11 @@
     "PhantomJS"
   ],
   "launch_in_dev": [
-    "PhantomJS",
-    "Chrome"
-  ]
+    "PhantomJS"
+  ],
+  "launchers": {
+    "nw": {
+        "command": "node nw-runner.js"
+    }
+  }
 }

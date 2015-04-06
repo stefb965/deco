@@ -7,9 +7,11 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    {{content-for 'test-base'}}
+    <!-- TODO What is the right way to tell whatever is compiling this to stop placing base at '/' -->
     {{content-for 'head'}}
     {{content-for 'test-head'}}
-
+    
     <link rel="stylesheet" href="assets/vendor.css">
     <link rel="stylesheet" href="assets/azureexplorer.css">
     <link rel="stylesheet" href="assets/test-support.css">
@@ -24,6 +26,7 @@
     <script src="assets/vendor.js"></script>
     <script src="assets/test-support.js"></script>
     <script src="assets/azureexplorer.js"></script>
+    {{content-for 'qunit-logger'}}
     <script src="testem.js"></script>
     <script src="assets/test-loader.js"></script>
 
