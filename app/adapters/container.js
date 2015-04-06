@@ -3,17 +3,17 @@ import serializer from '../serializers/azure-storage';
 import accountUtils from '../utilities/account';
 export default DS.Adapter.extend({
     serializer: serializer.create(),
+    nodeServices: Ember.inject.service(),
     find: function (store, type, snapshot) {
-        var azureStorage = window.requireNode('azure-storage');
+        var self = this;
         return new Ember.RSVP.Promise(function (resolve, reject) {
             accountUtils.getActiveAccount(store).then(function (account) {
-                var blobService = azureStorage.createBlobService(account.get('name'),
+                var blobService = self.get('azureStorage').createBlobService(account.get('name'),
                     account.get('key'));
                 blobService.getContainerProperties(snapshot.name, function (err, data) {
                     if (err) {
                         return Ember.run(null, reject, err);
                     }
-
                     return Ember.run(null, resolve, [{
                         name: data.name,
                         id: data.name,
@@ -24,10 +24,10 @@ export default DS.Adapter.extend({
         });
     },
     createRecord: function (store, type, snapshot) {
-        var azureStorage = window.requireNode('azure-storage');
+        var self = this;
         return new Ember.RSVP.Promise(function (resolve, reject) {
             accountUtils.getActiveAccount(store).then(function (account) {
-                var blobService = azureStorage.createBlobService(account.get('name'),
+                var blobService = self.get('azureStorage').createBlobService(account.get('name'),
                     account.get('key'));
                 blobService.createContainerIfNotExists(snapshot.get('name'), function (err) {
                     if (err) {
@@ -42,10 +42,10 @@ export default DS.Adapter.extend({
         throw 'not implemented';
     },
     deleteRecord: function (store, type, snapshot) {
-        var azureStorage = window.requireNode('azure-storage');
+        var self = this;
         return new Ember.RSVP.Promise(function (resolve, reject) {
             accountUtils.getActiveAccount(store).then(function (account) {
-                var blobService = azureStorage.createBlobService(account.get('name'),
+                var blobService = self.get('azureStorage').createBlobService(account.get('name'),
                     account.get('key'));
                 blobService.deleteContainer(snapshot.get('name'), function (err) {
                     if (err) {
@@ -57,15 +57,16 @@ export default DS.Adapter.extend({
         });
     },
     findAll: function (store) {
-        var azureStorage = window.requireNode('azure-storage');
+        var self = this;
         return new Ember.RSVP.Promise(function (resolve, reject) {
             accountUtils.getActiveAccount(store).then(function (account) {
-                var blobService = azureStorage.createBlobService(account.get('name'),
+                var blobService = self.get('azureStorage').createBlobService(account.get('name'),
                     account.get('key'));
                 blobService.listContainersSegmented(null, function (err, data) {
                     if (err) {
                         return Ember.run(null, reject, err);
                     }
+
                     var containerModels = [];
                     for (var i in data.entries) {
                         if (i % 1 === 0) {
@@ -82,10 +83,10 @@ export default DS.Adapter.extend({
         });
     },
     findQuery: function (store, type, snapshot) {
-        var azureStorage = window.requireNode('azure-storage');
+        var self = this;
         return new Ember.RSVP.Promise(function (resolve, reject) {
             accountUtils.getActiveAccount(store).then(function (account) {
-                var blobService = azureStorage.createBlobService(account.get('name'),
+                var blobService = self.get('azureStorage').createBlobService(account.get('name'),
                     account.get('key'));
                 blobService.getContainerProperties(snapshot.name, function (err, data) {
                     if (err) {
@@ -99,5 +100,6 @@ export default DS.Adapter.extend({
                 });
             });
         });
-    }
+    },
+    azureStorage: Ember.computed.alias('nodeServices.azureStorage')
 });
