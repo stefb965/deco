@@ -20,17 +20,30 @@ var mergeTrees = require('broccoli-merge-trees');
 // nwjs requires a package.json in order to runu anything
 
 // these in-line vars are only used by test runs
-var app = new EmberApp({
-  inlineContent: {
-    'qunit-logger' : './tests/helpers/qunit-logger.js',
-    'test-base': {
-        'content': '<base href=\"../\"/>'
-    }
-  }
-});
+var app;
+
+// brocfile-env module hasn't been decided on how to expose more build options
+
+if (process.env.TEST_IN_NW) {
+    app = new EmberApp({
+      inlineContent: {
+        'qunit-logger': './tests/helpers/qunit-logger.js',
+        'test-base': {
+            content: '<base href=\"../\"/>'
+        }
+      }
+    });
+} else {
+    app = new EmberApp();
+}
 
 var tree = new Funnel('tests', {
     files: ['package.json'],
     destDir: 'tests'
 });
-module.exports = mergeTrees([app.toTree(), tree]);
+
+if (process.env.TEST_IN_NW) {
+    module.exports = mergeTrees([app.toTree(), tree]);
+} else {
+    module.exports = app.toTree();
+}

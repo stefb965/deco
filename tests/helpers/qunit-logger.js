@@ -1,9 +1,10 @@
+/* global QUnit */
+/* global require */
 // dead stupid script to format test output from nw.js to the console
 var totalTestCount = 0;
 
 if(!window._phantom){
   QUnit.log(function( details ) {
-    console.log(details);
     console.log(details.module + ": " + details.name);
     if(details.result !== true){
       console.log("FAIL");
