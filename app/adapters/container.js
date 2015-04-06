@@ -14,7 +14,6 @@ export default DS.Adapter.extend({
                     if (err) {
                         return Ember.run(null, reject, err);
                     }
-
                     return Ember.run(null, resolve, [{
                         name: data.name,
                         id: data.name,
@@ -67,6 +66,7 @@ export default DS.Adapter.extend({
                     if (err) {
                         return Ember.run(null, reject, err);
                     }
+
                     var containerModels = [];
                     for (var i in data.entries) {
                         if (i % 1 === 0) {

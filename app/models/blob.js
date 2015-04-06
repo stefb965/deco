@@ -3,10 +3,8 @@ import accountUtil from '../utilities/account';
 
 function startWriteToStream(model, stream) {
     accountUtil.getActiveAccount(model.store).then(function (account) {
-        var blobService = model.get('azureStorage').createBlobService(account.
-            get('name'),
+        var blobService = model.get('azureStorage').createBlobService(account.get('name'),
             account.get('key'));
-
         blobService.getBlobToStream(model.get('container_id'), model.get('name'), stream, function (err) {
             if (err) {
                 Ember.Logger.error('Error getting blob to stream:');
@@ -28,30 +26,25 @@ export default DS.Model.extend({
     type: DS.attr('string'),
     link: function () {
         var self = this;
-        return new Ember.RSVP.Promise(function (resolve){
-                accountUtil.getActiveAccount(self.store).then(function (account) {
-                var blobService = self.get('azureStorage').createBlobService(account.
-                    get('name'),
+        return new Ember.RSVP.Promise(function (resolve) {
+            accountUtil.getActiveAccount(self.store).then(function (account) {
+                var blobService = self.get('azureStorage').createBlobService(account.get('name'),
                     account.get('key'));
                 var startDate = new Date();
                 var expiryDate = new Date(startDate);
                 // set the link expiration to 200 minutes in the future.
                 expiryDate.setMinutes(startDate.getMinutes() + 200);
                 startDate.setMinutes(startDate.getMinutes() - 100);
-
                 var sharedAccessPolicy = {
                     AccessPolicy: {
-                      Permissions: azureStorage.BlobUtilities.SharedAccessPermissions.READ,
-                      Start: startDate,
-                      Expiry: expiryDate
-                  }
+                        Permissions: self.get('azureStorage').BlobUtilities.SharedAccessPermissions.READ,
+                        Start: startDate,
+                        Expiry: expiryDate
+                    }
                 };
-
                 var token = blobService.generateSharedAccessSignature(self.get('container_id'), self.get('name'), sharedAccessPolicy);
-
                 // generate a url in which the user can have access to the blob
                 var sasUrl = blobService.getUrl(self.get('container_id'), self.get('name'), token);
-
                 return Ember.run(null, resolve, sasUrl);
             });
         });
@@ -59,10 +52,8 @@ export default DS.Model.extend({
     // returns stream to blob path
     toFile: function (path) {
         var fileStream = this.get('fileSvc').createWriteStream(path);
-
         // begin writing to stream
         startWriteToStream(this, fileStream);
-
         return fileStream;
     },
     azureStorage: Ember.computed.alias('nodeServices.azureStorage'),

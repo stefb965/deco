@@ -6,7 +6,6 @@ export default DS.Adapter.extend({
     nodeServices: Ember.inject.service(),
     find: function (store, type, snapshot) {
         var blobService = this.get('azureStorage').createBlobService(store.account_name, store.account_key);
-
         return new Ember.RSVP.Promise(function (resolve, reject) {
             blobService.getBlobProperties(snapshot.get('container').name, snapshot.get('name'), function (error, result) {
                 if (error) {
@@ -29,9 +28,7 @@ export default DS.Adapter.extend({
         throw 'not implemented';
     },
     findQuery: function (store, type, snapshot) {
-
-        var azureStorage = window.requireNode('azure-storage');
-        self = this;
+        var self = this;
         return new Ember.RSVP.Promise(function (resolve, reject) {
             accountUtils.getActiveAccount(store).then(function (account) {
                 var blobService = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));

@@ -1,5 +1,5 @@
 import DS from 'ember-data';
-export default DS.Model.extend({
+var Container = DS.Model.extend({
     blobs: function () {
         return this.store.find('blob', {
             container: this,
@@ -16,3 +16,4 @@ export default DS.Model.extend({
         defaultValue: null
     })
 });
+export default Container;
