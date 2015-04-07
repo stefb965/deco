@@ -11,5 +11,5 @@ moduleFor('adapter:container', 'ContainerAdapter', {
 // Replace this with your real tests.
 test('it exists', function(assert) {
   var adapter = this.subject();
-  assert.ok(adapter);
+  assert.ok(adapter)
 });
