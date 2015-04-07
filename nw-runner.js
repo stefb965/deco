@@ -54,7 +54,7 @@ else{
 
 function runNw(nwPath){
     var nw;
-    if(os.platform() === 'linux'){
+    if(os.platform() === 'darwin'){
         // TODO - What happens to folks running a linux desktop?
         nw = exec('./travis_runner.sh ' + nwPath + ' ./dist/tests');
     }
