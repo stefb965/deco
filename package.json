@@ -10,7 +10,7 @@
   "scripts": {
     "start": "ember server",
     "build": "ember build",
-    "test": "grunt test && ./travis_runner.sh"
+    "test": "grunt test && ember test"
   },
   "repository": "",
   "engines": {
