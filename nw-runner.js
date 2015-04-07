@@ -32,6 +32,7 @@ if(os.platform() === 'darwin'){
 }
 else if(os.platform() === 'linux'){
     if(!fs.existsSync(linux_64)) {
+        console.log('downloading nw.js for linux to ' + linux_64);
         new Download({mode: '755', extract: true})
         .get('http://dl.nwjs.io/v0.12.0/nwjs-v' + NW_VERSION + '-linux-x64.tar.gz')
         .dest('./bin/nw')
@@ -39,6 +40,7 @@ else if(os.platform() === 'linux'){
             if(err){
                 return console.error(err);
             }
+            console.log('sucessfully extracted linux nw.js ');
             runNw(linux_64);
         });
     }
@@ -52,6 +54,8 @@ else{
 
 function runNw(nwPath){
     var nw = exec(nwPath + ' ./dist/tests');
+    console.log('executng:');
+    console.log(nwPath + ' ./dist/tests')
     nw.stdout.on('data', function (data) {
         process.stdout.write(data);
     });
