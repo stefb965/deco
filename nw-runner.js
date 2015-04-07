@@ -53,13 +53,15 @@ else{
 }
 
 function runNw(nwPath){
+    var nw;
     if(os.platform() === 'linux'){
         // TODO - What happens to folks running a linux desktop?
-        var xvbf = exec('sh -e /etc/init.d/xvfb start');
+        nw = exec('./travis_runner.sh ' + nwPath + ' ./dist/tests');
     }
-    var nw = exec(nwPath + ' ./dist/tests');
-    console.log('executng:');
-    console.log(nwPath + ' ./dist/tests')
+    else{
+        nw = exec(nwPath + ' ./dist/tests');    
+    }
+    
     nw.stdout.on('data', function (data) {
         process.stdout.write(data);
     });
