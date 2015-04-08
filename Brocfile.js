@@ -24,26 +24,19 @@ var app;
 
 // brocfile-env module hasn't been decided on how to expose more build options
 
-if (process.env.TEST_IN_NW) {
-    app = new EmberApp({
-      inlineContent: {
-        'qunit-logger': './tests/helpers/qunit-logger.js',
-        'test-base': {
-            content: '<base href=\"../\"/>'
-        }
-      }
-    });
-} else {
-    app = new EmberApp();
-}
+app = new EmberApp({
+  inlineContent: {
+    'qunit-logger': './tests/helpers/qunit-logger.js',
+    'test-base': {
+        content: '<base href=\"../\"/>'
+    }
+  }
+});
+
 
 var tree = new Funnel('tests', {
     files: ['package.json'],
     destDir: 'tests'
 });
 
-if (process.env.TEST_IN_NW) {
-    module.exports = mergeTrees([app.toTree(), tree]);
-} else {
-    module.exports = app.toTree();
-}
+module.exports = mergeTrees([app.toTree(), tree]);
