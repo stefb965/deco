@@ -10,6 +10,8 @@ export default Ember.Controller.extend({
 
     blobsLoading: true,
 
+    selectedBlob: null,
+
     activeContainerObserver: function () {
         var activeContainer = this.get('activeContainer'),
             blobs = [],
@@ -54,6 +56,10 @@ export default Ember.Controller.extend({
             });
 
             nwInput.click();
+        },
+
+        selectBlob: function(blob) {
+            this.set('selectedBlob', blob);
         }
     }
 });

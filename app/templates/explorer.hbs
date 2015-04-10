@@ -4,13 +4,14 @@
         <div class="container">
             <ul>
                 {{#each container in model}}
-                <li {{action "switchActiveContainer" container.id}}>
-                    <i class="mdi-file-folder-open"></i> {{container.name}}
-                </li>
+                    <li {{action "switchActiveContainer" container.id}}>
+                        <i class="mdi-file-folder-open"></i> {{container.name}}
+                    </li>
                 {{/each}}
             </ul>
             <a class="btn-floating btn-small waves-effect waves-light"><i class="mdi-content-add"></i></a>
         </div>
+        {{ax-preview selectedBlob=selectedBlob}}
     </div>
     <div class="files z-depth-3">
         <div class="container">

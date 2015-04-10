@@ -1,8 +1,12 @@
+div.folder {
+    width: 250px;
+    float: left;
+    height: calc(100vh - 64px);
+}
+
 .folder {
-    div {
-        width: 250px;
-        float: left;
-        height: calc(100vh - 64px);
+    div.container {
+        margin: 0;
     }
 
     ul li {
