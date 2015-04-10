@@ -13,6 +13,7 @@ function startWriteToStream(model, stream) {
         });
     });
 }
+
 export default DS.Model.extend({
     container: DS.belongsTo('container', {
         async: true
@@ -24,17 +25,19 @@ export default DS.Model.extend({
     lastModified: DS.attr('date'),
     container_id: DS.attr('string'),
     type: DS.attr('string'),
-    link: function () {
+
+    getLink: function () {
         var self = this;
         return new Ember.RSVP.Promise(function (resolve) {
             accountUtil.getActiveAccount(self.store).then(function (account) {
-                var blobService = self.get('azureStorage').createBlobService(account.get('name'),
-                    account.get('key'));
+                var blobService = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
                 var startDate = new Date();
                 var expiryDate = new Date(startDate);
+
                 // set the link expiration to 200 minutes in the future.
                 expiryDate.setMinutes(startDate.getMinutes() + 200);
                 startDate.setMinutes(startDate.getMinutes() - 100);
+
                 var sharedAccessPolicy = {
                     AccessPolicy: {
                         Permissions: self.get('azureStorage').BlobUtilities.SharedAccessPermissions.READ,
@@ -42,13 +45,16 @@ export default DS.Model.extend({
                         Expiry: expiryDate
                     }
                 };
+
                 var token = blobService.generateSharedAccessSignature(self.get('container_id'), self.get('name'), sharedAccessPolicy);
                 // generate a url in which the user can have access to the blob
                 var sasUrl = blobService.getUrl(self.get('container_id'), self.get('name'), token);
+
                 return Ember.run(null, resolve, sasUrl);
             });
         });
-    }.property(),
+    },
+
     // returns stream to blob path
     toFile: function (path) {
         var fileStream = this.get('fileSvc').createWriteStream(path);
@@ -56,6 +62,7 @@ export default DS.Model.extend({
         startWriteToStream(this, fileStream);
         return fileStream;
     },
+
     azureStorage: Ember.computed.alias('nodeServices.azureStorage'),
     fileSvc: Ember.computed.alias('nodeServices.fs')
 });
