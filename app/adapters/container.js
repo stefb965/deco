@@ -4,13 +4,15 @@ import accountUtils from '../utilities/account';
 export default DS.Adapter.extend({
     serializer: serializer.create(),
     nodeServices: Ember.inject.service(),
-    find: function (store, type, snapshot) {
+
+    find: function (store, type, id, snapshot) {
         var self = this;
         return new Ember.RSVP.Promise(function (resolve, reject) {
             accountUtils.getActiveAccount(store).then(function (account) {
                 var blobService = self.get('azureStorage').createBlobService(account.get('name'),
                     account.get('key'));
-                blobService.getContainerProperties(snapshot.name, function (err, data) {
+
+                blobService.getContainerProperties(snapshot.attr('name'), function (err, data) {
                     if (err) {
                         return Ember.run(null, reject, err);
                     }
@@ -23,6 +25,7 @@ export default DS.Adapter.extend({
             });
         });
     },
+
     createRecord: function (store, type, snapshot) {
         var self = this;
         return new Ember.RSVP.Promise(function (resolve, reject) {
@@ -38,9 +41,11 @@ export default DS.Adapter.extend({
             });
         });
     },
+
     updateRecord: function () {
         throw 'not implemented';
     },
+
     deleteRecord: function (store, type, snapshot) {
         var self = this;
         return new Ember.RSVP.Promise(function (resolve, reject) {
@@ -56,6 +61,7 @@ export default DS.Adapter.extend({
             });
         });
     },
+
     findAll: function (store) {
         var self = this;
         return new Ember.RSVP.Promise(function (resolve, reject) {
@@ -82,6 +88,7 @@ export default DS.Adapter.extend({
             });
         });
     },
+
     findQuery: function (store, type, snapshot) {
         var self = this;
         return new Ember.RSVP.Promise(function (resolve, reject) {
@@ -101,5 +108,6 @@ export default DS.Adapter.extend({
             });
         });
     },
+
     azureStorage: Ember.computed.alias('nodeServices.azureStorage')
 });
