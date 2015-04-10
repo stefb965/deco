@@ -27,22 +27,23 @@
                 </thead>
                 <tbody>
                     {{#each blob in blobs itemController="blob"}}
-                        <tr {{action "selectBlob" blob}} {{bind-attr class="blob.selected:selected"}}>
+                        <tr {{action "selectBlob" blob.model}} {{bind-attr class="blob.selected:selected"}}>
                             <td>
-                                <a class="waves-effect waves-light btn btn-download" {{action "downloadBlob" blob blob.name}}>
+                                <a class="waves-effect waves-light btn btn-download" {{action "downloadBlob" blob.model blob.model.name}}>
                                     <i class="mdi-file-file-download"></i>
                                 </a>
                             </td>
-                            <td>{{blob.name}}</td>
-                            <td>{{blob.lastModified}}</td>
+                            <td>{{blob.model.name}}</td>
+                            <td>{{blob.model.lastModified}}</td>
                             <td>{{blob.prettySize}}</td>
-                            <td>{{blob.type}}</td>
+                            <td>{{blob.model.type}}</td>
                         </tr>
                     {{/each}}
                 </tbody>
             </table>
             {{!-- Hidden elements for nw.js file dialogs --}}
             <input id="nwSaveInput" type="file" nwsaveas class="hidden" />
+            <input id="nwUploadFile" type="file" class="hidden" />
         </div>
     </div>
 </div>

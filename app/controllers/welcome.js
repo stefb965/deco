@@ -1,18 +1,22 @@
 import Ember from 'ember';
+
 export default Ember.Controller.extend({
     needs: 'application',
     activeConnection: Ember.computed.alias('controllers.application.activeConnection'),
     loading: false,
+
     setup: function () {
         var model = this.get('model');
         if (!model || !model.content || model.content.length < 1) {
             this.set('addNewUi', true);
         }
     }.observes('model'),
+
     actions: {
         toggleAddNew: function () {
             this.toggleProperty('addNewUi');
         },
+
         addNew: function () {
             var name = this.get('account_name'),
                 key = this.get('account_key'),
@@ -23,6 +27,7 @@ export default Ember.Controller.extend({
             newAccount.save();
             this.send('connect', newAccount.get('id'));
         },
+
         connect: function (activeAccountId) {
             var self = this;
             this.set('loading', true);
@@ -45,6 +50,7 @@ export default Ember.Controller.extend({
                 self.transitionToRoute('explorer');
             });
         },
+
         selectAndConnect: function () {
             // TODO - Move these tests to a sane place to test
             // TEST - CONTAINERS
@@ -91,14 +97,17 @@ export default Ember.Controller.extend({
             //     });
             // });
         },
+
         test: function () {
             var name = this.get('account_name'),
                 key = this.get('account_key'),
                 azureStorage = window.requireNode('azure-storage'),
                 self = this,
                 blobService;
+
             if (name && key) {
                 Ember.$('#modal-testing').openModal();
+                
                 try {
                     blobService = azureStorage.createBlobService(name, key);
                     blobService.listContainersSegmented(null, function (error) {
