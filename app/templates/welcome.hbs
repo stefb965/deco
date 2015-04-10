@@ -6,15 +6,15 @@
                     <img src="images/clouds-1.jpg">
                 </div>
                 <div class="card-content">
-                    {{#if loading}}
+                    {{#liquid-if loading}}
                         <div {{bind-attr class="loading"}}></div>
                         <div class="welcome-loading">
                             {{ax-spinner}}
                         </div>
-                    {{/if}}
+                    {{/liquid-if}}
                     <span class="card-title grey-text text-darken-4">Storage Account</span>
                     <div class="row">
-                        {{#if addNewUi}}
+                        {{#liquid-if addNewUi}}
                             <div class="input-field col s12">
                                 <i class="mdi-action-bookmark-outline prefix"></i>
                                 {{input value=account_name id="account_name" type="text" class="validate"}}
@@ -38,7 +38,7 @@
                                 <a {{action "toggleAddNew"}} {{bind-attr disabed=loading}} class="waves-effect waves-light btn"><i class="mdi-content-add-circle left"></i>Add New</a>
                                 <a {{action "connect"}} {{bind-attr disabed=loading}} class="waves-effect waves-light btn"><i class="mdi-action-launch right"></i>Connect</a>
                             </div>
-                        {{/if}}
+                        {{/liquid-if}}
                     </div>
                 </div>
             </div>
