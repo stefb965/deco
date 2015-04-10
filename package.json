@@ -47,6 +47,7 @@
     "grunt-js-beautify": "^0.1.1",
     "grunt-jscodesniffer": "^0.1.8",
     "grunt-jscs": "^0.8.1",
+    "liquid-fire": "ef4/liquid-fire#8fcefd057478ab6852d7b8b3fc8526aa5079553c",
     "load-grunt-tasks": "^1.0.0",
     "nw": "0.12.0"
   },
