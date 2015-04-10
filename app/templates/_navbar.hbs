@@ -8,9 +8,8 @@
                 <li>{{activeConnection}}</li>
             </ul>
             <ul class="right actions">
-                <li><i class="mdi-file-file-upload"></i></li>
-                <li><i class="mdi-file-file-download"></i></li>
-                <li><i class="mdi-file-folder"></i></li>
+                <li {{action "refreshBlobs"}}><i class="mdi-navigation-refresh"></i></li>
+                <li {{action "uploadBlob"}}><i class="mdi-file-file-upload"></i></li>
             </ul>
         </div>
     </nav>
