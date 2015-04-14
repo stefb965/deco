@@ -33,7 +33,6 @@ app = new EmberApp({
   }
 });
 
-
 var tree = new Funnel('tests', {
     files: ['package.json'],
     destDir: 'tests'

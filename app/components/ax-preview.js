@@ -7,7 +7,6 @@ export default Ember.Component.extend({
     typeAudio: false,
     typeVideo: false,
 
-
     targetTypeObserver: function () {
         var selectedBlob = this.get('selectedBlob');
         var type;
@@ -29,7 +28,7 @@ export default Ember.Component.extend({
         }
 
         selectedBlob.getLink().then(result => this.set('previewLink', result));
-        Ember.run.scheduleOnce('afterRender', this, function() {
+        Ember.run.scheduleOnce('afterRender', this, function () {
             Ember.$('.materialboxed').materialbox();
         });
     }.observes('selectedBlob')

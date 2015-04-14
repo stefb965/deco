@@ -10,15 +10,7 @@ moduleForModel('container', {
     // Specify the other units that are required for this test.
     needs: ['model:blob'],
     setup: function () {
-        App = startApp();
-        store = App.__container__.lookup('store:main');
-        Ember.run(function(){
-            var newAccount = store.createRecord('account', {
-                name: 'Testaccount',
-                key: '5555-5555-5555-5555',
-                active: true
-            });
-        });
+        
     },
     teardown: function () {
         Ember.run(App, App.destroy);
@@ -28,8 +20,16 @@ moduleForModel('container', {
 });
 
 test('it should return 2 containers with names and last modified fields', function (assert) {
-    assert.expect(4);
-    
+    assert.expect(6);
+    App = startApp(null, assert);
+    store = App.__container__.lookup('store:main');
+    Ember.run(function(){
+        var newAccount = store.createRecord('account', {
+            name: 'Testaccount',
+            key: '5555-5555-5555-5555',
+            active: true
+        });
+    });
     Ember.run(function () {
         store.find('container').then(function (containers) {
             
@@ -42,8 +42,17 @@ test('it should return 2 containers with names and last modified fields', functi
     });
 });
 test('it should should return all blobs for the test containers', function (assert) {
-    assert.expect(44);
-    
+    assert.expect(52);
+    App = startApp(null, assert);
+    store = App.__container__.lookup('store:main');
+    Ember.run(function(){
+        var newAccount = store.createRecord('account', {
+            name: 'Testaccount',
+            key: '5555-5555-5555-5555',
+            active: true
+        });
+    });
+
     Ember.run(function () {
         
         store.find('container').then(function (containers) {

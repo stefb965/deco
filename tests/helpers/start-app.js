@@ -3,7 +3,7 @@ import Application from '../../app';
 import Router from '../../router';
 import config from '../../config/environment';
 import containerAdapter from '../../adapters/container';
-export default function startApp(attrs) {
+export default function startApp(attrs, assert) {
     var application;
     var attributes = Ember.merge({}, config.APP);
     attributes = Ember.merge(attributes, attrs); // use defaults, but you can override;
@@ -19,7 +19,8 @@ export default function startApp(attrs) {
         createBlobService: function () {
             return {
                 listContainersSegmented: function (shouldBeNull, callback) {
-                    
+                    assert.ok(shouldBeNull === null, 'expeceted arg shouldBeNull to be null');
+                    assert.ok(callback !== null, 'expeceted arg callback to be non-null');
                     return callback(null, {
                         entries: [{
                             name: 'testcontainer',
@@ -35,18 +36,27 @@ export default function startApp(attrs) {
                     });
                 },
                 deleteContainer: function (containerName, callback) {
+                    assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
+                    assert.ok(callback !== null, 'expeceted arg callback to be non-null');
                     return callback(null);
                 },
                 getContainerProperties: function (containerName, callback) {
+                    assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
+                    assert.ok(callback !== null, 'expeceted arg callback to be non-null');
                     return callback(null, {
-                        name: 'testcontainer',
+                        name: containerName,
                         lastModified: Date.Now()
                     });
                 },
                 createContainerIfNotExists: function (containerName, callback) {
+                    assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
+                    assert.ok(callback !== null, 'expeceted arg callback to be non-null');
                     return callback(null);
                 },
-                listBlobsSegmented: function (containerName, shouldBeNill, callback) {
+                listBlobsSegmented: function (containerName, shouldBeNull, callback) {
+                    assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
+                    assert.ok(shouldBeNull === null, 'expeceted arg shouldBeNull to be null');
+                    assert.ok(callback !== null, 'expeceted arg callback to be non-null');
                     return callback(null, {
                         entries: [{
                             name: 'test-blob-1.mp4',
@@ -80,10 +90,12 @@ export default function startApp(attrs) {
                     });
                 },
                 generateSharedAccessSignature: function () {
+                    assert.ok(true);
                     // litterally just mashed my keyboard here :-)
                     return '32523fdsgjsdkh5r43r89hvsghsdhafkjwerhs';
                 },
                 getUrl: function () {
+                    assert.ok(true);
                     return 'https://testaccount.storage.windows.net/somecontainer/test-blob?expiry=2000';
                 },
                 BlobUtilities: {
