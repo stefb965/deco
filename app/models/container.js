@@ -22,15 +22,16 @@ var Container = DS.Model.extend({
     }),
 
     uploadBlob: function (path) {
-        var container = this.get('name'),
-            self = this,
-            service, fileName;
+        var container = this.get('name');
+        var self = this;
+        var service;
+        var fileName;
 
         return new Ember.RSVP.Promise(function (resolve, reject) {
             accountUtil.getActiveAccount(self.store).then(function (account) {
                 service = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
                 fileName = path.replace(/^.*[\\\/]/, '');
-                
+
                 service.createBlockBlobFromLocalFile(container, fileName, path, function (err, result, response) {
                     if (!err) {
                         return resolve(response);

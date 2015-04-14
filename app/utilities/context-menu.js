@@ -2,36 +2,36 @@ import Ember from 'ember';
 import config from '../config/environment';
 
 function Menu() {
-    var gui = window.requireNode('nw.gui'),
-        menu = new gui.Menu(), 
+    var gui = window.requireNode('nw.gui');
+    var menu = new gui.Menu();
 
-        // Commands
-        cut = new gui.MenuItem({
-            label: 'Cut',
-            click: function() {
-                document.execCommand('cut');
-            }
-        }),
-        copy = new gui.MenuItem({
-            label: 'Copy',
-            click: function() {
-                document.execCommand('copy');
-            }
-        }),
-        paste = new gui.MenuItem({
-            label: 'Paste',
-            click: function() {
-                document.execCommand('paste');
-            }
-        }),
-        emberInspector = new gui.MenuItem({
-            label: 'Ember Inspector',
-            click: function() {
-                var s = document.createElement('script');
-                s.src = 'http://ember-extension.s3.amazonaws.com/dist_bookmarklet/load_inspector.js';
-                document.body.appendChild(s);
-            }
-        });
+    // Commands
+    var cut = new gui.MenuItem({
+        label: 'Cut',
+        click: function () {
+            document.execCommand('cut');
+        }
+    });
+    var copy = new gui.MenuItem({
+        label: 'Copy',
+        click: function () {
+            document.execCommand('copy');
+        }
+    });
+    var paste = new gui.MenuItem({
+        label: 'Paste',
+        click: function () {
+            document.execCommand('paste');
+        }
+    });
+    var emberInspector = new gui.MenuItem({
+        label: 'Ember Inspector',
+        click: function () {
+            var s = document.createElement('script');
+            s.src = 'http://ember-extension.s3.amazonaws.com/dist_bookmarklet/load_inspector.js';
+            document.body.appendChild(s);
+        }
+    });
 
     menu.append(cut);
     menu.append(copy);
@@ -48,7 +48,7 @@ var contextMenu = {
     setup: function () {
         var menu = new Menu();
 
-        Ember.$(document).on('contextmenu', function(e) {
+        Ember.$(document).on('contextmenu', function (e) {
             e.preventDefault();
             menu.popup(e.originalEvent.x, e.originalEvent.y);
         });

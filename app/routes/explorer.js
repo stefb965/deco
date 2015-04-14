@@ -5,7 +5,7 @@ export default Ember.Route.extend({
     },
 
     actions: {
-        refresh: function() {
+        refresh: function () {
           this.refresh();
         }
     }

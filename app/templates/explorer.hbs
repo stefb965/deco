@@ -9,7 +9,10 @@
                     </li>
                 {{/each}}
             </ul>
-            <a class="btn-floating btn-small waves-effect waves-light"><i class="mdi-content-add"></i></a>
+            <div style="display:{{newContainerEntryDisplay}}">
+                {{input placeholder="New Container" value=newContainerName action="createContainer" on="enter"}}
+            </div>
+            <a style="{cursor: pointer;}" {{action "showNewContainer"}} href="" class="btn-floating btn-small waves-effect waves-light"><i class="mdi-content-add"></i></a>
         </div>
         {{ax-preview selectedBlob=selectedBlob}}
     </div>

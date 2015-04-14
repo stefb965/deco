@@ -107,7 +107,7 @@ export default Ember.Controller.extend({
 
             if (name && key) {
                 Ember.$('#modal-testing').openModal();
-                
+
                 try {
                     blobService = azureStorage.createBlobService(name, key);
                     blobService.listContainersSegmented(null, function (error) {

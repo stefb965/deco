@@ -8,6 +8,10 @@ export default Ember.Controller.extend({
 
     blobs: [],
 
+    newContainerEntryDisplay: 'none',
+
+    newContainerName: '',
+
     blobsLoading: true,
 
     selectedBlob: null,
@@ -79,7 +83,7 @@ export default Ember.Controller.extend({
             nwInput.click();
         },
 
-        selectBlob: function(blob) {
+        selectBlob: function (blob) {
             this.set('selectedBlob', blob);
         },
 
@@ -96,6 +100,20 @@ export default Ember.Controller.extend({
 
                 self.set('blobs', blobs);
                 self.set('blobsLoading', false);
+            });
+        },
+        showNewContainer: function () {
+
+            return this.set('newContainerEntryDisplay', 'visible');
+
+        },
+
+        createContainer: function () {
+
+            var newContainer = this.store.createRecord('container', { name: this.get('newContainerName'), id: this.get('newContainerName') });
+            var self = this;
+            return newContainer.save().then(function (){
+                return self.set('newContainerEntryDisplay', 'none');
             });
         }
     }
