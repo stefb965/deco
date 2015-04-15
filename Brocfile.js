@@ -2,6 +2,8 @@
 
 var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 var app = new EmberApp();
+var path = require('path');
+var fs = require('fs');
 // Use `app.import` to add additional libraries to the generated
 // output files.
 //
@@ -38,4 +40,37 @@ var tree = new Funnel('tests', {
     destDir: 'tests'
 });
 
-module.exports = mergeTrees([app.toTree(), tree]);
+// Identify the platform and place the correct ffmpeg binary into the nwjs package
+// This provides nwjs with the codecs to play normal mp4 & mp3 media for the
+// blob preview feature. Not ideal but building much more of a pain
+var binary;
+var dir;
+var destPath;
+
+if (process.platform === 'darwin') {
+    dir = 'bin/darwin/64/';
+    binary = 'ffmpegsumo.so';
+    destPath = 'node_modules/nw/nwjs/nwjs.app/Contents/Frameworks/nwjs Framework.framework/Libraries';
+} else if (process.platform === 'linux') {
+    binary = 'linux/64/libffmpegsumo.so';
+} else if (process.platform === 'win32') {
+    binary = 'windows/32/ffmpegsumo.dll';
+}
+
+var binTree;
+
+if (dir && binary && destPath) {
+    if (fs.existsSync(path.join(destPath, binary))) {
+        fs.unlinkSync(path.join(destPath, binary));
+    }
+    binTree = new Funnel(dir, {
+        files: [binary],
+        destDir: path.join('../../', destPath)
+    });
+}
+
+if (binTree) {
+    module.exports = mergeTrees([app.toTree(), tree, binTree]);
+} else {
+    module.exports = mergeTrees([app.toTree(), tree]);
+}
