@@ -12,9 +12,46 @@ export default Ember.Controller.extend({
         }
     }.observes('model'),
 
+    editAccountObserver: function () {
+        var editAccount = this.get('selectedEditAccount');
+
+        this.store.find('account', editAccount).then(result => {
+            if (result) {
+                this.set('editAccountName', result.get('name'));
+                this.set('editAccountKey', result.get('key'));
+
+            }
+        });
+    }.observes('selectedEditAccount'),
+
     actions: {
         toggleAddNew: function () {
             this.toggleProperty('addNewUi');
+        },
+
+        toggleEdit: function () {
+            this.toggleProperty('editUi');
+            this.send('selectize');
+        },
+
+        edit: function () {
+            var editAccount = this.get('selectedEditAccount'),
+                editAccountName = this.get('editAccountName'),
+                editAccountKey = this.get('editAccountKey');
+
+            this.store.find('account', editAccount).then(result => {
+                if (result) {
+                    result.set('name', editAccountName);
+                    result.set('key', editAccountKey);
+                    result.save();
+                }
+
+                this.send('toggleEdit');
+            });
+        },
+
+        delete: function () {
+
         },
 
         addNew: function () {
@@ -30,10 +67,12 @@ export default Ember.Controller.extend({
 
         connect: function (activeAccountId) {
             var self = this;
+
             this.set('loading', true);
             if (!activeAccountId) {
                 activeAccountId = this.get('selectedAccount');
             }
+
             this.store.find('account').then(function (accounts) {
                 var i, account;
                 if (accounts && accounts.content && accounts.content.length > 0) {
