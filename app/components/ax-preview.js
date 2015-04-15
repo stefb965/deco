@@ -25,6 +25,8 @@ export default Ember.Component.extend({
             } else if (type.indexOf('video') > -1) {
                 this.set('typeVideo', true);
             }
+
+            this.set('type', type);
         }
 
         selectedBlob.getLink().then(result => this.set('previewLink', result));
