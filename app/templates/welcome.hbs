@@ -6,12 +6,12 @@
                     <img src="images/clouds-1.jpg">
                 </div>
                 <div class="card-content">
-                    {{#liquid-if loading}}
+                    {{#if loading}}
                         <div {{bind-attr class="loading"}}></div>
                         <div class="welcome-loading">
                             {{ax-spinner}}
                         </div>
-                    {{/liquid-if}}
+                    {{/if}}
                     <span class="card-title grey-text text-darken-4">Storage Account</span>
                     <div class="row">
                         {{#liquid-if addNewUi}}

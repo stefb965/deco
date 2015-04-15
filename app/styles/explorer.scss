@@ -7,7 +7,14 @@ div.folder {
 .folder {
     div.container {
         margin: 0;
-        overflow-y: scroll;
+        overflow-y: auto;
+        height: 100%;
+        width: 250px;
+
+    }
+
+    div.container::-webkit-scrollbar-track {
+        background-color: #212527;
     }
 
     ul li {
