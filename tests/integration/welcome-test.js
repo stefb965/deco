@@ -53,3 +53,54 @@ test('displays available if accounts if they exist', function (assert) {
         });
     });
 });
+
+test('displays edit account inputs', function (assert) {
+    var newAccount;
+
+    assert.expect(2);
+
+    Ember.run(function () {
+        newAccount = store.createRecord('account', {
+            name: 'Testaccount',
+            key: 'n+ufPpP3UwY+REvC3/zqBmHt2hCDdI06tQI5HFN7XnpUR5VEKMI+8kk/ez7QLQ3Cmojt/c1Ktaug3nK8FC8AeA=='
+        });
+        newAccount.save();
+    });
+
+    andThen(function () {
+        visit('/').then(function () {
+            return click('.mdi-content-create');
+        }).then(function () {
+            assert.equal(find('#editAccountName').length, 1, 'Page contains edit account name input');
+            assert.equal(find('#editAccountKey').length, 1, 'Page contains edit account key input');
+        });
+    });
+});
+
+test('edited values are saved', function (assert) {
+    var newAccount;
+
+    assert.expect(1);
+
+    Ember.run(function () {
+        newAccount = store.createRecord('account', {
+            name: 'Testaccount',
+            key: 'n+ufPpP3UwY+REvC3/zqBmHt2hCDdI06tQI5HFN7XnpUR5VEKMI+8kk/ez7QLQ3Cmojt/c1Ktaug3nK8FC8AeA=='
+        });
+        newAccount.save();
+    });
+
+    andThen(function () {
+        visit('/').then(function () {
+            return click('.mdi-content-create');
+        }).then(function () {
+            return fillIn('#edit_account_key', '1+ufPpP3UwY+REvC3/zqBmHt2hCDdI06tQI5HFN7XnpUR5VEKMI+8kk/ez7QLQ3Cmojt/c1Ktaug3nK8FC8AeA==');
+        }).then(function () {
+            return fillIn('#edit_account_name', 'RenamedTestaccount');
+        }).then(function () {
+            return click('#editSave');
+        }).then(function () {
+            assert.equal(find('option:contains("RenamedTestaccount")').length, 1, 'Page contains option with updated account name');
+        });
+    });
+});

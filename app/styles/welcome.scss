@@ -54,10 +54,20 @@
     z-index: 10;
 }
 
+.card.card-account a {
+    color: #fff;
+}
+
 .card-content {
     position: relative;
 }
 
 .welcome-loading {
     z-index: 50;
+}
+
+div.col.edit {
+    padding-top: 17px;
+    padding-left: 5px;
+    font-size: 1.8rem;
 }

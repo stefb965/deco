@@ -30,13 +30,37 @@
                                 <a {{action "test"}} class="waves-effect waves-light btn center"><i class="mdi-action-settings-remote left"></i>Test</a>
                                 <a {{action "addNew"}} class="waves-effect waves-light btn center"><i class="mdi-content-add-circle left"></i>Save & Open</a>
                             </div>
-                        {{else}}
-                            <div class="col s12">
-                                {{view "select" value=selectedAccount content=model optionValuePath="content.id" optionLabelPath="content.name"}}
+                        {{else if editUi}}
+                            <div class="col s11">
+                                {{view "select" value=selectedEditAccount content=model optionValuePath="content.id" optionLabelPath="content.name"}}
+                            </div>
+                            <div class="col s1 edit">
+                                <i {{action "delete"}} class="mdi-action-delete"></i>
+                            </div>
+                            <div id="editAccountName" class="input-field col s12">
+                                <i class="mdi-action-bookmark-outline prefix"></i>
+                                {{input value=editAccountName id="edit_account_name" type="text" class="validate"}}
+                                <label for="account_name" class="active">Storage Account Name</label>
+                            </div>
+                            <div id="editAccountKey" class="input-field col s12">
+                                <i class="mdi-communication-phone prefix"></i>
+                                {{input value=editAccountKey id="edit_account_key" type="text" class="validate"}}
+                                <label for="account_key" class="active">Storage Account Key</label>
                             </div>
                             <div class="col s12">
-                                <a {{action "toggleAddNew"}} {{bind-attr disabed=loading}} class="waves-effect waves-light btn"><i class="mdi-content-add-circle left"></i>Add New</a>
-                                <a {{action "connect"}} {{bind-attr disabed=loading}} class="waves-effect waves-light btn"><i class="mdi-action-launch right"></i>Connect</a>
+                                <a {{action "toggleEdit"}} class="waves-effect waves-light btn"><i class="mdi-navigation-cancel left"></i>Cancel</a>
+                                <a {{action "edit"}} id="editSave" class="waves-effect waves-light btn"><i class="mdi-content-save left"></i>Save</a>
+                            </div>
+                        {{else}}
+                            <div class="col s11">
+                                {{view "select" value=selectedAccount content=model optionValuePath="content.id" optionLabelPath="content.name"}}
+                            </div>
+                            <div class="col s1 edit">
+                                <i {{action "toggleEdit"}} class="mdi-content-create"></i>
+                            </div>
+                            <div class="col s12">
+                                <a {{action "toggleAddNew"}} {{bind-attr disabed=loading}} class="waves-effect waves-light btn"><i class="mdi-content-add-circle left"></i>Add</a>
+                                <a {{action "connect"}} {{bind-attr disabed=loading}} class="waves-effect waves-light btn"><i class="mdi-content-save left"></i>Connect</a>
                             </div>
                         {{/liquid-if}}
                     </div>
