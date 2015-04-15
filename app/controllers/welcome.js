@@ -30,10 +30,13 @@ export default Ember.Controller.extend({
 
         connect: function (activeAccountId) {
             var self = this;
+
             this.set('loading', true);
+
             if (!activeAccountId) {
                 activeAccountId = this.get('selectedAccount');
             }
+
             this.store.find('account').then(function (accounts) {
                 var i, account;
                 if (accounts && accounts.content && accounts.content.length > 0) {
