@@ -1,6 +1,8 @@
 # Azure Cross-Platform Storage Explorer
 [![Build Status](https://travis-ci.org/azure-storage/xplat.svg)](https://travis-ci.org/azure-storage/xplat) [![Code Climate](https://codeclimate.com/github/azure-storage/xplat/badges/gpa.svg)](https://codeclimate.com/github/azure-storage/xplat)
 
+A cross-platform implementation of azure storage explorer allowing the manipulation of azure [blob storage](http://azure.microsoft.com/en-us/documentation/articles/storage-introduction/) accounts and eventually tables and queues.
+
 ## Development
 #### Prerequisites
 
