@@ -8,7 +8,7 @@ div.folder {
     div.container {
         margin: 0;
         overflow-y: auto;
-        height: 100%;
+        height: 72.75%;
         width: 250px;
 
     }
@@ -20,6 +20,10 @@ div.folder {
     ul li {
         border-bottom: 1px solid #333;
         padding: 4px 0 4px 0;
+        color: #fff;
+    }
+
+    input {
         color: #fff;
     }
 
