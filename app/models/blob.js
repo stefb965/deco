@@ -25,7 +25,7 @@ export default DS.Model.extend({
     lastModified: DS.attr('date'),
     container_id: DS.attr('string'),
     type: DS.attr('string'),
-
+    selected: DS.attr('boolean'),
     getLink: function () {
         var self = this;
         return new Ember.RSVP.Promise(function (resolve) {

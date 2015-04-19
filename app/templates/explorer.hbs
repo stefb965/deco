@@ -21,7 +21,7 @@
             <table class="striped">
                 <thead>
                     <tr>
-                        <th>Action</th>
+                        <th {{action "selectAllBlobs"}}>Action</th>
                         <th data-field="id">Name</th>
                         <th data-field="name">Last Modified</th>
                         <th data-field="price">Size</th>
@@ -30,22 +30,21 @@
                 </thead>
                 <tbody>
                     {{#each blob in blobs itemController="blob"}}
-                        <tr {{action "selectBlob" blob.model}} {{bind-attr class="blob.selected:selected"}}>
+                        <tr {{bind-attr class="blob.selected:selected"}}>
                             <td>
-                                <a class="waves-effect waves-light btn btn-download" {{action "downloadBlob" blob.model blob.model.name}}>
-                                    <i class="mdi-file-file-download"></i>
-                                </a>
+                                {{input type="checkbox" id=blob.model.name checked=blob.model.selected}}
+                                <label for={{blob.model.name}}></label>
                             </td>
-                            <td>{{blob.model.name}}</td>
-                            <td>{{blob.model.lastModified}}</td>
-                            <td>{{blob.prettySize}}</td>
-                            <td>{{blob.model.type}}</td>
+                            <td {{action "selectBlob" blob.model}}>{{blob.model.name}}</td>
+                            <td {{action "selectBlob" blob.model}}>{{blob.model.lastModified}}</td>
+                            <td {{action "selectBlob" blob.model}}>{{blob.prettySize}}</td>
+                            <td {{action "selectBlob" blob.model}}>{{blob.model.type}}</td>
                         </tr>
                     {{/each}}
                 </tbody>
             </table>
             {{!-- Hidden elements for nw.js file dialogs --}}
-            <input id="nwSaveInput" type="file" nwsaveas class="hidden" />
+            <input id="nwSaveInput" type="file" nwdirectory class="hidden" />
             <input id="nwUploadFile" type="file" class="hidden" />
         </div>
     </div>

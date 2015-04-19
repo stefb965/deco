@@ -1,4 +1,5 @@
 import Ember from 'ember';
+
 export default Ember.Controller.extend({
     needs: 'application',
 
@@ -7,6 +8,10 @@ export default Ember.Controller.extend({
     activeContainer: null,
 
     blobs: [],
+
+    allBlobSelected: false,
+
+    nodeServices: Ember.inject.service(),
 
     newContainerEntryDisplay: 'none',
 
@@ -48,6 +53,8 @@ export default Ember.Controller.extend({
 
     actions: {
         switchActiveContainer: function (selectedContainer) {
+            // reset all blobs selected flag
+            this.set('allBlobSelected', false);
             this.set('activeContainer', selectedContainer);
         },
 
@@ -58,9 +65,8 @@ export default Ember.Controller.extend({
 
             nwInput.change(function () {
                 self.store.find('container', activeContainer).then(foundContainer => {
-                    foundContainer.uploadBlob(this.value).then(function (result) {
+                    foundContainer.uploadBlob(this.value).then(function () {
                         self.send('refreshBlobs');
-                        console.log(result);
                     }, function (error) {
                         toast(error, 4000);
                     });
@@ -70,17 +76,65 @@ export default Ember.Controller.extend({
 
             nwInput.click();
         },
-
-        downloadBlob: function (blob, name) {
-            var nwInput = Ember.$('#nwSaveInput');
-
-            nwInput.attr('nwsaveas', name);
-            nwInput.change(function () {
-                blob.toFile(this.value);
-                nwInput.off('change');
+        selectAllBlobs: function () {
+            var self = this;
+            this.get('blobs').forEach(blob => {
+                if (!self.get('allBlobSelected')) {
+                    blob.set('selected', true);
+                } else {
+                    blob.set('selected', false);
+                }
             });
 
-            nwInput.click();
+            this.toggleProperty('allBlobSelected');
+        },
+        // directory parameter is a test hook for automation
+        downloadBlobs: function (directory) {
+            var nwInput = Ember.$('#nwSaveInput');
+            var blobs = this.get('blobs');
+            nwInput.attr('nwsaveas', 'directory');
+
+            var handleInputDirectory = function (dir) {
+
+                blobs.forEach(function (blob) {
+                    // check if this one is marked for download
+                    if (blob.get('selected')){
+                        var targetPath = dir + '/' + blob.get('name');
+                        blob.toFile(targetPath);
+                    }
+                });
+            };
+
+            // check that at least one blob is selected
+            var atLeastOne = false;
+
+            blobs.every(function (blob) {
+                if (blob.get('selected')){
+                    atLeastOne = true;
+                    // break iteration
+                    return false;
+                }
+
+                return true;
+            });
+
+            // if no blobs are selected we don't need to show the native dialog
+            if (atLeastOne) {
+                // native dialog won't work in automation so skip in automation
+                if (!directory) {
+                    nwInput.change(function () {
+
+                        handleInputDirectory(this.value);
+                        // reset value to ensure change event always fires
+                        this.value = '';
+                        nwInput.off('change');
+                    });
+
+                    nwInput.click();
+                } else {
+                    handleInputDirectory(directory);
+                }
+            }
         },
 
         selectBlob: function (blob) {
@@ -116,5 +170,7 @@ export default Ember.Controller.extend({
                 return self.set('newContainerEntryDisplay', 'none');
             });
         }
-    }
+    },
+    azureStorage: Ember.computed.alias('nodeServices.azureStorage'),
+    fileSvc: Ember.computed.alias('nodeServices.fs')
 });
