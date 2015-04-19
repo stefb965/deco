@@ -17,8 +17,8 @@ moduleFor('controller:explorer', {
 
 });
 
-// Replace this with your real tests.
-test('it should give us models', function(assert) {
+
+test('it should create a container', function(assert) {
   assert.expect(2);
   App = startApp(null, assert);
   store = App.__container__.lookup('store:main');
@@ -41,4 +41,68 @@ test('it should give us models', function(assert) {
 
 });
 
+test('it should download blobs', function(assert) {
+  assert.expect(48);
+  App = startApp(null, assert);
+  store = App.__container__.lookup('store:main');
+  Ember.run(function(){
+      var newAccount = store.createRecord('account', {
+          name: 'Testaccount',
+          key: '5555-5555-5555-5555',
+          active: true
+      });
+  });
+
+  var controller = this.subject();
+  controller.store = store;
+
+  Ember.run(function(){
+    store.find('container').then(function(containers){
+      containers.forEach(function(container){
+        container.get('blobs').then(function(blobs){
+
+          controller.set('blobs', blobs);
+          blobs.forEach(function(blob){
+            // indicated blob is unchecked
+            blob.set('selected', false);
+          });
+          // controller should select all blobs
+          controller.send('selectAllBlobs');
+          controller.send('downloadBlobs', './testdir');
+          controller.send('selectAllBlobs');
+        });
+      });
+    });
+  });
+});
+
+test('it should not download any blobs', function(assert) {
+  assert.expect(8);
+  App = startApp(null, assert);
+  store = App.__container__.lookup('store:main');
+  Ember.run(function(){
+      var newAccount = store.createRecord('account', {
+          name: 'Testaccount',
+          key: '5555-5555-5555-5555',
+          active: true
+      });
+  });
+
+  var controller = this.subject();
+  controller.store = store;
+
+  Ember.run(function(){
+    store.find('container').then(function(containers){
+      containers.forEach(function(container){
+        container.get('blobs').then(function(blobs){
+
+          controller.set('blobs', blobs);
+          // no blobs are selected, so none should download
+          controller.send('downloadBlobs', './testdir');
+
+        });
+      });
+    });
+  });
+});
 

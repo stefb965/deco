@@ -45,7 +45,7 @@ export default function startApp(attrs, assert) {
                     assert.ok(callback !== null, 'expeceted arg callback to be non-null');
                     return callback(null, {
                         name: containerName,
-                        lastModified: Date.Now()
+                        lastModified: Date.now()
                     });
                 },
                 createContainerIfNotExists: function (containerName, callback) {
@@ -98,12 +98,33 @@ export default function startApp(attrs, assert) {
                     assert.ok(true);
                     return 'https://testaccount.storage.windows.net/somecontainer/test-blob?expiry=2000';
                 },
+                getBlobToStream: function (containerName, blobName, stream, callback) {
+                    assert.ok(containerName);
+                    assert.ok(blobName);
+                    assert.ok(stream);
+                    assert.ok(callback);
+                    return callback(null);
+                },
                 BlobUtilities: {
                     SharedAccessPermissions: {
                         READ: 'READ'
                     }
                 }
             };
+        }
+    });
+    nodeServices.set('fs', {
+        existsSync: function (path) {
+            assert.ok(path);
+            return false;
+        },
+        mkdirSync: function (path) {
+            assert.ok(path);
+            return null;
+        },
+        createWriteStream: function (path) {
+            assert.ok(path);
+            return {};
         }
     });
     return application;
