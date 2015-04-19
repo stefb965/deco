@@ -53,7 +53,7 @@ if(!window._phantom){
     }
     else{
       // fail out
-      //gui.App.crashRenderer();
+      gui.App.crashRenderer();
     }
   });
 }
