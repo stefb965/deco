@@ -17,7 +17,6 @@ You will need the following things properly installed on your computer.
 #### Running / Development
 
 * `ember nw`
-* Visit your app at [http://localhost:4200](http://localhost:4200).
 
 #### Running Tests
 All tests suites can be run with `npm test`.
