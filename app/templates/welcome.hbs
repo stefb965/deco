@@ -9,7 +9,9 @@
                     {{#if loading}}
                         <div {{bind-attr class="loading"}}></div>
                         <div class="welcome-loading">
-                            {{ax-spinner}}
+                            <div class="preloader-wrapper big active">
+                                {{ax-spinner}}
+                            </div>
                         </div>
                     {{/if}}
                     <span class="card-title grey-text text-darken-4">Storage Account</span>
