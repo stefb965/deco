@@ -1,6 +1,12 @@
 {{partial "navbar"}}
 <div class="explorer-container">
     <div class="folder">
+        <div class="search">
+            {{input placeholder="Search Containers" value=searchQuery}}
+            <div class="preloader-wrapper small active" style="display:{{searchSpinnerDisplay}}">
+                {{ax-spinner}}
+            </div>
+        </div>
         <div class="container">
             <ul>
                 {{#each container in model}}
