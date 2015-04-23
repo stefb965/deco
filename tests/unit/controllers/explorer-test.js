@@ -106,3 +106,60 @@ test('it should not download any blobs', function(assert) {
   });
 });
 
+test('it should search and return 1 container', function(assert) {
+  assert.expect(4);
+  App = startApp(null, assert);
+  store = App.__container__.lookup('store:main');
+  Ember.run(function(){
+      var newAccount = store.createRecord('account', {
+          name: 'Testaccount',
+          key: '5555-5555-5555-5555',
+          active: true
+      });
+  });
+
+  var controller = this.subject();
+  controller.store = store;
+
+  Ember.run(function(){
+    controller.set('searchQuery', 'testcontainer2');
+    
+    controller.get('model').then((containers) => {
+        var count = 0;
+        containers.forEach((container) => { 
+          assert.ok(container.get('name').indexOf('testcontainer2') > -1);
+          count++;
+        });
+        assert.ok(count === 1, 'expected exactly 1 container match');
+    });
+  });
+});
+
+
+test('it should search and return 0 container', function(assert) {
+  assert.expect(3);
+  App = startApp(null, assert);
+  store = App.__container__.lookup('store:main');
+  Ember.run(function(){
+      var newAccount = store.createRecord('account', {
+          name: 'Testaccount',
+          key: '5555-5555-5555-5555',
+          active: true
+      });
+  });
+
+  var controller = this.subject();
+  controller.store = store;
+
+  Ember.run(function(){
+    controller.set('searchQuery', 'nonexistentcontainer');
+    
+    controller.get('model').then((containers) => {
+        var count = 0;
+        containers.forEach((container) => { 
+          count++;
+        });
+        assert.ok(count === 0, 'expected exactly 0 container matches');
+    });
+  });
+});
