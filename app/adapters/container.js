@@ -95,15 +95,23 @@ export default DS.Adapter.extend({
             accountUtils.getActiveAccount(store).then(function (account) {
                 var blobService = self.get('azureStorage').createBlobService(account.get('name'),
                     account.get('key'));
-                blobService.getContainerProperties(snapshot.name, function (err, data) {
+                blobService.listContainersSegmented(null, function (err, data) {
                     if (err) {
                         return Ember.run(null, reject, err);
                     }
-                    return Ember.run(null, resolve, [{
-                        name: data.name,
-                        id: data.name,
-                        lastModified: new Date(Date.parse(data.lastModified))
-                    }]);
+                    var results = [];
+                    for (var i in data.entries) {
+                        if (i % 1 === 0 &&
+                            data.entries[i].name.indexOf(snapshot.name) > -1) {
+
+                            results.push({
+                                name: data.entries[i].name,
+                                id: data.entries[i].name,
+                                lastModified: new Date(Date.parse(data.entries[i].lastModified))
+                            });
+                        }
+                    }
+                    return Ember.run(null, resolve, results);
                 });
             });
         });

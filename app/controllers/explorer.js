@@ -15,11 +15,27 @@ export default Ember.Controller.extend({
 
     newContainerEntryDisplay: 'none',
 
+    searchSpinnerDisplay: 'none',
+
     newContainerName: '',
+
+    searchQuery: '',
 
     blobsLoading: true,
 
     selectedBlob: null,
+
+    model: function () {
+        var self = this;
+        if (!this.get('searchQuery')) {
+            return this.store.find('container');
+        } else {
+            this.set('searchSpinnerDisplay', 'visible');
+            var promise = this.store.find('container', {name: this.get('searchQuery')});
+            promise.then(() => { self.set('searchSpinnerDisplay', 'none'); });
+            return promise;
+        }
+    }.property('searchQuery'),
 
     activeContainerObserver: function () {
         var activeContainer = this.get('activeContainer'),
@@ -27,16 +43,25 @@ export default Ember.Controller.extend({
             self = this,
             containerObject;
 
+        if (!this.get('model').get('firstObject')) {
+            // if there are no containers bail out (in case of empty search)
+            return;
+        }
+
         this.set('blobsLoading', true);
 
         if (!activeContainer) {
             containerObject = this.get('model').get('firstObject');
-            blobs = containerObject.get('blobs');
+            if (containerObject) {
+                blobs = containerObject.get('blobs');
 
-            this.set('blobs', blobs);
-            this.set('blobsLoading', false);
+                this.set('blobs', blobs);
+                this.set('blobsLoading', false);
+                Ember.run.next(() => {
+                    this.set('activeContainer', containerObject.id);
+                });
+            }
 
-            Ember.run.next(() => this.set('activeContainer', containerObject.id));
         } else {
             return this.store.find('container', activeContainer).then(function (result) {
                 if (result) {
@@ -47,8 +72,10 @@ export default Ember.Controller.extend({
 
                 self.set('blobs', blobs);
                 self.set('blobsLoading', false);
+
             });
         }
+
     }.observes('model', 'activeContainer'),
 
     actions: {
@@ -156,6 +183,7 @@ export default Ember.Controller.extend({
                 self.set('blobsLoading', false);
             });
         },
+
         showNewContainer: function () {
 
             return this.set('newContainerEntryDisplay', 'visible');
