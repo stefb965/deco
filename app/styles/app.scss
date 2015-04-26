@@ -29,6 +29,10 @@ body {
     overflow: auto;
 }
 
+.visible {
+    visibility: visible;
+}
+
 .hidden {
     display: none;
     visibility: hidden;
