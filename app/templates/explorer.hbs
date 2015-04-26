@@ -18,7 +18,7 @@
             <div {{bind-attr class="newContainerEntryDisplay:visible:hidden"}}>
                 {{input placeholder="New Container" value=newContainerName action="createContainer" on="enter"}}
             </div>
-            <a style="{cursor: pointer;}" {{action "showNewContainer"}} href="" class="btn-floating btn-small waves-effect waves-light"><i class="mdi-content-add"></i></a>
+            <a {{action "showNewContainer"}} href="" class="btn-floating btn-small waves-effect waves-light"><i class="mdi-content-add"></i></a>
         </div>
         {{ax-preview selectedBlob=selectedBlob}}
     </div>
