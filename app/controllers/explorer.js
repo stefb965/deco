@@ -13,9 +13,9 @@ export default Ember.Controller.extend({
 
     nodeServices: Ember.inject.service(),
 
-    newContainerEntryDisplay: 'none',
+    newContainerEntryDisplay: false,
 
-    searchSpinnerDisplay: 'none',
+    searchSpinnerDisplay: false,
 
     newContainerName: '',
 
@@ -30,9 +30,9 @@ export default Ember.Controller.extend({
         if (!this.get('searchQuery')) {
             return this.store.find('container');
         } else {
-            this.set('searchSpinnerDisplay', 'visible');
+            this.set('searchSpinnerDisplay', true);
             var promise = this.store.find('container', {name: this.get('searchQuery')});
-            promise.then(() => { self.set('searchSpinnerDisplay', 'none'); });
+            promise.then(() => self.set('searchSpinnerDisplay', false));
             return promise;
         }
     }.property('searchQuery'),
@@ -185,9 +185,7 @@ export default Ember.Controller.extend({
         },
 
         showNewContainer: function () {
-
-            return this.set('newContainerEntryDisplay', 'visible');
-
+            return this.set('newContainerEntryDisplay', true);
         },
 
         createContainer: function () {
@@ -195,7 +193,7 @@ export default Ember.Controller.extend({
             var newContainer = this.store.createRecord('container', { name: this.get('newContainerName'), id: this.get('newContainerName') });
             var self = this;
             return newContainer.save().then(function (){
-                return self.set('newContainerEntryDisplay', 'none');
+                return self.set('newContainerEntryDisplay', false);
             });
         }
     },
