@@ -41,3 +41,7 @@ body {
 #materialbox-overlay {
     opacity: 0!important;
 }
+
+[data-ember-action] {
+    cursor: pointer;
+}
