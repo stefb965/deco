@@ -47,6 +47,7 @@
     "grunt-js-beautify": "^0.1.1",
     "grunt-jscodesniffer": "^0.1.8",
     "grunt-jscs": "^0.8.1",
+    "grunt-node-webkit-builder": "^1.0.2",
     "liquid-fire": "ef4/liquid-fire#8fcefd057478ab6852d7b8b3fc8526aa5079553c",
     "load-grunt-tasks": "^1.0.0",
     "nw": "0.12.0"
@@ -54,11 +55,12 @@
   "main": "dist/index.html",
   "window": {
     "title": "Azure Storage Explorer",
-    "width": 1200,
+    "width": 1000,
     "height": 800,
     "min_width": 800,
     "min_height": 600,
-    "toolbar": true
+    "toolbar": false,
+    "frame": true
   },
   "dependencies": {
     "azure-storage": "^0.4.3",
