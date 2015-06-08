@@ -46,6 +46,21 @@ module.exports = function (grunt) {
                     macIcns: './public/icon/ase.icns',
                 },
                 src: ['./nwbuildcache/**/*'] // Your node-webkit app
+            },
+            linux: {
+                options: {
+                    platforms: ['linux64'],
+                    buildDir: './webkitbuilds'
+                },
+                src: ['./nwbuildcache/**/*'] // Your node-webkit app
+            },
+            windows: {
+                options: {
+                    platforms: ['win32'],
+                    buildDir: './webkitbuilds',
+                    winIco: './public/icon/ase.ico'
+                },
+                src: ['./nwbuildcache/**/*'] // Your node-webkit app
             }
         },
         exec: {
@@ -77,6 +92,10 @@ module.exports = function (grunt) {
                 src: './bin/darwin/64/ffmpegsumo.so',
                 dest: './webkitbuilds/azureexplorer/osx64/azureexplorer.app/Contents/Frameworks/nwjs Framework.framework/Libraries/ffmpegsumo.so'
             },
+            bin_linux: {
+                src: './bin/linux/64/libffmpegsumo.so',
+                dest: './webkitbuilds/azureexplorer/linux64/libffmpegsumo.so'
+            }
         },
         clean: ['./nwbuildcache', './dist', './webkitbuilds']
     });
@@ -94,4 +113,5 @@ module.exports = function (grunt) {
     grunt.registerTask('copyForBuild', ['copy:nwbuildcache', 'copy:azure_storage', 'copy:memorystream', 'copy:pack']);
     grunt.registerTask('prebuild', ['clean', 'exec', 'copyForBuild']);
     grunt.registerTask('compileOSX', ['prebuild', 'nodewebkit:osx', 'copy:bin_osx']);
+    grunt.registerTask('compileLinux', ['prebuild', 'nodewebkit:linux', 'copy:bin_linux]);
 };
