@@ -101,7 +101,7 @@ module.exports = function (grunt) {
             },
             bin_windows: {
                 src: './bin/windows/32/ffmpegsumo.dll',
-                dest: './webkitbuilds/azureexplorer/windows32/ffmpegsumo.dll'
+                dest: './webkitbuilds/azureexplorer/win32/ffmpegsumo.dll'
             }
         },
         clean: ['./nwbuildcache', './dist']
