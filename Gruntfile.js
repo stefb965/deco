@@ -32,12 +32,8 @@ module.exports = function (grunt) {
             }
         },
         // Execute individual builds with the commands below
-        // Warning: If trying to compile Windows on OS X / Linux,
-        // you'll need Wine.
-        // 
-        // grunt compile --platforms'win
-        // grunt compile --platforms:osx
-        // grunt compile --platforms:linux
+        // Warning: If trying to compile Windows with Icon 
+        // on OS X / Linux, you'll need Wine.
         nodewebkit: {
             osx: {
                 options: {
@@ -45,27 +41,34 @@ module.exports = function (grunt) {
                     buildDir: './webkitbuilds',
                     macIcns: './public/icon/ase.icns',
                 },
-                src: ['./nwbuildcache/**/*'] // Your node-webkit app
+                src: ['./nwbuildcache/**/*']
             },
             linux: {
                 options: {
                     platforms: ['linux64'],
                     buildDir: './webkitbuilds'
                 },
-                src: ['./nwbuildcache/**/*'] // Your node-webkit app
+                src: ['./nwbuildcache/**/*']
             },
             windows: {
+                options: {
+                    platforms: ['win32'],
+                    buildDir: './webkitbuilds'
+                },
+                src: ['./nwbuildcache/**/*']
+            },
+            windowsWithIcon: {
                 options: {
                     platforms: ['win32'],
                     buildDir: './webkitbuilds',
                     winIco: './public/icon/ase.ico'
                 },
-                src: ['./nwbuildcache/**/*'] // Your node-webkit app
+                src: ['./nwbuildcache/**/*']
             }
         },
         exec: {
             build: {
-                command: 'ember build --production'
+                command: 'ember build --environment=production'
             }
         },
         copy: {
@@ -95,9 +98,13 @@ module.exports = function (grunt) {
             bin_linux: {
                 src: './bin/linux/64/libffmpegsumo.so',
                 dest: './webkitbuilds/azureexplorer/linux64/libffmpegsumo.so'
+            },
+            bin_windows: {
+                src: './bin/windows/32/ffmpegsumo.dll',
+                dest: './webkitbuilds/azureexplorer/windows32/ffmpegsumo.dll'
             }
         },
-        clean: ['./nwbuildcache', './dist', './webkitbuilds']
+        clean: ['./nwbuildcache', './dist']
     });
 
     grunt.loadNpmTasks('grunt-node-webkit-builder');
@@ -112,6 +119,9 @@ module.exports = function (grunt) {
     grunt.registerTask('beautify', ['js_beautify']);
     grunt.registerTask('copyForBuild', ['copy:nwbuildcache', 'copy:azure_storage', 'copy:memorystream', 'copy:pack']);
     grunt.registerTask('prebuild', ['clean', 'exec', 'copyForBuild']);
-    grunt.registerTask('compileOSX', ['prebuild', 'nodewebkit:osx', 'copy:bin_osx']);
-    grunt.registerTask('compileLinux', ['prebuild', 'nodewebkit:linux', 'copy:bin_linux]);
+    grunt.registerTask('compileOSX', ['nodewebkit:osx', 'copy:bin_osx']);
+    grunt.registerTask('compileLinux', ['nodewebkit:linux', 'copy:bin_linux']);
+    grunt.registerTask('compileWindows', ['nodewebkit:windows', 'copy:bin_windows']);
+    grunt.registerTask('compileWindowsWithIcon', ['nodewebkit:windowsWithIcon', 'copy:bin_windows']);
+    grunt.registerTask('compile', ['prebuild', 'compileOSX', 'compileWindows', 'compileLinux']);
 };
