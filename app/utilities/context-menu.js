@@ -41,6 +41,13 @@ function Menu() {
         menu.append(emberInspector);
     }
 
+    // Mac Menu
+    if (process && process.platform === 'darwin') {
+        var mb = new gui.Menu({type: 'menubar'});
+        mb.createMacBuiltin('Azure Storage Explorer');
+        gui.Window.get().menu = mb;
+    }
+
     return menu;
 }
 
