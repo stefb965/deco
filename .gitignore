@@ -19,3 +19,7 @@
 /libpeerconnection.log
 npm-debug.log
 testem.log
+
+/cache
+/nwbuildcache
+/webkitbuilds
