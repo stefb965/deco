@@ -18,7 +18,6 @@ var fs = require('fs');
 // along with the exports of each module as its value.
 
 var Funnel = require('broccoli-funnel');
-var mergeTrees = require('broccoli-merge-trees');
 // nwjs requires a package.json in order to runu anything
 
 // these in-line vars are only used by test runs
@@ -26,19 +25,7 @@ var app;
 
 // brocfile-env module hasn't been decided on how to expose more build options
 
-app = new EmberApp({
-  inlineContent: {
-    'qunit-logger': './tests/helpers/qunit-logger.js',
-    'test-base': {
-        content: '<base href=\"../\"/>'
-    }
-  }
-});
-
-var tree = new Funnel('tests', {
-    files: ['package.json'],
-    destDir: 'tests'
-});
+app = new EmberApp();
 
 // Identify the platform and place the correct ffmpeg binary into the nwjs package
 // This provides nwjs with the codecs to play normal mp4 & mp3 media for the
@@ -70,7 +57,7 @@ if (dir && binary && destPath) {
 }
 
 if (binTree) {
-    module.exports = mergeTrees([app.toTree(), tree, binTree]);
+    module.exports = app.toTree();
 } else {
-    module.exports = mergeTrees([app.toTree(), tree]);
+    module.exports = app.toTree();
 }
