@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import contextMenu from '../utilities/context-menu';
+import contextMenu from '../utils/context-menu';
 
 export default Ember.Route.extend({
     beforeModel: function () {

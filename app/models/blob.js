@@ -1,5 +1,5 @@
 import DS from 'ember-data';
-import accountUtil from '../utilities/account';
+import accountUtil from '../utils/account';
 
 function startWriteToStream(model, stream) {
     accountUtil.getActiveAccount(model.store).then(function (account) {

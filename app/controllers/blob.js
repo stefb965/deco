@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import filesize from '../utilities/filesize.js';
+import filesize from '../utils/filesize.js';
 
 export default Ember.Controller.extend({
     prettySize: function () {

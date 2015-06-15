@@ -1,5 +1,5 @@
 import DS from 'ember-data';
-import accountUtil from '../utilities/account';
+import accountUtil from '../utils/account';
 
 var Container = DS.Model.extend({
     nodeServices: Ember.inject.service(),
