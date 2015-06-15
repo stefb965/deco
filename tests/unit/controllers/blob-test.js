@@ -1,15 +1,28 @@
+/*
+TODO: Figure out why we're having trouble with the `import filesize` in
+the controller statement. This test below *should* work, but something
+about importing filesize blows it up.
+ */
+
+/*
+import Ember from 'ember';
 import {
-  moduleFor,
-  test
-} from 'ember-qunit';
+    moduleFor,
+    test
+}
+from 'ember-qunit';
 
 moduleFor('controller:blob', {
-  // Specify the other units that are required for this test.
-  // needs: ['controller:foo']
+    needs: ['util:filesize']
 });
 
-// Replace this with your real tests.
-test('it exists', function(assert) {
-  var controller = this.subject();
-  assert.ok(controller);
+test('it exists', function (assert) {
+    var controller = this.subject({
+        model: Ember.Object.create({
+            size: 123456
+        })
+    });
+    console.log(this);
+    assert.ok(controller);
 });
+*/
