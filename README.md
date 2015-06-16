@@ -17,7 +17,11 @@ You will need the following things properly installed on your computer.
 To run a small dev server with autoreload, simply execute `ember nw`. Since we're running Node and UI JavaScript on the same thread, running `ember serve` alone won't suffice.
 
 #### Running Tests
-All tests suites can be run with `npm test`. Functional and unit tests can be run with `ember test` and `ember test --server`. Code Style tests with JSHint and JSCS can be run with `grunt test`.
+All tests suites can be run with `npm test`. 
+
+Functional and unit tests can be run with `ember nw:test`. You can also do `ember nw:test --server` to run tests continuously. 
+
+Code Style tests with JSHint and JSCS can be run with `grunt test`.
 
 #### Building the App
 Building packaged apps is automated via Grunt. From any Unix machine, run `grunt compile`, which will first build the latest version of the Ember app followed by packaging it for OS X, Linux, Windows, and a transfer of the changed ffmpeg binaries.
