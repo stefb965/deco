@@ -1,10 +1,3 @@
-/*
-TODO: Figure out why we're having trouble with the `import filesize` in
-the controller statement. This test below *should* work, but something
-about importing filesize blows it up.
- */
-
-/*
 import Ember from 'ember';
 import {
     moduleFor,
@@ -25,4 +18,3 @@ test('it exists', function (assert) {
     console.log(this);
     assert.ok(controller);
 });
-*/
