@@ -124,7 +124,7 @@ test('it should search and return 1 container', function(assert) {
   Ember.run(function(){
     controller.set('searchQuery', 'testcontainer2');
     
-    controller.get('model').then((containers) => {
+    controller.get('containers').then((containers) => {
         var count = 0;
         containers.forEach((container) => { 
           assert.ok(container.get('name').indexOf('testcontainer2') > -1);
@@ -154,7 +154,7 @@ test('it should search and return 0 container', function(assert) {
   Ember.run(function(){
     controller.set('searchQuery', 'nonexistentcontainer');
     
-    controller.get('model').then((containers) => {
+    controller.get('containers').then((containers) => {
         var count = 0;
         containers.forEach((container) => { 
           count++;
