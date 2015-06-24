@@ -2,33 +2,26 @@ import Ember from 'ember';
 
 export default Ember.Controller.extend({
     needs: 'application',
-
     activeConnection: Ember.computed.alias('controllers.application.activeConnection'),
-
-    activeContainer: null,
-
-    blobs: [],
-
-    allBlobSelected: false,
-
+    azureStorage: Ember.computed.alias('nodeServices.azureStorage'),
+    fileSvc: Ember.computed.alias('nodeServices.fs'),
     nodeServices: Ember.inject.service(),
 
+    activeContainer: null,
+    blobs: [],
+    allBlobSelected: false,
     newContainerEntryDisplay: false,
-
     searchSpinnerDisplay: false,
-
     newContainerName: '',
-
     searchQuery: '',
-
     blobsLoading: true,
-
     selectedBlob: null,
 
-    model: function () {
+    containers: function () {
         var self = this;
+
         if (!this.get('searchQuery')) {
-            return this.store.find('container');
+            return this.get('model');
         } else {
             this.set('searchSpinnerDisplay', true);
             var promise = this.store.find('container', {name: this.get('searchQuery')});
@@ -75,8 +68,7 @@ export default Ember.Controller.extend({
 
             });
         }
-
-    }.observes('model', 'activeContainer'),
+    }.observes('containers', 'activeContainer'),
 
     actions: {
         switchActiveContainer: function (selectedContainer) {
@@ -103,6 +95,7 @@ export default Ember.Controller.extend({
 
             nwInput.click();
         },
+
         selectAllBlobs: function () {
             var self = this;
             this.get('blobs').forEach(blob => {
@@ -115,6 +108,7 @@ export default Ember.Controller.extend({
 
             this.toggleProperty('allBlobSelected');
         },
+
         // directory parameter is a test hook for automation
         downloadBlobs: function (directory) {
             var nwInput = Ember.$('#nwSaveInput');
@@ -189,14 +183,11 @@ export default Ember.Controller.extend({
         },
 
         createContainer: function () {
-
             var newContainer = this.store.createRecord('container', { name: this.get('newContainerName'), id: this.get('newContainerName') });
             var self = this;
             return newContainer.save().then(function (){
                 return self.set('newContainerEntryDisplay', false);
             });
         }
-    },
-    azureStorage: Ember.computed.alias('nodeServices.azureStorage'),
-    fileSvc: Ember.computed.alias('nodeServices.fs')
+    }
 });
