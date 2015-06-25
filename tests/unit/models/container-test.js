@@ -42,7 +42,7 @@ test('it should return 2 containers with names and last modified fields', functi
     });
 });
 test('it should should return all blobs for the test containers', function (assert) {
-    assert.expect(52);
+    assert.expect(58);
     App = startApp(null, assert);
     store = App.__container__.lookup('store:main');
     Ember.run(function(){

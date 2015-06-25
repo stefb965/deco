@@ -9,8 +9,31 @@ export default Ember.Controller.extend({
 
     activeContainer: null,
     blobs: [],
+    subDirectories: [],
+    // individal directory names of current path
+    pathSegments: [ { name: '/' } ],
+    currentPath: function () {
+        var path = '';
+        var first = true;
+        this.get('pathSegments').forEach(segment => {
+
+            if (first) {
+                // the first slash should be skipped
+                first = false;
+                return;
+            }
+
+            path += segment.name;
+        });
+
+        return path;
+    }.property('pathSegments'),
     allBlobSelected: false,
     newContainerEntryDisplay: false,
+    // path used for the local file path for upload
+    modalFileUploadPath: '',
+    // path used for the upload path to azure in the upload modal
+    modalDefaultUploadPath: '',
     searchSpinnerDisplay: false,
     newContainerName: '',
     searchQuery: '',
@@ -36,7 +59,7 @@ export default Ember.Controller.extend({
             self = this,
             containerObject;
 
-        if (!this.get('model').get('firstObject')) {
+        if (!this.get('containers').get('firstObject')) {
             // if there are no containers bail out (in case of empty search)
             return;
         }
@@ -44,15 +67,28 @@ export default Ember.Controller.extend({
         this.set('blobsLoading', true);
 
         if (!activeContainer) {
-            containerObject = this.get('model').get('firstObject');
+            containerObject = self.get('containers').get('firstObject');
             if (containerObject) {
                 blobs = containerObject.get('blobs');
 
-                this.set('blobs', blobs);
-                this.set('blobsLoading', false);
+                self.set('blobs', blobs);
+                self.set('blobsLoading', false);
                 Ember.run.next(() => {
-                    this.set('activeContainer', containerObject.id);
+                    self.set('activeContainer', containerObject.id);
                 });
+
+                containerObject.listDirectoriesWithPrefix(this.get('currentPath'))
+                .then(result => {
+
+                    var subDirs = [];
+                    result.forEach(dir => {
+                        subDirs.push({
+                            name: dir.name
+                        });
+                    });
+                    self.set('subDirectories', subDirs);
+                });
+
             }
 
         } else {
@@ -63,12 +99,23 @@ export default Ember.Controller.extend({
                     blobs = [];
                 }
 
+                result.listDirectoriesWithPrefix(self.get('currentPath'))
+                .then(result => {
+                    var subDirs = [];
+                    result.forEach(dir => {
+                        subDirs.push({
+                            name: dir.name
+                        });
+                    });
+                    self.set('subDirectories', subDirs);
+                });
+
                 self.set('blobs', blobs);
                 self.set('blobsLoading', false);
 
             });
         }
-    }.observes('containers', 'activeContainer'),
+    }.observes('containers', 'activeContainer', 'pathSegments'),
 
     actions: {
         switchActiveContainer: function (selectedContainer) {
@@ -77,20 +124,76 @@ export default Ember.Controller.extend({
             this.set('activeContainer', selectedContainer);
         },
 
+        uploadBlobData: function (filePath, azurePath) {
+            var self = this;
+            var activeContainer = this.get('activeContainer');
+            var blobName = azurePath.replace(/.*\:\//, '');
+            self.store.find('container', activeContainer).then(foundContainer => {
+                foundContainer.uploadBlob(filePath, blobName).then(() => {
+                    self.send('refreshBlobs');
+                }, error => {
+                    toast(error, 4000);
+                });
+            });
+        },
+
+        changeDirectory: function (directory) {
+            // we have recieved a path segment object, ie: the user clicked a path button
+            var pathSegs = [ ];
+            this.get('pathSegments').every(segment => {
+                pathSegs.push(segment);
+
+                if (segment === directory) {
+                    return false;
+                }
+
+                return true;
+            });
+
+            this.set('pathSegments', pathSegs);
+            this.send('refreshBlobs');
+        },
+
+        changeSubDirectory: function (directory) {
+
+            var pathSegs = [ { name: '/' } ];
+
+            // we have recieved a literal path
+            directory.name.split('/').forEach(segment => {
+
+                if (segment === '') {
+                    return;
+                }
+
+                pathSegs.push({ name: segment + '/' });
+            });
+
+            this.set('pathSegments', pathSegs);
+            this.send('refreshBlobs');
+        },
+
         uploadBlob: function () {
             var nwInput = Ember.$('#nwUploadFile'),
                 activeContainer = this.get('activeContainer'),
                 self = this;
 
             nwInput.change(function () {
-                self.store.find('container', activeContainer).then(foundContainer => {
-                    foundContainer.uploadBlob(this.value).then(function () {
-                        self.send('refreshBlobs');
-                    }, function (error) {
-                        toast(error, 4000);
-                    });
-                });
                 nwInput.off('change');
+                Ember.$('#modal-upload').openModal();
+
+                // https://github.com/Dogfalo/materialize/issues/1532
+                // ugh!
+                var overlay = Ember.$('#lean-overlay');
+                overlay.detach();
+                Ember.$('.explorer-container').after(overlay);
+
+                self.set('modalFileUploadPath', this.value);
+                var fileName = this.value.replace(/^.*[\\\/]/, '');
+
+                self.store.find('container', activeContainer).then(result => {
+                    self.set('modalDefaultUploadPath', result.get('name') + ':/' + fileName);
+                });
+
             });
 
             nwInput.click();
@@ -120,7 +223,8 @@ export default Ember.Controller.extend({
                 blobs.forEach(function (blob) {
                     // check if this one is marked for download
                     if (blob.get('selected')){
-                        var targetPath = dir + '/' + blob.get('name');
+                        var fileName = blob.get('name').replace(/^.*[\\\/]/, '');
+                        var targetPath = dir + '/' + fileName;
                         blob.toFile(targetPath);
                     }
                 });
@@ -166,8 +270,10 @@ export default Ember.Controller.extend({
             var blobs = [],
                 self = this;
 
-            this.store.find('container', this.get('activeContainer')).then(function (result) {
+            this.store.find('container', this.get('activeContainer'))
+            .then(result => {
                 if (result) {
+                    result.set('blobPrefixFilter', self.get('currentPath'));
                     blobs = result.get('blobs');
                 } else {
                     blobs = [];

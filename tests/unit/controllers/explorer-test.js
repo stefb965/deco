@@ -37,12 +37,10 @@ test('it should create a container', function(assert) {
   Ember.run(function(){
       controller.send('createContainer');
   });
-
-
 });
 
 test('it should download blobs', function(assert) {
-  assert.expect(48);
+  assert.expect(54);
   App = startApp(null, assert);
   store = App.__container__.lookup('store:main');
   Ember.run(function(){
@@ -59,7 +57,7 @@ test('it should download blobs', function(assert) {
   Ember.run(function(){
     store.find('container').then(function(containers){
       containers.forEach(function(container){
-        container.get('blobs').then(function(blobs){
+        container.get('blobs', { prefix: '/' }).then(function(blobs){
 
           controller.set('blobs', blobs);
           blobs.forEach(function(blob){
@@ -77,7 +75,7 @@ test('it should download blobs', function(assert) {
 });
 
 test('it should not download any blobs', function(assert) {
-  assert.expect(8);
+  assert.expect(14);
   App = startApp(null, assert);
   store = App.__container__.lookup('store:main');
   Ember.run(function(){
@@ -153,13 +151,139 @@ test('it should search and return 0 container', function(assert) {
 
   Ember.run(function(){
     controller.set('searchQuery', 'nonexistentcontainer');
-    
     controller.get('containers').then((containers) => {
         var count = 0;
         containers.forEach((container) => { 
           count++;
         });
         assert.ok(count === 0, 'expected exactly 0 container matches');
+    });
+  });
+});
+
+test('it should have the correct subdirectories', function(assert) {
+  assert.expect(14);
+  App = startApp(null, assert);
+  store = App.__container__.lookup('store:main');
+  Ember.run(function(){
+      var newAccount = store.createRecord('account', {
+          name: 'Testaccount',
+          key: '5555-5555-5555-5555',
+          active: true
+      });
+  });
+
+  var controller = this.subject();
+  controller.addObserver('subDirectories', controller, () => {
+    assert.ok(controller.get('subDirectories').length === 1);
+    assert.ok(controller.get('subDirectories')[0].name === 'mydir1/');
+  });
+  controller.store = store;
+  controller.set('searchQuery', 'testcontainer');
+  Ember.run( () => {
+    controller.get('containers')
+    .then(() => {
+      controller.set('activeContainer', 'testcontainer');      
+    });
+  });
+});
+
+test('it should change subdirectories', function(assert) {
+  assert.expect(30);
+  App = startApp(null, assert);
+  store = App.__container__.lookup('store:main');
+  Ember.run(function(){
+      var newAccount = store.createRecord('account', {
+          name: 'Testaccount',
+          key: '5555-5555-5555-5555',
+          active: true
+      });
+  });
+
+  var controller = this.subject();
+  var changed = false;
+  controller.addObserver('subDirectories', controller, () => {
+    if(!changed) {
+      changed = true;
+      controller.send('changeSubDirectory', { name: 'mydir1/' });
+    }
+    else {
+      assert.ok(controller.get('subDirectories').length === 1);
+      assert.ok(controller.get('subDirectories')[0].name === 'mydir1/mydir2');
+    }
+  });
+  controller.store = store;
+  controller.set('searchQuery', 'testcontainer');
+  Ember.run( () => {
+    controller.get('containers')
+    .then(() => {
+      controller.set('activeContainer', 'testcontainer');      
+    });
+  });
+});
+
+test('it should change subdirectories', function(assert) {
+  assert.expect(46);
+  App = startApp(null, assert);
+  store = App.__container__.lookup('store:main');
+  Ember.run(function(){
+      var newAccount = store.createRecord('account', {
+          name: 'Testaccount',
+          key: '5555-5555-5555-5555',
+          active: true
+      });
+  });
+
+  var controller = this.subject();
+  var changed = false;
+  var changedBackToRoot = false;
+  controller.addObserver('subDirectories', controller, () => {
+    if(!changed) {
+      changed = true;
+      // change to subdirectory
+      controller.send('changeSubDirectory', { name: 'mydir1/' });
+    } else if (!changedBackToRoot) {
+      // change back to root directory
+      controller.send('changeDirectory', controller.get('pathSegments')[0]);
+      changedBackToRoot = true;
+    }
+    else {
+      assert.ok(controller.get('subDirectories').length === 1);
+      assert.ok(controller.get('subDirectories')[0].name === 'mydir1/');
+    }
+  });
+  controller.store = store;
+  controller.set('searchQuery', 'testcontainer');
+  Ember.run( () => {
+    controller.get('containers')
+    .then(() => {
+      controller.set('activeContainer', 'testcontainer');      
+    });
+  });
+});
+
+test('it should upload file to blob', function(assert) {
+
+  assert.expect(12);
+  App = startApp(null, assert);
+  store = App.__container__.lookup('store:main');
+  Ember.run(function(){
+      var newAccount = store.createRecord('account', {
+          name: 'Testaccount',
+          key: '5555-5555-5555-5555',
+          active: true
+      });
+  });
+
+  var controller = this.subject();
+  var changed = false;
+  controller.store = store;
+  controller.set('searchQuery', 'testcontainer');
+  controller.set('activeContainer', 'testcontainer');
+  Ember.run( () => {
+    controller.get('containers')
+    .then(() => {
+      controller.send('uploadBlobData', '/testdir/testfile.js', 'mydir1/testfile.js');    
     });
   });
 });

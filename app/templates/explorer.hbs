@@ -1,4 +1,5 @@
 {{partial "navbar"}}
+{{partial "modals/upload"}}
 <div class="explorer-container">
     <div class="folder">
         <div class="search">
@@ -22,8 +23,15 @@
         </div>
         {{ax-preview selectedBlob=selectedBlob}}
     </div>
-    <div class="files z-depth-3">
+    <div class="files">
         <div class="container">
+
+            {{#if activeContainer}}
+                {{#each path in pathSegments }}
+                    <a {{action "changeDirectory" path}} class="waves-effect waves-light btn btn-path"><i class="material-icons left"></i>{{path.name}}</a>
+                {{/each}}
+            {{/if}}
+
             <table class="striped">
                 <thead>
                     <tr>
@@ -35,13 +43,26 @@
                     </tr>
                 </thead>
                 <tbody>
+
+                    {{#each dir in subDirectories}}
+                        <tr {{action "changeSubDirectory" dir}}>
+                            <td>
+                                <i class="mdi-file-folder-open"></i>
+                            </td>
+                            <td>{{blob-display-path dir.name currentPath}}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    {{/each}}
+
                     {{#each blob in blobs itemController="blob"}}
                         <tr {{bind-attr class="blob.selected:selected"}}>
                             <td>
                                 {{input type="checkbox" id=blob.model.name checked=blob.model.selected}}
                                 <label for={{blob.model.name}}></label>
                             </td>
-                            <td {{action "selectBlob" blob.model}}>{{blob.model.name}}</td>
+                            <td {{action "selectBlob" blob.model}}>{{blob-display-path blob.model.name currentPath}}</td>
                             <td {{action "selectBlob" blob.model}}>{{blob.model.lastModified}}</td>
                             <td {{action "selectBlob" blob.model}}>{{blob.prettySize}}</td>
                             <td {{action "selectBlob" blob.model}}>{{blob.model.type}}</td>
