@@ -1,0 +1,12 @@
+<div id="modal-upload" class="modal">
+    <div class="modal-content">
+        <h4>File Upload</h4>
+        <h5>Source:</h5>
+        {{input value=modalFileUploadPath disabled=true}}
+        <h5>Destination</h5>
+        {{input placeholder=modalDefaultUploadPath value=modalDefaultUploadPath }}
+    </div>
+    <div class="modal-footer">
+        <a {{action 'uploadBlobData' modalFileUploadPath modalDefaultUploadPath}} class=" modal-action modal-close waves-effect waves-green btn-flat">Upload</a>
+    </div>
+</div>

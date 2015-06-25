@@ -7,8 +7,8 @@ export default DS.Adapter.extend({
     nodeServices: Ember.inject.service(),
     find: function (store, type, snapshot) {
         var blobService = this.get('azureStorage').createBlobService(store.account_name, store.account_key);
-        return new Ember.RSVP.Promise(function (resolve, reject) {
-            blobService.getBlobProperties(snapshot.get('container').name, snapshot.get('name'), function (error, result) {
+        return new Ember.RSVP.Promise((resolve, reject) => {
+            blobService.getBlobProperties(snapshot.get('container').name, snapshot.get('name'), (error, result) => {
                 if (error) {
                     return Ember.run(null, reject, error);
                 }
@@ -30,14 +30,19 @@ export default DS.Adapter.extend({
     },
     findQuery: function (store, type, snapshot) {
         var self = this;
-        return new Ember.RSVP.Promise(function (resolve, reject) {
-            accountUtils.getActiveAccount(store).then(function (account) {
-                var blobService = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
-                blobService.listBlobsSegmented(snapshot.container.get('name'), null, function (error, result) {
+        return new Ember.RSVP.Promise((resolve, reject) => {
+            accountUtils.getActiveAccount(store).then(account => {
+                var blobService = self.get('azureStorage').createBlobService(account.get('name'), account.get('key')),
+                    // null means root directory
+                    prefix = (snapshot.prefix === '/') ? null : snapshot.prefix;
+
+                blobService.listBlobsSegmentedWithPrefix(snapshot.container.get('name'), prefix, null, { delimiter: '/' }, (error, result) => {
                     var blobs = [];
+
                     if (error) {
                         return Ember.run(null, reject, error);
                     }
+
                     // Fill out the blob models
                     for (var i in result.entries) {
                         if (i % 1 === 0) {
@@ -52,6 +57,7 @@ export default DS.Adapter.extend({
                             });
                         }
                     }
+
                     return Ember.run(null, resolve, blobs);
                 });
             });

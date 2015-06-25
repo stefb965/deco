@@ -18,6 +18,25 @@ export default function startApp(attrs, assert) {
     nodeServices.set('azureStorage', {
         createBlobService: function () {
             return {
+                createBlockBlobFromLocalFile: function (containerName, blobName, path, callback) {
+                    assert.ok(typeof containerName === 'string');
+                    assert.ok(typeof blobName === 'string');
+                    assert.ok(typeof path === 'string');
+                    assert.ok(typeof callback === 'function');
+
+                    return callback(null, null, {
+                        entries: [
+                            {
+                                name: blobName,
+                                properties: {
+                                    'content-type': 'video/mpeg4',
+                                    'content-length': 12313435,
+                                    'last-modified': new Date(Date.now())
+                                }
+                            }
+                        ]
+                    });
+                },
                 listContainersSegmented: function (shouldBeNull, callback) {
                     assert.ok(shouldBeNull === null, 'expeceted arg shouldBeNull to be null');
                     assert.ok(callback !== null, 'expeceted arg callback to be non-null');
@@ -52,6 +71,112 @@ export default function startApp(attrs, assert) {
                     assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
                     assert.ok(callback !== null, 'expeceted arg callback to be non-null');
                     return callback(null);
+                },
+                listBlobDirectoriesSegmentedWithPrefix: function (containerName, prefix, shouldBeNull, callback) {
+                    assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
+                    assert.ok(shouldBeNull === null, 'expeceted arg shouldBeNull to be null');
+                    assert.ok(typeof callback === 'function');
+                    assert.ok(typeof prefix === 'string');
+                    console.log('called with prefix: ' + prefix);
+                    var entries = [
+                        {
+                            name: 'mydir1/'
+                        },
+                        {
+                            name: 'mydir1/mydir2'
+                        }
+                    ];
+
+                    var matches = [];
+
+                    if (prefix === '') {
+                        matches.push({
+                            name: 'mydir1/'
+                        });
+                    } else {
+                        entries.forEach(entry => {
+                            if (entry.name.startsWith(prefix)) {
+                                matches.push(entry);
+                            }
+                        });
+                    }
+                    
+                    return callback(null, {
+                        entries: matches     
+                    });
+                },
+                listBlobsSegmentedWithPrefix: function (containerName, prefix, shouldBeNull, options, callback) {
+                    assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
+                    assert.ok(shouldBeNull === null, 'expeceted arg shouldBeNull to be null');
+                    assert.ok(typeof callback === 'function');
+                    assert.ok(typeof prefix === 'string');
+                    assert.ok(typeof options === 'object');
+                    assert.ok(options.delimiter);
+                    console.log('called with prefix: ' + prefix);
+                    var entries = [{
+                            name: 'test-blob-1.mp4',
+                            properties: {
+                                'content-type': 'video/mpeg4',
+                                'content-length': 12313435,
+                                'last-modified': new Date(Date.now())
+                            }
+                        }, {
+                            name: 'test-blob-2.png',
+                            properties: {
+                                'content-type': 'image/png',
+                                'content-length': 12313435,
+                                'last-modified': new Date(Date.now())
+                            }
+                        }, {
+                            name: 'test-blob-3.mp4',
+                            properties: {
+                                'content-type': 'video/mpeg4',
+                                'content-length': 12313435,
+                                'last-modified': new Date(Date.now())
+                            }
+                        },
+                        {
+                            name: 'test-blob-4.mp4',
+                            properties: {
+                                'content-type': 'video/mpeg4',
+                                'content-length': 12313435,
+                                'last-modified': new Date(Date.now())
+                            }
+                        },
+                        {
+                            name: 'mydir1/mydir2/test-blob-4.mp3',
+                            properties: {
+                                'content-type': 'audio/mp3',
+                                'content-length': 12313435,
+                                'last-modified': new Date(Date.now())
+                            }
+                        },
+                        {
+                            name: 'mydir1/test-blob-5.mp3',
+                            properties: {
+                                'content-type': 'audio/mp3',
+                                'content-length': 12313435,
+                                'last-modified': new Date(Date.now())
+                            }
+                        }];
+
+                    var matches = [];
+
+                    if(prefix === '') {
+                        matches.push(entries[0]);
+                        matches.push(entries[1]);
+                        matches.push(entries[2]);
+                        matches.push(entries[3]);
+                    }
+                    else if(prefix === '/mydir1') {
+                        matches.push(entries[5]);
+                    }
+                    else if(prefix === '/mydir1/mydir2') {
+                        matches.push(entries[4]);
+                    }
+                    return callback(null, {
+                        entries: matches
+                    });
                 },
                 listBlobsSegmented: function (containerName, shouldBeNull, callback) {
                     assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
