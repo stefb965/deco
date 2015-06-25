@@ -34,7 +34,7 @@ var Container = DS.Model.extend({
         return new Ember.RSVP.Promise((resolve, reject) => {
             accountUtil.getActiveAccount(self.store).then(account => {
                 service = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
-                service.listBlobDirectoriesSegmentedWithPrefix(self.get('name'), prefix, null,  (err, result) => {
+                service.listBlobDirectoriesSegmentedWithPrefix(self.get('name'), prefix, null, (err, result) => {
                     if (err) {
                         return reject(err);
                     }

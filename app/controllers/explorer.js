@@ -16,7 +16,6 @@ export default Ember.Controller.extend({
         var path = '';
         var first = true;
         this.get('pathSegments').forEach(segment => {
-
             if (first) {
                 // the first slash should be skipped
                 first = false;
@@ -59,7 +58,7 @@ export default Ember.Controller.extend({
             self = this,
             containerObject;
 
-        if (!this.get('containers').get('firstObject')) {
+        if (!this.get('containers') || !this.get('containers').get('firstObject')) {
             // if there are no containers bail out (in case of empty search)
             return;
         }
@@ -79,13 +78,13 @@ export default Ember.Controller.extend({
 
                 containerObject.listDirectoriesWithPrefix(this.get('currentPath'))
                 .then(result => {
-
                     var subDirs = [];
                     result.forEach(dir => {
                         subDirs.push({
                             name: dir.name
                         });
                     });
+
                     self.set('subDirectories', subDirs);
                 });
 
@@ -112,7 +111,6 @@ export default Ember.Controller.extend({
 
                 self.set('blobs', blobs);
                 self.set('blobsLoading', false);
-
             });
         }
     }.observes('containers', 'activeContainer', 'pathSegments'),
@@ -139,15 +137,11 @@ export default Ember.Controller.extend({
 
         changeDirectory: function (directory) {
             // we have recieved a path segment object, ie: the user clicked a path button
-            var pathSegs = [ ];
+            var pathSegs = [];
+
             this.get('pathSegments').every(segment => {
                 pathSegs.push(segment);
-
-                if (segment === directory) {
-                    return false;
-                }
-
-                return true;
+                return (segment !== directory);
             });
 
             this.set('pathSegments', pathSegs);
@@ -155,12 +149,10 @@ export default Ember.Controller.extend({
         },
 
         changeSubDirectory: function (directory) {
-
             var pathSegs = [ { name: '/' } ];
 
             // we have recieved a literal path
             directory.name.split('/').forEach(segment => {
-
                 if (segment === '') {
                     return;
                 }
@@ -214,12 +206,13 @@ export default Ember.Controller.extend({
 
         // directory parameter is a test hook for automation
         downloadBlobs: function (directory) {
-            var nwInput = Ember.$('#nwSaveInput');
-            var blobs = this.get('blobs');
+            var nwInput = Ember.$('#nwSaveInput'),
+                blobs = this.get('blobs'),
+                handleInputDirectory;
+
             nwInput.attr('nwsaveas', 'directory');
 
-            var handleInputDirectory = function (dir) {
-
+            handleInputDirectory = function (dir) {
                 blobs.forEach(function (blob) {
                     // check if this one is marked for download
                     if (blob.get('selected')){
@@ -231,24 +224,15 @@ export default Ember.Controller.extend({
             };
 
             // check that at least one blob is selected
-            var atLeastOne = false;
-
-            blobs.every(function (blob) {
-                if (blob.get('selected')){
-                    atLeastOne = true;
-                    // break iteration
-                    return false;
-                }
-
-                return true;
+            var noBlobsSelected = blobs.every(blob => {
+                return (!blob.get('selected'));
             });
 
             // if no blobs are selected we don't need to show the native dialog
-            if (atLeastOne) {
+            if (!noBlobsSelected) {
                 // native dialog won't work in automation so skip in automation
                 if (!directory) {
                     nwInput.change(function () {
-
                         handleInputDirectory(this.value);
                         // reset value to ensure change event always fires
                         this.value = '';
