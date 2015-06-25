@@ -32,20 +32,17 @@ export default DS.Adapter.extend({
         var self = this;
         return new Ember.RSVP.Promise((resolve, reject) => {
             accountUtils.getActiveAccount(store).then(account => {
-                var blobService = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
-
-                var prefix = snapshot.prefix;
-
-                // means null means root directory
-                if (prefix === '/') {
-                    prefix = null;
-                }
+                var blobService = self.get('azureStorage').createBlobService(account.get('name'), account.get('key')),
+                    // null means root directory
+                    prefix = (snapshot.prefix === '/') ? null : snapshot.prefix;
 
                 blobService.listBlobsSegmentedWithPrefix(snapshot.container.get('name'), prefix, null, { delimiter: '/' }, (error, result) => {
                     var blobs = [];
+
                     if (error) {
                         return Ember.run(null, reject, error);
                     }
+
                     // Fill out the blob models
                     for (var i in result.entries) {
                         if (i % 1 === 0) {
@@ -60,6 +57,7 @@ export default DS.Adapter.extend({
                             });
                         }
                     }
+
                     return Ember.run(null, resolve, blobs);
                 });
             });
