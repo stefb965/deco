@@ -240,7 +240,6 @@ export default function startApp(attrs, assert) {
     });
     nodeServices.set('fs', {
         existsSync: function (path) {
-            assert.ok(path);
             return false;
         },
         mkdirSync: function (path) {
