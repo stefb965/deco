@@ -46,7 +46,7 @@ div.folder {
 }
 
 .files {
-    div {
+    div.container {
         background-color: #fff;
         height: calc(100vh - 64px);
         width: calc(100vw - 250px);
@@ -68,6 +68,6 @@ div.folder {
     }
 
     .waves-effect.waves-light.btn.btn-path {
-      margin-top: 5px;
+        margin-top: 5px;
     }
 }

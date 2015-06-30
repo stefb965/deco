@@ -26,9 +26,11 @@
     <div class="files">
         <div class="container">
             {{#if activeContainer}}
-                {{#each path in pathSegments }}
-                    <a {{action "changeDirectory" path}} class="waves-effect waves-light btn btn-path"><i class="material-icons left"></i>{{path.name}}</a>
-                {{/each}}
+                <ul class="breadcrumb">
+                    {{#each path in pathSegments }}
+                        <li {{action "changeDirectory" path}}>{{path.name}}</li>
+                    {{/each}}
+                </ul>
             {{/if}}
 
             <table class="striped">
