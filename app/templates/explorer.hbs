@@ -30,7 +30,6 @@
                     <a {{action "changeDirectory" path}} class="waves-effect waves-light btn btn-path"><i class="material-icons left"></i>{{path.name}}</a>
                 {{/each}}
             {{/if}}
-
             <table class="striped">
                 <thead>
                     <tr>
@@ -42,7 +41,6 @@
                     </tr>
                 </thead>
                 <tbody>
-
                     {{#each dir in subDirectories}}
                         <tr {{action "changeSubDirectory" dir}}>
                             <td>
@@ -54,7 +52,6 @@
                             <td></td>
                         </tr>
                     {{/each}}
-
                     {{#each blob in blobs itemController="blob"}}
                         <tr {{bind-attr class="blob.selected:selected"}}>
                             <td>
