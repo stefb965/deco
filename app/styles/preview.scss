@@ -11,6 +11,7 @@ div.preview {
     .content {
         @include vertical-align;
 
+        max-height: 100%;
         z-index: 1000;
 
         img {
