@@ -76,5 +76,6 @@
         "checkRedundantParams": true,
         "requireParamTypes": true
     },
-    "validateQuoteMarks": "'"
+    "validateQuoteMarks": "'",
+    "esnext": true
 }

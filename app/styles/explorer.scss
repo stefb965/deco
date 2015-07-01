@@ -8,17 +8,14 @@ div.folder {
     div.container {
         margin: 0;
         overflow-y: auto;
-        height: 72.75%;
+        height: calc(100% - 261px);
         width: 250px;
-
+        padding-bottom: 15px;
     }
 
     .search {
         padding: 0 1.5rem;
-
-        input {
-            float: left;
-        }
+        height: 61px;
 
         .preloader-wrapper {
             margin-top: 5px;
@@ -63,7 +60,7 @@ div.folder {
     }
 
     input {
-        margin-left:auto; 
+        margin-left:auto;
         margin-right:auto
     }
 
