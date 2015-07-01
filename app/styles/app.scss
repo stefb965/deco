@@ -6,14 +6,24 @@
 @import 'preview';
 @import 'breadcrumbs';
 
-// @import url("//i.s-microsoft.com/fonts/segoe-ui/west-european/normal/latest.css");
-// @import url("//i.s-microsoft.com/fonts/segoe-ui/west-european/light/latest.css");
-// @import url("//i.s-microsoft.com/fonts/segoe-ui/west-european/semilight/latest.css");
-// @import url("//i.s-microsoft.com/fonts/segoe-ui/west-european/semibold/latest.css");
-// @import url("//i.s-microsoft.com/fonts/segoe-ui/west-european/bold/latest.css");
+@font-face {
+    font-family: WeblySleek;
+    src: url("../font/ws/weblysleekuisl.ttf") format("truetype");
+}
+@font-face {
+    font-family: "WeblySleek";
+    src: url("../font/ws/weblysleekuisb.ttf") format("truetype");
+    font-weight: bold;
+}
+@font-face {
+    font-family: "WeblySleek";
+    src: url("../font/ws/weblysleekuil.ttf") format("truetype");
+    font-style: italic, oblique;
+}
 
 body, html {
     background-color: #212527;
+    font-family: WeblySleek, Tahoma, Arial, sans-serif;
 }
 
 [data-ember-action] {
