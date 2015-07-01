@@ -69,7 +69,9 @@ export default Ember.Controller.extend({
             return;
         }
 
+        // clear out subdirs'
         this.set('blobsLoading', true);
+        this.set('subDirectories', []);
 
         if (!activeContainer) {
             containerObject = self.get('containers').get('firstObject');
@@ -90,7 +92,6 @@ export default Ember.Controller.extend({
                             name: dir.name
                         });
                     });
-
                     self.set('subDirectories', subDirs);
                 });
             }
@@ -110,6 +111,8 @@ export default Ember.Controller.extend({
                             name: dir.name
                         });
                     });
+                    console.log('set sub dir to:');
+                    console.dir(subDirs);
                     self.set('subDirectories', subDirs);
                 });
 
@@ -133,11 +136,12 @@ export default Ember.Controller.extend({
             var activeContainer = this.get('activeContainer');
             var blobName = azurePath.replace(/.*\:\//, '');
             self.store.find('container', activeContainer).then(foundContainer => {
-                foundContainer.uploadBlob(filePath, blobName).then(() => {
-                    self.send('refreshBlobs');
-                }, error => {
-                    toast(error, 4000);
-                });
+                return foundContainer.uploadBlob(filePath, blobName);
+            })
+            .then(() => {
+                self.send('refreshBlobs');
+            }, error => {
+                toast(error, 4000);
             });
         },
 
@@ -149,7 +153,7 @@ export default Ember.Controller.extend({
                 pathSegs.push(segment);
                 return (segment !== directory);
             });
-
+            this.set('subDirectories', []);
             this.set('pathSegments', pathSegs);
             this.send('refreshBlobs');
         },
@@ -189,7 +193,7 @@ export default Ember.Controller.extend({
                 var fileName = this.value.replace(/^.*[\\\/]/, '');
 
                 self.store.find('container', activeContainer).then(result => {
-                    self.set('modalDefaultUploadPath', result.get('name') + ':/' + fileName);
+                    self.set('modalDefaultUploadPath', result.get('name') + ':/' + self.get('currentPath') + fileName);
                 });
 
             });
@@ -316,6 +320,19 @@ export default Ember.Controller.extend({
 
                 self.set('blobs', blobs);
                 self.set('blobsLoading', false);
+                return result;
+            })
+            .then(container => {
+                return container.listDirectoriesWithPrefix(self.get('currentPath'));
+            })
+            .then(result => {
+                var subDirs = [];
+                result.forEach(dir => {
+                    subDirs.push({
+                        name: dir.name
+                    });
+                });
+                self.set('subDirectories', subDirs);
             });
         },
 
