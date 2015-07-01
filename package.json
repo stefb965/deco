@@ -67,7 +67,7 @@
     "height": 600,
     "min_width": 800,
     "min_height": 600,
-    "toolbar": false,
+    "toolbar": true,
     "frame": true,
     "position": "center",
     "resizable": true
