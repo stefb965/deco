@@ -191,8 +191,61 @@ test('it should have the correct subdirectories', function(assert) {
   });
 });
 
+test('it should reset path segments when switching containers', function(assert) {
+  assert.expect(34);
+  App = startApp(null, assert);
+  store = App.__container__.lookup('store:main');
+  Ember.run(function(){
+      var newAccount = store.createRecord('account', {
+          name: 'Testaccount',
+          key: '5555-5555-5555-5555',
+          active: true
+      });
+  });
+
+  var controller = this.subject();
+  var sentChangeAction = false,
+      sentPathSegmentChangeAction = false;
+
+  controller.addObserver('subDirectories', controller, () => {
+    if(!sentChangeAction) {
+      sentChangeAction = true;
+      controller.send('changeSubDirectory', { name: 'mydir1/' });
+      return;
+    }
+
+    // we will receieve this handler multiple times as the
+    // controller changes state and clears/refills subdirectories
+    if (controller.get('subDirectories').length === 1 &&
+        controller.get('subDirectories')[0].name === 'mydir1/mydir2' &&
+        sentPathSegmentChangeAction === false)
+    {
+        assert.ok(controller.get('pathSegments').length === 2);
+        sentPathSegmentChangeAction = true;
+        // this specifcally tests clicking a button to go up
+        controller.addObserver('pathSegments', controller, () => {
+            if (controller.get('pathSegments').length === 1 &&
+                controller.get('pathSegments')[0].name === '/') {
+                assert.ok(true);
+            }
+        });
+        controller.send('switchActiveContainer', 'testcontainer2');
+        return;
+    }
+  });
+
+  controller.store = store;
+  controller.set('searchQuery', 'testcontainer');
+  Ember.run( () => {
+    controller.get('containers')
+    .then(() => {
+      controller.set('activeContainer', 'testcontainer');      
+    });
+  });
+});
+
 test('it should change directory based on path segment', function(assert) {
-  assert.expect(55);
+  assert.expect(34);
   App = startApp(null, assert);
   store = App.__container__.lookup('store:main');
   Ember.run(function(){
@@ -243,7 +296,7 @@ test('it should change directory based on path segment', function(assert) {
 });
 
 test('it should change subdirectories', function(assert) {
-  assert.expect(55);
+  assert.expect(34);
   App = startApp(null, assert);
   store = App.__container__.lookup('store:main');
   Ember.run(function(){
@@ -375,26 +428,32 @@ test('it should delete all but 1 blobs', function(assert) {
   controller.set('searchQuery', 'testcontainer');
 
   controller.addObserver('blobs', controller, () => {
-    
     controller.get('blobs')
     .then( blobs => {
         var count = 0;
         blobs.forEach(function (blob){
-        
             if (count > 2) {
               return;
             }
+
             blob.set('selected', true);
             count++;
         });
         
         initialBlobCount = blobs.get('length');
-        controller.send('deleteBlobData');
+        var blobCount = 0;
+        // bind to the record array as it changes
+        controller.addObserver('blobs.@each', controller, () => {
+          controller.get('blobs')
+          .then(blobs => {
+              blobCount += 1;
+              if (blobCount === 3) {
+                  assert.ok(blobs.get('length') === initialBlobCount - 3);
+              }
+          });
+        });
 
-        return controller.get('blobs');
-    })
-    .then( blobs => {
-      assert.ok(blobs.get('length') === initialBlobCount - 3);
+        controller.send('deleteBlobData');
     });
     
   });
