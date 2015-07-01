@@ -36,7 +36,7 @@
             <table class="striped">
                 <thead>
                     <tr>
-                        <th {{action "selectAllBlobs"}}>Action</th>
+                        <th class="action-field" {{action "selectAllBlobs"}}>Action</th>
                         <th data-field="id">Name</th>
                         <th data-field="name">Last Modified</th>
                         <th data-field="price">Size</th>
@@ -46,7 +46,7 @@
                 <tbody>
                     {{#each dir in subDirectories}}
                         <tr {{action "changeSubDirectory" dir}}>
-                            <td>
+                            <td class="action-field">
                                 <i class="mdi-file-folder-open"></i>
                             </td>
                             <td>{{blob-display-path dir.name currentPath}}</td>

@@ -65,11 +65,36 @@ export default function startApp(attrs, assert) {
                         'last-modified': new Date(Date.now())
                     }
                 }],
+                subDirectories: [
+                    {
+                        name: 'mydir1/'
+                    },
+                    {
+                        name: 'mydir1/mydir2'
+                    }
+                ],
                 createBlockBlobFromLocalFile: function (containerName, blobName, path, callback) {
                     assert.ok(typeof containerName === 'string');
                     assert.ok(typeof blobName === 'string');
                     assert.ok(typeof path === 'string');
                     assert.ok(typeof callback === 'function');
+                    var segments = blobName.split('/');
+                    
+                    if (segments.length > 1) {
+                        var segment = segments[0] + '/',
+                            exists = false;
+                        this.subDirectories.forEach(subDir => {
+                            if (subDir.name === segment) {
+                                exists = true;
+                            }
+                        });
+
+                        if (!exists) {
+                            this.subDirectories.push({
+                                name: segments[0] + '/'
+                            }); 
+                        }
+                    }
 
                     return callback(null, null, {
                         entries: [
@@ -107,7 +132,6 @@ export default function startApp(attrs, assert) {
                     return callback(null);
                 },
                 deleteBlob: function(containerName, blobName, callback) {
-                    console.log('DELETE CALLED!');
                     assert.ok(typeof containerName === 'string', 'expeceted arg containerName to be string');
                     assert.ok(typeof containerName === 'string', 'expeceted arg blobName to be string');
                     assert.ok(typeof callback === 'function', 'expeceted arg callback to be function');
@@ -146,30 +170,34 @@ export default function startApp(attrs, assert) {
                     assert.ok(shouldBeNull === null, 'expeceted arg shouldBeNull to be null');
                     assert.ok(typeof callback === 'function');
                     assert.ok(typeof prefix === 'string');
-                    console.log('called with prefix: ' + prefix);
-                    var entries = [
-                        {
-                            name: 'mydir1/'
-                        },
-                        {
-                            name: 'mydir1/mydir2'
-                        }
-                    ];
 
-                    var matches = [];
+                    var matches = [],
+                        self = this;
 
                     if (prefix === '') {
-                        matches.push({
-                            name: 'mydir1/'
+                        this.subDirectories.forEach(entry => {
+                            var segments = entry.name.split('/');
+
+                            // remove empty strings
+                            segments.forEach( (seg, index) => {
+                                if (seg === '') {
+                                    segments.splice(index, 1);
+                                }
+                            });
+
+                            if (segments.length === 1) {
+                                matches.push(entry);
+                            }
                         });
                     } else {
-                        entries.forEach(entry => {
+                        this.subDirectories.forEach(entry => {
                             if (entry.name.startsWith(prefix)) {
                                 matches.push(entry);
                             }
                         });
                     }
-                    
+                    console.log('listing directories:');
+                    console.dir(matches);
                     return callback(null, {
                         entries: matches     
                     });
@@ -181,7 +209,6 @@ export default function startApp(attrs, assert) {
                     assert.ok(typeof prefix === 'string');
                     assert.ok(typeof options === 'object');
                     assert.ok(options.delimiter);
-                    console.log('called with prefix: ' + prefix);
                     
 
                     var matches = [];

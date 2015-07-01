@@ -162,7 +162,7 @@ test('it should search and return 0 container', function(assert) {
 });
 
 test('it should have the correct subdirectories', function(assert) {
-  assert.expect(14);
+  assert.expect(13);
   App = startApp(null, assert);
   store = App.__container__.lookup('store:main');
   Ember.run(function(){
@@ -175,8 +175,11 @@ test('it should have the correct subdirectories', function(assert) {
 
   var controller = this.subject();
   controller.addObserver('subDirectories', controller, () => {
-    assert.ok(controller.get('subDirectories').length === 1);
-    assert.ok(controller.get('subDirectories')[0].name === 'mydir1/');
+
+    if (controller.get('subDirectories').length === 1 &&
+        controller.get('subDirectories')[0].name === 'mydir1/') {
+        assert.ok(true);
+    }
   });
   controller.store = store;
   controller.set('searchQuery', 'testcontainer');
@@ -188,8 +191,8 @@ test('it should have the correct subdirectories', function(assert) {
   });
 });
 
-test('it should change subdirectories', function(assert) {
-  assert.expect(30);
+test('it should change directory based on path segment', function(assert) {
+  assert.expect(55);
   App = startApp(null, assert);
   store = App.__container__.lookup('store:main');
   Ember.run(function(){
@@ -201,16 +204,33 @@ test('it should change subdirectories', function(assert) {
   });
 
   var controller = this.subject();
-  var changed = false;
+  var sentChangeAction = false,
+      sentPathSegmentChangeAction = false;
+
   controller.addObserver('subDirectories', controller, () => {
-    if(!changed) {
-      changed = true;
+    if(!sentChangeAction) {
+      sentChangeAction = true;
       controller.send('changeSubDirectory', { name: 'mydir1/' });
+      return;
     }
-    else {
-      assert.ok(controller.get('subDirectories').length === 1);
-      assert.ok(controller.get('subDirectories')[0].name === 'mydir1/mydir2');
+
+    // we will receieve this handler multiple times as the
+    // controller changes state and clears/refills subdirectories
+    if (controller.get('subDirectories').length === 1 &&
+        controller.get('subDirectories')[0].name === 'mydir1/mydir2' &&
+        sentPathSegmentChangeAction === false)
+    {
+        assert.ok(true);
+        sentPathSegmentChangeAction = true;
+        // this specifcally tests clicking a button to go up
+        controller.send('changeSubDirectory', controller.get('pathSegments')[0]);
     }
+
+    if (controller.get('subDirectories').length === 1 &&
+        controller.get('subDirectories')[0].name === 'mydir1/') {
+        assert.ok(true);
+    }
+
   });
   controller.store = store;
   controller.set('searchQuery', 'testcontainer');
@@ -223,7 +243,7 @@ test('it should change subdirectories', function(assert) {
 });
 
 test('it should change subdirectories', function(assert) {
-  assert.expect(46);
+  assert.expect(55);
   App = startApp(null, assert);
   store = App.__container__.lookup('store:main');
   Ember.run(function(){
@@ -235,22 +255,32 @@ test('it should change subdirectories', function(assert) {
   });
 
   var controller = this.subject();
-  var changed = false;
-  var changedBackToRoot = false;
+  var sentChangeAction = false,
+      sentChangeUpAction = false;
+
   controller.addObserver('subDirectories', controller, () => {
-    if(!changed) {
-      changed = true;
+    if(!sentChangeAction) {
       // change to subdirectory
+      sentChangeAction = true;
       controller.send('changeSubDirectory', { name: 'mydir1/' });
-    } else if (!changedBackToRoot) {
-      // change back to root directory
-      controller.send('changeDirectory', controller.get('pathSegments')[0]);
-      changedBackToRoot = true;
+      return;
     }
-    else {
-      assert.ok(controller.get('subDirectories').length === 1);
-      assert.ok(controller.get('subDirectories')[0].name === 'mydir1/');
+    
+    // we will receieve this handler multiple times as the
+    // controller changes state and clears/refills subdirectories
+    if (controller.get('subDirectories').length === 1 &&
+        controller.get('subDirectories')[0].name === 'mydir1/mydir2' &&
+        !sentChangeUpAction) {
+        assert.ok(true);
+        sentChangeUpAction = true;
+        controller.send('changeSubDirectory', { name: ''});
     }
+
+    if (controller.get('subDirectories').length === 1 &&
+        controller.get('subDirectories')[0].name === 'mydir1/') {
+        assert.ok(true);
+    }
+    
   });
   controller.store = store;
   controller.set('searchQuery', 'testcontainer');
@@ -264,7 +294,7 @@ test('it should change subdirectories', function(assert) {
 
 test('it should upload file to blob', function(assert) {
 
-  assert.expect(12);
+  assert.expect(16);
   App = startApp(null, assert);
   store = App.__container__.lookup('store:main');
   Ember.run(function(){
@@ -284,6 +314,43 @@ test('it should upload file to blob', function(assert) {
     controller.get('containers')
     .then(() => {
       controller.send('uploadBlobData', '/testdir/testfile.js', 'mydir1/testfile.js');    
+    });
+  });
+});
+
+test('it should create a subdirectory/folder upon upload', function(assert) {
+
+  assert.expect(16);
+  App = startApp(null, assert);
+  store = App.__container__.lookup('store:main');
+  Ember.run(function(){
+      var newAccount = store.createRecord('account', {
+          name: 'Testaccount',
+          key: '5555-5555-5555-5555',
+          active: true
+      });
+  });
+
+  var controller = this.subject();
+  var changed = false;
+  controller.store = store;
+  controller.set('searchQuery', 'testcontainer');
+  controller.set('activeContainer', 'testcontainer');
+
+  controller.addObserver('subDirectories', controller, () => {
+      if (controller.get('subDirectories').length === 3) {
+        controller.get('subDirectories').forEach(subDir => {
+            if (subDir.name === 'mydir5/') {
+              assert.ok(true);
+            }
+        });
+      }
+  });
+
+  Ember.run( () => {
+    controller.get('containers')
+    .then(() => {
+      controller.send('uploadBlobData', '/testdir/testfile.js', 'mydir5/testfile.js');    
     });
   });
 });
