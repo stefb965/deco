@@ -22,8 +22,26 @@ export default DS.Adapter.extend({
     updateRecord: function () {
         throw 'not implemented';
     },
-    deleteRecord: function () {
-        throw 'not implemented';
+    deleteRecord: function (store, type, snapshot) {
+        var self = this;
+        return new Ember.RSVP.Promise((resolve, reject) => {
+            var blobService;
+
+            accountUtils.getActiveAccount(store).then(account => {
+                blobService = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
+                return store.find('container', snapshot.attr('container_id'));
+            })
+            .then(container => {
+                blobService.deleteBlob(container.get('name'), snapshot.attr('name'), (error) => {
+
+                if (error) {
+                    return Ember.run(null, reject, error);
+                }
+
+                    return Ember.run(null, resolve);
+                });
+            });
+        });
     },
     findAll: function () {
         throw 'not implemented';
