@@ -1,17 +1,45 @@
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
+    // Services & Aliases
+    // ------------------------------------------------------------------------------
     needs: 'application',
     activeConnection: Ember.computed.alias('controllers.application.activeConnection'),
     azureStorage: Ember.computed.alias('nodeServices.azureStorage'),
     fileSvc: Ember.computed.alias('nodeServices.fs'),
     nodeServices: Ember.inject.service(),
 
+    // Properties
+    // ------------------------------------------------------------------------------
     activeContainer: null,
     blobs: [],
     subDirectories: [],
-    // individal directory names of current path
-    pathSegments: [ { name: '/' } ],
+    pathSegments: [{ name: '/' }],      // individal directory names of current path
+    allBlobSelected: false,
+    newContainerEntryDisplay: false,
+    modalFileUploadPath: '',            // path used for the local file path for upload
+    modalDefaultUploadPath: '',         // path used for the upload path to azure in the upload modal
+    searchSpinnerDisplay: false,
+    newContainerName: '',
+    searchQuery: '',
+    blobsLoading: true,
+    selectedBlob: null,
+
+    // Computed Properties
+    // ------------------------------------------------------------------------------
+    containers: function () {
+        var self = this;
+
+        if (!this.get('searchQuery')) {
+            return this.get('model');
+        } else {
+            this.set('searchSpinnerDisplay', true);
+            var promise = this.store.find('container', {name: this.get('searchQuery')});
+            promise.then(() => self.set('searchSpinnerDisplay', false));
+            return promise;
+        }
+    }.property('searchQuery'),
+
     currentPath: function () {
         var path = '';
         var first = true;
@@ -27,31 +55,9 @@ export default Ember.Controller.extend({
 
         return path;
     }.property('pathSegments'),
-    allBlobSelected: false,
-    newContainerEntryDisplay: false,
-    // path used for the local file path for upload
-    modalFileUploadPath: '',
-    // path used for the upload path to azure in the upload modal
-    modalDefaultUploadPath: '',
-    searchSpinnerDisplay: false,
-    newContainerName: '',
-    searchQuery: '',
-    blobsLoading: true,
-    selectedBlob: null,
 
-    containers: function () {
-        var self = this;
-
-        if (!this.get('searchQuery')) {
-            return this.get('model');
-        } else {
-            this.set('searchSpinnerDisplay', true);
-            var promise = this.store.find('container', {name: this.get('searchQuery')});
-            promise.then(() => self.set('searchSpinnerDisplay', false));
-            return promise;
-        }
-    }.property('searchQuery'),
-
+    // Observers
+    // ------------------------------------------------------------------------------
     activeContainerObserver: function () {
         var activeContainer = this.get('activeContainer'),
             blobs = [],
@@ -87,9 +93,7 @@ export default Ember.Controller.extend({
 
                     self.set('subDirectories', subDirs);
                 });
-
             }
-
         } else {
             return this.store.find('container', activeContainer).then(function (result) {
                 if (result) {
@@ -113,8 +117,10 @@ export default Ember.Controller.extend({
                 self.set('blobsLoading', false);
             });
         }
-    }.observes('containers', 'activeContainer', 'pathSegments'),
+    }.observes('containers', 'activeContainer', 'pathSegments', 'model'),
 
+    // Actions
+    // ------------------------------------------------------------------------------
     actions: {
         switchActiveContainer: function (selectedContainer) {
             // reset all blobs selected flag
