@@ -15,64 +15,67 @@ export default function startApp(attrs, assert) {
     });
     var container = application.__container__;
     var nodeServices = container.lookup('service:node-services');
+    var fakeData = {
+        entries: [
+            {
+                name: 'test-blob-1.mp4',
+                properties: {
+                    'content-type': 'video/mpeg4',
+                    'content-length': 12313435,
+                    'last-modified': new Date(Date.now())
+                }
+            }, {
+                name: 'test-blob-2.png',
+                properties: {
+                    'content-type': 'image/png',
+                    'content-length': 12313435,
+                    'last-modified': new Date(Date.now())
+                }
+            }, {
+                name: 'test-blob-3.mp4',
+                properties: {
+                    'content-type': 'video/mpeg4',
+                    'content-length': 12313435,
+                    'last-modified': new Date(Date.now())
+                }
+            },
+            {
+                name: 'test-blob-4.mp4',
+                properties: {
+                    'content-type': 'video/mpeg4',
+                    'content-length': 12313435,
+                    'last-modified': new Date(Date.now())
+                }
+            },
+            {
+                name: 'mydir1/mydir2/test-blob-4.mp3',
+                properties: {
+                    'content-type': 'audio/mp3',
+                    'content-length': 12313435,
+                    'last-modified': new Date(Date.now())
+                }
+            },
+            {
+                name: 'mydir1/test-blob-5.mp3',
+                properties: {
+                    'content-type': 'audio/mp3',
+                    'content-length': 12313435,
+                    'last-modified': new Date(Date.now())
+                }
+            }],
+        subDirectories: [
+            {
+                name: 'mydir1/'
+            },
+            {
+                name: 'mydir1/mydir2'
+            }
+        ]
+    };
     nodeServices.set('azureStorage', {
         
         createBlobService: function () {
             return {
-                entries: [{
-                    name: 'test-blob-1.mp4',
-                    properties: {
-                        'content-type': 'video/mpeg4',
-                        'content-length': 12313435,
-                        'last-modified': new Date(Date.now())
-                    }
-                }, {
-                    name: 'test-blob-2.png',
-                    properties: {
-                        'content-type': 'image/png',
-                        'content-length': 12313435,
-                        'last-modified': new Date(Date.now())
-                    }
-                }, {
-                    name: 'test-blob-3.mp4',
-                    properties: {
-                        'content-type': 'video/mpeg4',
-                        'content-length': 12313435,
-                        'last-modified': new Date(Date.now())
-                    }
-                },
-                {
-                    name: 'test-blob-4.mp4',
-                    properties: {
-                        'content-type': 'video/mpeg4',
-                        'content-length': 12313435,
-                        'last-modified': new Date(Date.now())
-                    }
-                },
-                {
-                    name: 'mydir1/mydir2/test-blob-4.mp3',
-                    properties: {
-                        'content-type': 'audio/mp3',
-                        'content-length': 12313435,
-                        'last-modified': new Date(Date.now())
-                    }
-                },
-                {
-                    name: 'mydir1/test-blob-5.mp3',
-                    properties: {
-                        'content-type': 'audio/mp3',
-                        'content-length': 12313435,
-                        'last-modified': new Date(Date.now())
-                    }
-                }],
-                subDirectories: [
-                    {
-                        name: 'mydir1/'
-                    },
-                    {
-                        name: 'mydir1/mydir2'
-                    }
-                ],
                 createBlockBlobFromLocalFile: function (containerName, blobName, path, callback) {
                     assert.ok(typeof containerName === 'string');
                     assert.ok(typeof blobName === 'string');
@@ -83,14 +86,14 @@ export default function startApp(attrs, assert) {
                     if (segments.length > 1) {
                         var segment = segments[0] + '/',
                             exists = false;
-                        this.subDirectories.forEach(subDir => {
+                        fakeData.subDirectories.forEach(subDir => {
                             if (subDir.name === segment) {
                                 exists = true;
                             }
                         });
 
                         if (!exists) {
-                            this.subDirectories.push({
+                            fakeData.subDirectories.push({
                                 name: segments[0] + '/'
                             }); 
                         }
@@ -135,21 +138,14 @@ export default function startApp(attrs, assert) {
                     assert.ok(typeof containerName === 'string', 'expeceted arg containerName to be string');
                     assert.ok(typeof containerName === 'string', 'expeceted arg blobName to be string');
                     assert.ok(typeof callback === 'function', 'expeceted arg callback to be function');
+                    var keepIndicies = [];
 
-                    var removeIndicies = [],
-                        self = this;
-
-                    this.entries.forEach( function(entry, index) {
-
-                        if (entry.name === blobName) {
-                            removeIndicies.push(index);
+                    fakeData.entries.forEach( function(entry, index) {
+                        if (entry.name !== blobName) {
+                            keepIndicies.push(entry);
                         }
                     });
-
-                    removeIndicies.forEach( function(index) {
-                        self.entries.splice(index, 1);
-                    });
-
+                    fakeData.entries = keepIndicies;
                     return callback(null);
                 },
                 getContainerProperties: function (containerName, callback) {
@@ -174,8 +170,11 @@ export default function startApp(attrs, assert) {
                     var matches = [],
                         self = this;
 
+                    if ( containerName === 'testcontainer2' ) {
+                        return;
+                    }
                     if (prefix === '') {
-                        this.subDirectories.forEach(entry => {
+                        fakeData.subDirectories.forEach(entry => {
                             var segments = entry.name.split('/');
 
                             // remove empty strings
@@ -190,14 +189,13 @@ export default function startApp(attrs, assert) {
                             }
                         });
                     } else {
-                        this.subDirectories.forEach(entry => {
+                        fakeData.subDirectories.forEach(entry => {
                             if (entry.name.startsWith(prefix)) {
                                 matches.push(entry);
                             }
                         });
                     }
-                    console.log('listing directories:');
-                    console.dir(matches);
+                    
                     return callback(null, {
                         entries: matches     
                     });
@@ -214,16 +212,16 @@ export default function startApp(attrs, assert) {
                     var matches = [];
 
                     if(prefix === '') {
-                        matches.push(this.entries[0]);
-                        matches.push(this.entries[1]);
-                        matches.push(this.entries[2]);
-                        matches.push(this.entries[3]);
+                        matches.push(fakeData.entries[0]);
+                        matches.push(fakeData.entries[1]);
+                        matches.push(fakeData.entries[2]);
+                        matches.push(fakeData.entries[3]);
                     }
                     else if(prefix === '/mydir1') {
-                        matches.push(this.entries[5]);
+                        matches.push(fakeData.entries[5]);
                     }
                     else if(prefix === '/mydir1/mydir2') {
-                        matches.push(this.entries[4]);
+                        matches.push(fakeData.entries[4]);
                     }
                     return callback(null, {
                         entries: matches

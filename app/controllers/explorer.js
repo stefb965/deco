@@ -75,6 +75,7 @@ export default Ember.Controller.extend({
 
         if (!activeContainer) {
             containerObject = self.get('containers').get('firstObject');
+            containerObject.set('blobPrefixFilter', self.get('currentPath'));
             if (containerObject) {
                 blobs = containerObject.get('blobs');
 
@@ -98,6 +99,7 @@ export default Ember.Controller.extend({
         } else {
             return this.store.find('container', activeContainer).then(function (result) {
                 if (result) {
+                    result.set('blobPrefixFilter', self.get('currentPath'));
                     blobs = result.get('blobs');
                 } else {
                     blobs = [];
@@ -111,8 +113,6 @@ export default Ember.Controller.extend({
                             name: dir.name
                         });
                     });
-                    console.log('set sub dir to:');
-                    console.dir(subDirs);
                     self.set('subDirectories', subDirs);
                 });
 
@@ -120,13 +120,21 @@ export default Ember.Controller.extend({
                 self.set('blobsLoading', false);
             });
         }
-    }.observes('containers', 'activeContainer', 'pathSegments', 'model'),
+    }.observes('containers', 'activeContainer', 'model'),
+
+    pathSegmentObserver : function () {
+        this.set('subDirectories', []);
+    }.observes('pathSegments'),
 
     // Actions
     // ------------------------------------------------------------------------------
     actions: {
         switchActiveContainer: function (selectedContainer) {
             // reset all blobs selected flag
+            if (selectedContainer === this.get('activeContainer')) {
+                return;
+            }
+            this.set('pathSegments', [{ name: '/' }]);
             this.set('allBlobSelected', false);
             this.set('activeContainer', selectedContainer);
         },
@@ -303,6 +311,8 @@ export default Ember.Controller.extend({
                     }
                 }
             });
+
+            this.set('blobs', blobs);
         },
 
         refreshBlobs: function () {
