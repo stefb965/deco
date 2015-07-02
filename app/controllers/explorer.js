@@ -1,5 +1,5 @@
 import Ember from 'ember';
-
+import config from '../config/environment';
 export default Ember.Controller.extend({
     // Services & Aliases
     // ------------------------------------------------------------------------------
@@ -24,6 +24,19 @@ export default Ember.Controller.extend({
     searchQuery: '',
     blobsLoading: true,
     selectedBlob: null,
+
+    // Init & Setup
+    // ------------------------------------------------------------------------------
+    init: function () {
+        if (config.environment !== 'test') {
+            Ember.run.scheduleOnce('afterRender', this, () => {
+                var self = this;
+                Ember.$('.files')[0].ondrop = e => {
+                    self.send('handleFileDragDrop', e);
+                };
+            });
+        }
+    },
 
     // Computed Properties
     // ------------------------------------------------------------------------------
@@ -129,6 +142,39 @@ export default Ember.Controller.extend({
     // Actions
     // ------------------------------------------------------------------------------
     actions: {
+
+        handleFileDragDrop: function (e) {
+            var sourcePaths = '',
+                self = this,
+                activeContainer = this.get('activeContainer'),
+                file;
+            // dataTransfer.files doesn't have forEach
+            for (var i in e.dataTransfer.files) {
+                if (i % 1 === 0) {
+                    file = e.dataTransfer.files[i];
+                    if (i < e.dataTransfer.files.length - 1) {
+                        sourcePaths += file.path + ';';
+                    } else {
+                        sourcePaths += file.path;
+                    }
+                }
+            }
+
+            Ember.$('#modal-upload').openModal();
+
+            // https://github.com/Dogfalo/materialize/issues/1532
+            // ugh!
+            var overlay = Ember.$('#lean-overlay');
+            overlay.detach();
+            Ember.$('.explorer-container').after(overlay);
+
+            self.set('modalFileUploadPath', sourcePaths);
+
+            self.store.find('container', activeContainer).then(result => {
+                self.set('modalDefaultUploadPath', result.get('name') + ':/' + self.get('currentPath'));
+            });
+        },
+
         switchActiveContainer: function (selectedContainer) {
             // reset all blobs selected flag
             if (selectedContainer === this.get('activeContainer')) {
@@ -139,16 +185,25 @@ export default Ember.Controller.extend({
             this.set('activeContainer', selectedContainer);
         },
 
-        uploadBlobData: function (filePath, azurePath) {
-            var self = this;
-            var activeContainer = this.get('activeContainer');
-            var blobName = azurePath.replace(/.*\:\//, '');
+        uploadBlobData: function (filePaths, azurePath) {
+            var self = this,
+                activeContainer = this.get('activeContainer'),
+                containerPath = azurePath.replace(/.*\:\//, ''),
+                paths = filePaths.split(';'),
+                fileName;
+
             self.store.find('container', activeContainer).then(foundContainer => {
-                return foundContainer.uploadBlob(filePath, blobName);
+                var promises = [];
+                paths.forEach(path => {
+                    fileName = path.replace(/^.*[\\\/]/, '');
+                    promises.push(foundContainer.uploadBlob(path, containerPath + fileName));
+                });
+                return Ember.RSVP.all(promises);
             })
             .then(() => {
                 self.send('refreshBlobs');
-            }, error => {
+            })
+            .catch (error => {
                 toast(error, 4000);
             });
         },
@@ -198,10 +253,9 @@ export default Ember.Controller.extend({
                 Ember.$('.explorer-container').after(overlay);
 
                 self.set('modalFileUploadPath', this.value);
-                var fileName = this.value.replace(/^.*[\\\/]/, '');
 
                 self.store.find('container', activeContainer).then(result => {
-                    self.set('modalDefaultUploadPath', result.get('name') + ':/' + self.get('currentPath') + fileName);
+                    self.set('modalDefaultUploadPath', result.get('name') + ':/' + self.get('currentPath'));
                 });
 
             });
