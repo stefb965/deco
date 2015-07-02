@@ -32,6 +32,12 @@ function Menu() {
             document.body.appendChild(s);
         }
     });
+    var devTools = new gui.MenuItem({
+        label: 'DevTools',
+        click: function () {
+            require('nw.gui').Window.get().showDevTools();
+        }
+    });
 
     menu.append(cut);
     menu.append(copy);
@@ -39,6 +45,7 @@ function Menu() {
 
     if (config.environment === 'development') {
         menu.append(emberInspector);
+        menu.append(devTools);
     }
 
     // Mac Menu
