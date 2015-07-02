@@ -347,7 +347,7 @@ test('it should change subdirectories', function(assert) {
 
 test('it should upload file to blob', function(assert) {
 
-  assert.expect(16);
+  assert.expect(24);
   App = startApp(null, assert);
   store = App.__container__.lookup('store:main');
   Ember.run(function(){
@@ -366,7 +366,7 @@ test('it should upload file to blob', function(assert) {
   Ember.run( () => {
     controller.get('containers')
     .then(() => {
-      controller.send('uploadBlobData', '/testdir/testfile.js', 'mydir1/testfile.js');    
+      controller.send('uploadBlobData', '/testdir/testfile.js;/testdir/testfile2.js;/testdir/testfile3.js', 'mydir1/');    
     });
   });
 });
