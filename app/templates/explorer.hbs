@@ -39,42 +39,44 @@
                     {{/each}}
                 </ul>
             {{/if}}
-            <table class="striped">
-                <thead>
-                    <tr>
-                        <th class="action-field" {{action "selectAllBlobs"}}>Action</th>
-                        <th data-field="id">Name</th>
-                        <th data-field="name">Last Modified</th>
-                        <th data-field="price">Size</th>
-                        <th data-field="price">Type</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each dir in subDirectories}}
-                        <tr {{action "changeSubDirectory" dir}}>
-                            <td class="action-field">
-                                <i class="mdi-file-folder-open"></i>
-                            </td>
-                            <td>{{blob-display-path dir.name currentPath}}</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+            <div class="tableContainer">
+                <table class="striped">
+                    <thead>
+                        <tr>
+                            <th class="action-field" {{action "selectAllBlobs"}}>Action</th>
+                            <th data-field="id">Name</th>
+                            <th data-field="name">Last Modified</th>
+                            <th data-field="price">Size</th>
+                            <th data-field="price">Type</th>
                         </tr>
-                    {{/each}}
-                    {{#each blob in blobs itemController="blob"}}
-                        <tr {{bind-attr class="blob.selected:selected"}}>
-                            <td>
-                                {{input type="checkbox" id=blob.model.name checked=blob.model.selected}}
-                                <label for={{blob.model.name}}></label>
-                            </td>
-                            <td {{action "selectBlob" blob.model}}>{{blob-display-path blob.model.name currentPath}}</td>
-                            <td {{action "selectBlob" blob.model}}>{{blob.model.lastModified}}</td>
-                            <td {{action "selectBlob" blob.model}}>{{blob.prettySize}}</td>
-                            <td {{action "selectBlob" blob.model}}>{{blob.model.type}}</td>
-                        </tr>
-                    {{/each}}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {{#each dir in subDirectories}}
+                            <tr {{action "changeSubDirectory" dir}}>
+                                <td class="action-field">
+                                    <i class="mdi-file-folder-open"></i>
+                                </td>
+                                <td>{{blob-display-path dir.name currentPath}}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        {{/each}}
+                        {{#each blob in blobs itemController="blob"}}
+                            <tr {{bind-attr class="blob.selected:selected"}}>
+                                <td>
+                                    {{input type="checkbox" id=blob.model.name checked=blob.model.selected}}
+                                    <label for={{blob.model.name}}></label>
+                                </td>
+                                <td {{action "selectBlob" blob.model}}>{{blob-display-path blob.model.name currentPath}}</td>
+                                <td {{action "selectBlob" blob.model}}>{{blob.model.lastModified}}</td>
+                                <td {{action "selectBlob" blob.model}}>{{blob.prettySize}}</td>
+                                <td {{action "selectBlob" blob.model}}>{{blob.model.type}}</td>
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
             {{!-- Hidden elements for nw.js file dialogs --}}
             <input id="nwSaveInput" type="file" nwdirectory class="hidden" />
             <input id="nwUploadFile" type="file" class="hidden" multiple/>
