@@ -40,6 +40,11 @@ div.folder {
     ul li:last-child {
         border-bottom: none;
     }
+
+    .selected-container {
+        background-color: $secondary-color;
+        border-radius: 5px
+    }
 }
 
 .files {

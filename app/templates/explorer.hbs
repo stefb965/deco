@@ -12,9 +12,15 @@
         <div class="container">
             <ul>
                 {{#each container in containers}}
-                    <li {{action "switchActiveContainer" container.id}}>
-                        <i class="mdi-file-folder-open"></i> {{container.name}}
-                    </li>
+                    {{#if (compare-containers container activeContainer)}}
+                        <li class="selected-container" {{action "switchActiveContainer" container.id}}>
+                            <i class="mdi-file-folder-open"></i> {{container.name}}
+                        </li>
+                    {{else}}
+                        <li {{action "switchActiveContainer" container.id}}>
+                            <i class="mdi-file-folder-open"></i> {{container.name}}
+                        </li>
+                    {{/if}}
                 {{/each}}
             </ul>
             <div {{bind-attr class="newContainerEntryDisplay:visible:hidden"}}>
