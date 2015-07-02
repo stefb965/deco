@@ -189,6 +189,7 @@ export default Ember.Controller.extend({
 
             nwInput.change(function () {
                 nwInput.off('change');
+                console.log('OPEN MODAL');
                 Ember.$('#modal-upload').openModal();
 
                 // https://github.com/Dogfalo/materialize/issues/1532
@@ -203,7 +204,8 @@ export default Ember.Controller.extend({
                 self.store.find('container', activeContainer).then(result => {
                     self.set('modalDefaultUploadPath', result.get('name') + ':/' + self.get('currentPath') + fileName);
                 });
-
+                // ensure event fires
+                this.value = '';
             });
 
             nwInput.click();
