@@ -1,7 +1,7 @@
 /*** Colors ***/
-$primary-color: #0078d7;
-$primary-color-light: lighten($primary-color, 15%);
-$primary-color-dark: darken($primary-color, 15%);
+$primary-color: rgb(0, 72, 129);
+$primary-color-light: rgb(25, 90, 142);
+$primary-color-dark: rgb(0, 48, 86);
 
 $secondary-color: #8AC340;
 $success-color: color("green", "base");
