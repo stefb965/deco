@@ -3,8 +3,9 @@ import config from '../config/environment';
 export default Ember.Controller.extend({
     // Services & Aliases
     // ------------------------------------------------------------------------------
-    needs: 'application',
+    needs: ['application', 'notifications'],
     activeConnection: Ember.computed.alias('controllers.application.activeConnection'),
+    notifications: Ember.computed.alias('controllers.notifications'),
     azureStorage: Ember.computed.alias('nodeServices.azureStorage'),
     fileSvc: Ember.computed.alias('nodeServices.fs'),
     nodeServices: Ember.inject.service(),
