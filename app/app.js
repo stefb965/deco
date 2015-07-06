@@ -7,6 +7,9 @@ import blobAdapter from './adapters/blob';
 
 Ember.MODEL_FACTORY_INJECTIONS = true;
 
+/**
+ * Ember App object.
+ */
 var App = Ember.Application.extend({
     modulePrefix: config.modulePrefix,
     podModulePrefix: config.podModulePrefix,

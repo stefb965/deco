@@ -1,6 +1,11 @@
 import Ember from 'ember';
 
 export default {
+    /**
+     * Get the currently active account
+     * @param  {DS.Store} store
+     * @return {Promise}
+     */
     getActiveAccount: function (store) {
         return new Ember.RSVP.Promise(function (resolve, reject) {
             var accounts = store.all('account'),

@@ -1,16 +1,29 @@
 import Ember from 'ember';
 
+/**
+ * Ember Explorer Route
+ */
 export default Ember.Route.extend({
-
+    /**
+     * Get all containers for the current account, set them as model
+     */
     model: function () {
         return this.store.find('container');
     },
 
+    /**
+     * Housekeeping on transitions
+     */
     willTransition: function () {
         this.controller.notifyPropertyChange('searchQuery');
         this.controller.notifyPropertyChange('pathSegments');
     },
 
+    /**
+     * Reset the whole controller when we leave the route
+     * @param  {Ember.Controller}  controller
+     * @param  {Boolean} isExiting
+     */
     resetController: function (controller, isExiting) {
         if (isExiting) {
             // Reset the whole explorer controller on exit
@@ -37,6 +50,9 @@ export default Ember.Route.extend({
     },
 
     actions: {
+        /**
+         * Refresh the current model
+         */
         refresh: function () {
             return this.refresh();
         }

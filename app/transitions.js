@@ -1,3 +1,6 @@
+/**
+ * Liquid Fire Transitions
+ */
 var transition = function () {
     this.transition(
         this.fromRoute('welcome'),

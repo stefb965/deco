@@ -1,14 +1,27 @@
 import DS from 'ember-data';
 import accountUtil from '../utils/account';
 
+/**
+ * Ember-Data Model for containers
+ */
 var Container = DS.Model.extend({
-    nodeServices: Ember.inject.service(),
-
-    // filters result of blobs property
-    blobPrefixFilter: DS.attr('string', {
+    nodeServices: Ember.inject.service(),       // Node services (injected)
+    blobPrefixFilter: DS.attr('string', {       // Filters result of blobs property
         defaultValue: ''
     }),
+    name: DS.attr('string', {                   // Name of the container
+        defaultValue: ''
+    }),
+    lastModified: DS.attr('date', {             // Timestamp: Last modified
+        defaultValue: ''
+    }),
+    publicAccessLevel: ('string', {             // Public access level of the container
+        defaultValue: null
+    }),
 
+    /**
+     * Returns all the blobs in this container, accounting for faked folders
+     */
     blobs: function () {
         return this.store.find('blob', {
             container: this,
@@ -17,16 +30,10 @@ var Container = DS.Model.extend({
         });
     }.property().volatile(),
 
-    name: DS.attr('string', {
-        defaultValue: ''
-    }),
-    lastModified: DS.attr('date', {
-        defaultValue: ''
-    }),
-    publicAccessLevel: ('string', {
-        defaultValue: null
-    }),
-
+    /**
+     * Lists the "faked" directories for this container
+     * @param  {string} prefix - Which prefix to use
+     */
     listDirectoriesWithPrefix: function (prefix) {
         var self = this;
         var service;
@@ -54,6 +61,11 @@ var Container = DS.Model.extend({
         });
     },
 
+    /**
+     * Upload a blob to this container
+     * @param  {string} path     - Where is the file?
+     * @param  {string} blobName - Name of the blob that will be created
+     */
     uploadBlob: function (path, blobName) {
         var container = this.get('name');
         var self = this;
