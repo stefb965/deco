@@ -1,0 +1,22 @@
+{{!--
+Whereever this partial is used, you need to make sure that
+`notifications` is available on the controller and an alias
+to the actual notifications controller.
+ --}}
+ <div {{bind-attr class="notifications.isPulloutVisible :notifications"}}>
+     <div {{action "togglePullout" target="controllers.notifications"}} class="handle">
+         <span>…</span>
+         {{#if notifications.isActive}}
+             <div class="progress">
+                 <div class="indeterminate"></div>
+             </div>
+         {{/if}}
+     </div>
+     <div class="pullout">
+        <ul>
+            {{#each notification in notifications.notifications}}
+                {{partial "notification"}}
+            {{/each}}
+        </ul>
+    </div>
+</div>
