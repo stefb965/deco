@@ -7,14 +7,13 @@ import startApp from 'azureexplorer/tests/helpers/start-app';
 var App, store;
 moduleFor('controller:explorer', {
   // Specify the other units that are required for this test.
-    needs: ['controller:application', 'model:blob', 'model:container'],
+    needs: ['controller:application', 'controller:notifications', 'model:blob', 'model:container'],
 
     teardown: function () {
         Ember.run(App, App.destroy);
         window.localStorage.clear();
         store = null;
     }
-
 });
 
 

@@ -41,6 +41,8 @@ var NotificationObject = Ember.Object.extend({
         if (notificationsCtrl) {
             notificationsCtrl.removeNotification(this);
         }
+
+        this.destroy();
     }
 });
 
@@ -73,7 +75,7 @@ export default Ember.Controller.extend({
         } else {
             return false;
         }
-    }.property('notifications.@each'),
+    }.property('notifications.@each.progress'),
 
     /**
      * Add a notification to the notification queue.
@@ -124,34 +126,6 @@ export default Ember.Controller.extend({
      */
     addPromiseNotification: function (promise, type, text) {
         console.log('Not implemented! ', promise, type, text, name);
-    },
-
-    /**
-     * Updates a notification in the notification array,
-     * returning the new notification.
-     * @param {string} type          - Type of batch notification
-     * @param {string} text          - Text of batch notification
-     * @param {string} uuid          - UUID of the notification to change
-     * @return {notification}        - A notification object
-     */
-    updateNotification: function (uuid, type, text) {
-        var notifications = this.get('notifications');
-
-        if (!uuid || uuid === '') {
-            return false;
-        }
-
-        notifications.forEach(notification => {
-            if (notification.id === uuid) {
-                if (type) {
-                    notification.set('type', type);
-                }
-                if (text) {
-                    notification.set('text', text);
-                }
-                notification.set('timestamp', Date.now());
-            }
-        });
     },
 
     /**
