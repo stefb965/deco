@@ -7,7 +7,7 @@ import Uuid from '../utils/uuid';
  * @prop  {string} id                                   - UUID (use utils/uuid)
  * @prop  {string} type                                 - (upload || download || generic)
  * @prop  {string} text                                 - Text on the notification
- * @prop  {boolean} status                              - Is this an ongoing process?
+ * @prop  {int} progress                                - -1: Ongoing, status unknown. 0-100: Progress in %
  * @prop  {string} timestamp                            - When was the notification created?
  * @prop  {Ember.Controller} _notificationsCtrlRef      - Reference to the notifications controller
  *
@@ -19,9 +19,21 @@ var NotificationObject = Ember.Object.extend({
     id: null,
     type: null,
     text: null,
-    status: null,
+    progress: null,
     timestamp: null,
     _notificationsCtrlRef: null,
+
+    isRunning: function () {
+        return (this.get('progress') && this.get('progress') < 100);
+    }.property('progress'),
+
+    progressStyle: function () {
+        let width = 100 - this.get('progress'),
+            widthDone = this.get('progress'),
+            style = `background: linear-gradient(90deg, #c2d9a5 ${widthDone}%, #e7e7e8 ${width}%)`;
+
+        return (this.get('progress') > -1) ? style.htmlSafe() : '';
+    }.property('progress'),
 
     remove: function () {
         var notificationsCtrl = this.get('_notificationsCtrlRef');
@@ -46,7 +58,7 @@ export default Ember.Controller.extend({
 
         if (notifications && notifications.length > 0) {
             let firstActiveNotification = notifications.find((item) => {
-                if (item.get('status')) {
+                if (item.get('progress') && item.get('progress') < 100) {
                     return true;
                 } else {
                     return false;
@@ -67,10 +79,10 @@ export default Ember.Controller.extend({
      * Add a notification to the notification queue.
      * @param {string} type          - Type of notification
      * @param {string} text          - Text of notification
-     * @param {boolean} status       - Is it a running process?
+     * @param {int} progress         - -1: Ongoing, status unknown. 0-100: Progress in %
      * @return {notification}        - A notification object
      */
-    addNotification: function (type, text, status) {
+    addNotification: function (type, text, progress) {
         var notifications = this.get('notifications'),
             uuid = Uuid.makeUUID(),
             notification;
@@ -79,13 +91,13 @@ export default Ember.Controller.extend({
             return false;
         }
 
-        status = (status) ? status : false;
+        progress = (progress) ? progress : -1;
 
         notification = NotificationObject.create({
             id: uuid,
             type: type,
             text: text,
-            status: status,
+            progress: progress,
             timestamp: Date.now(),
             _notificationsCtrlRef: this
         });

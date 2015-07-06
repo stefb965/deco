@@ -1,6 +1,6 @@
-<li class="{{notification.type}}">
+<li class={{notification.type}} style={{notification.progressStyle}}>
     <span>
-        {{#if notification.status}}
+        {{#if notification.isRunning}}
             <i class="mdi-av-loop"></i>
         {{else}}
             <i class="mdi-action-done"></i>
