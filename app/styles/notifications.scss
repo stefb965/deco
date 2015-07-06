@@ -1,3 +1,5 @@
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(-360deg); } }
+
 .notifications {
     position: absolute;
     background-color: rgba(208, 208, 208, .5);
@@ -33,6 +35,14 @@
         ul {
             padding: 0;
             margin: 0;
+        }
+
+        ul li i.mdi-action-done {
+            -webkit-animation: none;
+        }
+
+        ul li i {
+            -webkit-animation: spin 2s linear infinite;
         }
 
         ul li {

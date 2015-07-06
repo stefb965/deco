@@ -1,4 +1,13 @@
 <li class="{{notification.type}}">
-    <span>{{notification.text}}</span>
+    <span>
+        {{#if notification.status}}
+            <i class="mdi-av-loop"></i>
+        {{else}}
+            <i class="mdi-action-done"></i>
+        {{/if}}
+    </span>
+    <span>
+        {{notification.text}}
+    </span>
     <span class="timestamp">{{ago notification.timestamp}}</span>
 </li>

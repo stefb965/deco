@@ -60,11 +60,11 @@ export default Ember.Controller.extend({
     }.property('notifications.@each'),
 
     init: function () {
-        this.addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"');
-        this.addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"');
-        this.addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"');
-        this.addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"');
-        this.addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"');
+        this.addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"', true);
+        this.addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"', false);
+        this.addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"', true);
+        this.addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"', false);
+        this.addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"', true);
     },
 
     /**
@@ -182,6 +182,11 @@ export default Ember.Controller.extend({
          * notifications list in the UI (if there is one);
          */
         togglePullout: function () {
+            // This hack is required since Chrome isn't smart enough
+            // to trigger our animations right away. We're just
+            // redrawing those elements.
+            Ember.$('div.pullout').hide().show(0);
+
             this.toggleProperty('isPulloutVisible');
         }
     }
