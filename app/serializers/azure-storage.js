@@ -1,9 +1,10 @@
 import DS from 'ember-data';
-// ////////////////////////////////////////////////
-// Azure Storage Serializer
-// Nothing to do, azure library does serializtion
-// this is here to override the default serializer
-// ////////////////////////////////////////////////
+
+/**
+ * Azure Storage Serializer
+ * Nothing to do, azure library does serializtion
+ * this is here to override the default serializer
+ */
 export default DS.Serializer.extend({
     extract: function (store, type, payload) {
         return payload;

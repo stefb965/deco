@@ -1,6 +1,11 @@
 import DS from 'ember-data';
 import accountUtil from '../utils/account';
 
+/**
+ * Helper function: Write a blob to a Node file stream
+ * @param  {DS.Model} model   - Model to query for data
+ * @param  {FS Stream} stream - The stream to write to
+ */
 function startWriteToStream(model, stream) {
     accountUtil.getActiveAccount(model.store).then(function (account) {
         var blobService = model.get('azureStorage').createBlobService(account.get('name'),
@@ -14,18 +19,26 @@ function startWriteToStream(model, stream) {
     });
 }
 
+/**
+ * Ember-Data Model for blobs
+ */
 export default DS.Model.extend({
-    container: DS.belongsTo('container', {
+    container: DS.belongsTo('container', {  // The container this blob lives in
         async: true
     }),
-    nodeServices: Ember.inject.service(),
-    fileSystem: Ember.inject.service(),
-    name: DS.attr('string'),
-    size: DS.attr('number'),
-    lastModified: DS.attr('date'),
-    container_id: DS.attr('string'),
-    type: DS.attr('string'),
-    selected: DS.attr('boolean'),
+    nodeServices: Ember.inject.service(),   // Node services (injected)
+    fileSystem: Ember.inject.service(),     // Node FS service (injected)
+    name: DS.attr('string'),                // Name of the blob
+    size: DS.attr('number'),                // Size of the blob, in bytes
+    lastModified: DS.attr('date'),          // Timestamp: Last modified
+    container_id: DS.attr('string'),        // ID of the container this blob lives in
+    type: DS.attr('string'),                // Filetype of the blob (example: image/png)
+    selected: DS.attr('boolean'),           // Is this blob selected?
+
+    /**
+     * Get a public URL to the blob
+     * @return {Promise}
+     */
     getLink: function () {
         var self = this;
         return new Ember.RSVP.Promise(function (resolve) {
@@ -55,7 +68,10 @@ export default DS.Model.extend({
         });
     },
 
-    // returns stream to blob path
+    /**
+     * Returns stream to blob path
+     * @param  {string} path - Path to write to
+     */
     toFile: function (path) {
         var fileStream = this.get('fileSvc').createWriteStream(path);
         // begin writing to stream

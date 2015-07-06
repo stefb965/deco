@@ -1,6 +1,9 @@
-/*jshint bitwise: false*/
-// Stolen and then cleaned from File-Size | 1.0.0 | MIT | Nijiko Yonskai <nijikokun@gmail.com> | 2015
+/* jshint bitwise: false */
 
+/**
+ * Take a filesize and turn it into something a human understands
+ * Stolen and then cleaned from File-Size | 1.0.0 | MIT | Nijiko Yonskai <nijikokun@gmail.com> | 2015
+ */
 export default (function () {
     var units = 'BKMGTPEZY'.split('');
 

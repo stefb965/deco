@@ -1,10 +1,18 @@
 import Ember from 'ember';
 
+/**
+ * The controller for the welcome view - controlling the creation/addition/connection of and
+ * with accounts.
+ */
 export default Ember.Controller.extend({
     needs: 'application',
     activeConnection: Ember.computed.alias('controllers.application.activeConnection'),
     loading: false,
 
+    /**
+     * If the model is changed, we check if there's reason to go straight to
+     * the "add a new account" UI
+     */
     setup: function () {
         var model = this.get('model');
         if (!model || !model.content || model.content.length < 1) {
@@ -12,6 +20,10 @@ export default Ember.Controller.extend({
         }
     }.observes('model'),
 
+    /**
+     * If the user selects an account for editing, we're
+     * updating the name & key field with the right data
+     */
     editAccountObserver: function () {
         var editAccount = this.get('selectedEditAccount');
 
@@ -24,15 +36,24 @@ export default Ember.Controller.extend({
     }.observes('selectedEditAccount'),
 
     actions: {
+        /**
+         * Show the "Add New Account" UI
+         */
         toggleAddNew: function () {
             this.toggleProperty('addNewUi');
         },
 
+        /**
+         * Show the "Edit Account" UI
+         */
         toggleEdit: function () {
             this.toggleProperty('editUi');
             this.send('selectize');
         },
 
+        /**
+         * Save data for a changed account and go back to the "Select Account" view
+         */
         edit: function () {
             var editAccount = this.get('selectedEditAccount');
             var editAccountName = this.get('editAccountName');
@@ -52,6 +73,9 @@ export default Ember.Controller.extend({
         delete: function () {
         },
 
+        /**
+         * Add a new account and connect to it.
+         */
         addNew: function () {
             var name = this.get('account_name');
             var key = this.get('account_key');
@@ -65,6 +89,10 @@ export default Ember.Controller.extend({
             this.send('connect', newAccount.get('id'));
         },
 
+        /**
+         * Connect to a selected account
+         * @param  {string} activeAccountId
+         */
         connect: function (activeAccountId) {
             var self = this;
 
@@ -94,6 +122,9 @@ export default Ember.Controller.extend({
             });
         },
 
+        /**
+         * Test the selected account and return whether or not we can actually connect
+         */
         test: function () {
             var name = this.get('account_name');
             var key = this.get('account_key');

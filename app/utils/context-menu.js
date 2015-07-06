@@ -1,6 +1,9 @@
 import Ember from 'ember';
 import config from '../config/environment';
 
+/**
+ * This setups NW.js's context menu
+ */
 function Menu() {
     var gui = window.requireNode('nw.gui');
     var menu = new gui.Menu();

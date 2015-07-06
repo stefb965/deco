@@ -1,5 +1,10 @@
 import Ember from 'ember';
 import config from '../config/environment';
+
+/**
+ * The controller for the file explorer - in many ways the main controller for the application,
+ * controlling container/blob selection and interaction.
+ */
 export default Ember.Controller.extend({
     // Services & Aliases
     // ------------------------------------------------------------------------------
@@ -12,19 +17,19 @@ export default Ember.Controller.extend({
 
     // Properties
     // ------------------------------------------------------------------------------
-    activeContainer: null,
-    blobs: [],
-    subDirectories: [],
-    pathSegments: [{name: '/'}],      // individal directory names of current path
-    allBlobSelected: false,
+    activeContainer: null,              // DS.Record of the currently selected container
+    blobs: [],                          // Ember.MutableArray containing the blobs for the current container
+    subDirectories: [],                 // Ember.MutableArray containing the directories for the current container
+    pathSegments: [{name: '/'}],        // Individal directory names of current path
+    allBlobSelected: false,             // Are all blobs selected?
     newContainerEntryDisplay: false,
-    modalFileUploadPath: '',            // path used for the local file path for upload
-    modalDefaultUploadPath: '',         // path used for the upload path to azure in the upload modal
-    searchSpinnerDisplay: false,
-    newContainerName: '',
-    searchQuery: '',
-    blobsLoading: true,
-    selectedBlob: null,
+    modalFileUploadPath: '',            // Path used for the local file path for upload
+    modalDefaultUploadPath: '',         // Path used for the upload path to azure in the upload modal
+    searchSpinnerDisplay: false,        // Should the 'searching for a container' spinner be displayed
+    newContainerName: '',               // Placeholder property for the 'create a container' action
+    searchQuery: '',                    // Search query for containers
+    blobsLoading: true,                 // Are we loading blobs
+    selectedBlob: null,                 // DS.Record of the currently selected blob
 
     // Init & Setup
     // ------------------------------------------------------------------------------
@@ -41,6 +46,11 @@ export default Ember.Controller.extend({
 
     // Computed Properties
     // ------------------------------------------------------------------------------
+    /**
+     * Either all containers in the model or, if a container search query is set,
+     * all the containers matching the query.
+     * @return {Promise}
+     */
     containers: function () {
         var self = this;
 
@@ -54,12 +64,16 @@ export default Ember.Controller.extend({
         }
     }.property('searchQuery'),
 
+    /**
+     * Composes the current "faked" path
+     * @return {string}
+     */
     currentPath: function () {
         var path = '';
         var first = true;
         this.get('pathSegments').forEach(segment => {
+            // the first slash should be skipped
             if (first) {
-                // the first slash should be skipped
                 first = false;
                 return;
             }
@@ -72,6 +86,10 @@ export default Ember.Controller.extend({
 
     // Observers
     // ------------------------------------------------------------------------------
+    /**
+     * Observes the currently selected container and responds to changes by
+     * setting up blobs
+     */
     activeContainerObserver: function () {
         var activeContainer = this.get('activeContainer'),
             blobs = [],
@@ -143,7 +161,9 @@ export default Ember.Controller.extend({
     // Actions
     // ------------------------------------------------------------------------------
     actions: {
-
+        /**
+         * Handle a file dragged into the window (by uploading it)
+         */
         handleFileDragDrop: function (e) {
             var sourcePaths = '',
                 self = this,
@@ -163,8 +183,7 @@ export default Ember.Controller.extend({
 
             Ember.$('#modal-upload').openModal();
 
-            // https://github.com/Dogfalo/materialize/issues/1532
-            // ugh!
+            // Ugh: https://github.com/Dogfalo/materialize/issues/1532
             var overlay = Ember.$('#lean-overlay');
             overlay.detach();
             Ember.$('.explorer-container').after(overlay);
@@ -176,6 +195,10 @@ export default Ember.Controller.extend({
             });
         },
 
+        /**
+         * Switch the active container, plus minor housekeeping
+         * @param  {DS.Record Container} selectedContainer - The container to be selected
+         */
         switchActiveContainer: function (selectedContainer) {
             // reset all blobs selected flag
             if (selectedContainer === this.get('activeContainer')) {
@@ -186,6 +209,11 @@ export default Ember.Controller.extend({
             this.set('activeContainer', selectedContainer);
         },
 
+        /**
+         * Upload one or multiple files to blobs
+         * @param  {Array} filePaths  - Local file paths of the files to upload
+         * @param  {string} azurePath - Remote Azure Storage path
+         */
         uploadBlobData: function (filePaths, azurePath) {
             var self = this,
                 activeContainer = this.get('activeContainer'),
@@ -200,15 +228,17 @@ export default Ember.Controller.extend({
                     promises.push(foundContainer.uploadBlob(path, containerPath + fileName));
                 });
                 return Ember.RSVP.all(promises);
-            })
-            .then(() => {
+            }).then(() => {
                 self.send('refreshBlobs');
-            })
-            .catch (error => {
+            }).catch (error => {
                 toast(error, 4000);
             });
         },
 
+        /**
+         * Change the current "faked" directory
+         * @param  {string} directory
+         */
         changeDirectory: function (directory) {
             // we have recieved a path segment object, ie: the user clicked a path button
             var pathSegs = [];
@@ -222,6 +252,10 @@ export default Ember.Controller.extend({
             this.send('refreshBlobs');
         },
 
+        /**
+         * Change the current "faked" sub directory
+         * @param  {string} directory
+         */
         changeSubDirectory: function (directory) {
             var pathSegs = [{name: '/'}];
 
@@ -238,6 +272,9 @@ export default Ember.Controller.extend({
             this.send('refreshBlobs');
         },
 
+        /**
+         * Open the upload file modal
+         */
         uploadBlob: function () {
             var nwInput = Ember.$('#nwUploadFile'),
                 activeContainer = this.get('activeContainer'),
@@ -245,11 +282,9 @@ export default Ember.Controller.extend({
 
             nwInput.change(function () {
                 nwInput.off('change');
-                console.log('OPEN MODAL');
                 Ember.$('#modal-upload').openModal();
 
-                // https://github.com/Dogfalo/materialize/issues/1532
-                // ugh!
+                // Ugh: https://github.com/Dogfalo/materialize/issues/1532
                 var overlay = Ember.$('#lean-overlay');
                 overlay.detach();
                 Ember.$('.explorer-container').after(overlay);
@@ -260,13 +295,16 @@ export default Ember.Controller.extend({
                     self.set('modalDefaultUploadPath', result.get('name') + ':/' + self.get('currentPath'));
                 });
 
-                // ensure event fires
+                // Ensure event fires
                 this.value = '';
             });
 
             nwInput.click();
         },
 
+        /**
+         * Select all blobs in the current view
+         */
         selectAllBlobs: function () {
             var self = this;
             this.get('blobs').forEach(blob => {
@@ -280,7 +318,11 @@ export default Ember.Controller.extend({
             this.toggleProperty('allBlobSelected');
         },
 
-        // directory parameter is a test hook for automation
+        /**
+         * Download all the selected blobs in a directory.
+         * Directory parameter is a test hook for automation.
+         * @param  {string} directory
+         */
         downloadBlobs: function (directory) {
             var nwInput = Ember.$('#nwSaveInput'),
                 blobs = this.get('blobs'),
@@ -290,7 +332,7 @@ export default Ember.Controller.extend({
 
             handleInputDirectory = function (dir) {
                 blobs.forEach(function (blob) {
-                    // check if this one is marked for download
+                    // Check if this one is marked for download
                     if (blob.get('selected')) {
                         var fileName = blob.get('name').replace(/^.*[\\\/]/, '');
                         var targetPath = dir + '/' + fileName;
@@ -299,18 +341,18 @@ export default Ember.Controller.extend({
                 });
             };
 
-            // check that at least one blob is selected
+            // Check that at least one blob is selected
             var noBlobsSelected = blobs.every(blob => {
                 return (!blob.get('selected'));
             });
 
-            // if no blobs are selected we don't need to show the native dialog
+            // If no blobs are selected we don't need to show the native dialog
             if (!noBlobsSelected) {
-                // native dialog won't work in automation so skip in automation
+                // Native dialog won't work in automation so skip in automation
                 if (!directory) {
                     nwInput.change(function () {
                         handleInputDirectory(this.value);
-                        // reset value to ensure change event always fires
+                        // Reset value to ensure change event always fires
                         this.value = '';
                         nwInput.off('change');
                     });
@@ -322,10 +364,17 @@ export default Ember.Controller.extend({
             }
         },
 
+        /**
+         * Mark a given blob as selected
+         * @param  {DS.Record} blob
+         */
         selectBlob: function (blob) {
             this.set('selectedBlob', blob);
         },
 
+        /**
+         * Open the 'delete blobs' modal.
+         */
         deleteBlobs: function () {
             var blobs = this.get('blobs'),
                 deleteCount = 0;
@@ -348,13 +397,15 @@ export default Ember.Controller.extend({
             // Open delete prompt
             Ember.$('#modal-delete').openModal();
 
-            // https://github.com/Dogfalo/materialize/issues/1532
-            // ugh!
+            // Ugh: https://github.com/Dogfalo/materialize/issues/1532
             var overlay = Ember.$('#lean-overlay');
             overlay.detach();
             Ember.$('.explorer-container').after(overlay);
         },
 
+        /**
+         * Delete all the selected blobs
+         */
         deleteBlobData: function () {
             var blobs = this.get('blobs'),
                 self = this;
@@ -373,12 +424,14 @@ export default Ember.Controller.extend({
             this.set('blobs', blobs);
         },
 
+        /**
+         * Refresh the current blobs. Useful if the blobs have changed/
+         */
         refreshBlobs: function () {
             var blobs = [],
                 self = this;
 
-            this.store.find('container', this.get('activeContainer'))
-            .then(result => {
+            this.store.find('container', this.get('activeContainer')).then(result => {
                 if (result) {
                     result.set('blobPrefixFilter', self.get('currentPath'));
                     blobs = result.get('blobs');
@@ -389,11 +442,9 @@ export default Ember.Controller.extend({
                 self.set('blobs', blobs);
                 self.set('blobsLoading', false);
                 return result;
-            })
-            .then(container => {
+            }).then(container => {
                 return container.listDirectoriesWithPrefix(self.get('currentPath'));
-            })
-            .then(result => {
+            }).then(result => {
                 var subDirs = [];
                 result.forEach(dir => {
                     subDirs.push({
@@ -404,10 +455,16 @@ export default Ember.Controller.extend({
             });
         },
 
+        /**
+         * Display the new container name input field
+         */
         showNewContainer: function () {
             return this.set('newContainerEntryDisplay', true);
         },
 
+        /**
+         * Create a new container
+         */
         createContainer: function () {
             var newContainer = this.store.createRecord('container', {name: this.get('newContainerName'), id: this.get('newContainerName')});
             var self = this;
@@ -416,6 +473,9 @@ export default Ember.Controller.extend({
             });
         },
 
+        /**
+         * Go back to the welcome screen
+         */
         goHome: function () {
             this.transitionToRoute('welcome');
         }

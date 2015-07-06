@@ -1,15 +1,29 @@
 import Ember from 'ember';
+
 var azureStorage = null;
 var fs = null;
-// check if running in nw, if not, we're probably running as a test
-// in which case this entire service will be mocked
+
+/**
+ * Check if running in nw, if not, we're probably running as a test,
+ * in which case this entire service will be mocked
+ */
 if (window.requireNode) {
     azureStorage = window.requireNode('azure-storage');
     fs = window.requireNode('fs');
 }
+
+/**
+ * Allow the injection of Node Modules as Ember Services
+ */
 export default Ember.Service.extend({
     azureStorage: azureStorage,
     fs: fs,
+
+    /**
+     * Get the currently active account
+     * @param  {DS.Store} store
+     * @return {Promise}
+     */
     getActiveAccount: function (store) {
         return new Ember.RSVP.Promise(function (resolve, reject) {
             var accounts = store.all('account'),
