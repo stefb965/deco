@@ -10,6 +10,10 @@ import Uuid from '../utils/uuid';
  * @prop  {boolean} status                              - Is this an ongoing process?
  * @prop  {string} timestamp                            - When was the notification created?
  * @prop  {Ember.Controller} _notificationsCtrlRef      - Reference to the notifications controller
+ *
+ *
+ * ## Usage Example
+ * addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"', true);
  */
 var NotificationObject = Ember.Object.extend({
     id: null,
@@ -23,7 +27,7 @@ var NotificationObject = Ember.Object.extend({
         var notificationsCtrl = this.get('_notificationsCtrlRef');
 
         if (notificationsCtrl) {
-            notificationsCtrl.removeNotification(this.get('id'));
+            notificationsCtrl.removeNotification(this);
         }
     }
 });
@@ -58,14 +62,6 @@ export default Ember.Controller.extend({
             return false;
         }
     }.property('notifications.@each'),
-
-    init: function () {
-        this.addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"', true);
-        this.addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"', false);
-        this.addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"', true);
-        this.addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"', false);
-        this.addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"', true);
-    },
 
     /**
      * Add a notification to the notification queue.
@@ -148,32 +144,17 @@ export default Ember.Controller.extend({
 
     /**
      * Remove a notification from the notifications array.
-     * @param {string} uuid          - UUID of the notification to remove
+     * @param {object} notification  - Notification to remove
      * @return {boolean}             - True for success, false for failure
      */
-    removeNotification: function (uuid) {
-        var notifications = this.get('notifications'),
-            notification, notificationIndex;
+    removeNotification: function (notification) {
+        var notifications = this.get('notifications');
 
-        if (!uuid || uuid === '') {
+        if (!notification) {
             return false;
         }
 
-        notification = notifications.find((item, index) => {
-            if (item.get('id') === uuid) {
-                notificationIndex = index;
-                return true;
-            } else {
-                return false;
-            }
-        });
-
-        if (notificationIndex) {
-            notifications.removeAt(notificationIndex, 1);
-            return true;
-        } else {
-            return false;
-        }
+        notifications.removeObject(notification);
     },
 
     actions: {
@@ -188,6 +169,12 @@ export default Ember.Controller.extend({
             Ember.$('div.pullout').hide().show(0);
 
             this.toggleProperty('isPulloutVisible');
+        },
+
+        removeNotification: function (notification) {
+            if (notification) {
+                notification.remove();
+            }
         }
     }
 });

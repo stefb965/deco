@@ -37,11 +37,7 @@
             margin: 0;
         }
 
-        ul li i.mdi-action-done {
-            -webkit-animation: none;
-        }
-
-        ul li i {
+        ul li i.mdi-av-loop {
             -webkit-animation: spin 2s linear infinite;
         }
 
@@ -61,6 +57,12 @@
 
         ul li span.timestamp {
             float: right;
+        }
+
+        ul li span.dismiss {
+            width: 15px;
+            float: right;
+            margin-left: 10px;
         }
     }
 }
