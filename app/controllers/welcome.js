@@ -40,6 +40,10 @@ export default Ember.Controller.extend({
          * Show the "Add New Account" UI
          */
         toggleAddNew: function () {
+            if (!this.get('model').content || this.get('model').content.length < 1) {
+                return this.set('addNewUi', true);
+            }
+
             this.toggleProperty('addNewUi');
             this.send('selectize');
 
@@ -82,6 +86,26 @@ export default Ember.Controller.extend({
         },
 
         delete: function () {
+            var editAccount = this.get('selectedEditAccount');
+
+            this.store.find('account', editAccount).then(result => {
+                if (result) {
+                    result.destroyRecord();
+                }
+
+                Ember.run.schedule('destroy', () => {
+                    this.store.find('account').then(accounts => {
+                        if (!accounts || !accounts.content || accounts.content.length < 1) {
+                            this.send('toggleEdit');
+                            this.send('toggleAddNew');
+                        } else {
+                            this.send('toggleEdit');
+                        }
+                    });
+                });
+            });
+
+            appInsights.trackEvent('DeleteAccount');
         },
 
         /**
@@ -91,9 +115,9 @@ export default Ember.Controller.extend({
             var name = this.get('account_name');
             var key = this.get('account_key');
             var newAccount = this.store.createRecord('account', {
-                    name: name,
-                    key: key
-                });
+                name: name,
+                key: key
+            });
 
             newAccount.save();
 

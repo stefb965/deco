@@ -46,6 +46,13 @@ export default Ember.Route.extend({
          */
         didTransition: function () {
             this.controller.send('selectize');
+        },
+
+        /**
+         * Refresh the current model
+         */
+        refresh: function () {
+            return this.refresh();
         }
     }
 });
