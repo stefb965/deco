@@ -12,6 +12,13 @@ export default Ember.Route.extend({
     },
 
     /**
+     * AfterModel: Track PageView
+     */
+    afterModel: function () {
+        appInsights.trackPageView('Explorer');
+    },
+
+    /**
      * Housekeeping on transitions
      */
     willTransition: function () {

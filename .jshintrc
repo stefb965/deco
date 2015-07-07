@@ -40,6 +40,7 @@
         "md5": true,
         "nitrogen": true,
         "QUnit": true,
-        "toast": true
+        "toast": true,
+        "appInsights": true
     }
 }

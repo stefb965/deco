@@ -12,6 +12,13 @@ export default Ember.Route.extend({
     },
 
     /**
+     * AfterModel: Track PageView
+     */
+    afterModel: function () {
+        appInsights.trackPageView('Welcome');
+    },
+
+    /**
      * When we transition to the explorer view, let's do some housekeeping
      * @param  {Ember.Controller}  controller
      * @param  {Boolean} isExiting

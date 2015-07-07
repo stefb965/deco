@@ -29,6 +29,7 @@ export default Ember.Service.extend({
             var accounts = store.all('account'),
                 length = accounts.get('length'),
                 i = 0;
+
             accounts.forEach(function (account) {
                 if (account.get('active') === true) {
                     return Ember.run(null, resolve, account);

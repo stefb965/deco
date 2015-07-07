@@ -33,10 +33,13 @@ export default Ember.Component.extend({
 
             if (type.indexOf('image') > -1) {
                 this.set('typeImage', true);
+                appInsights.trackEvent('PreviewImage');
             } else if (type.indexOf('audio') > -1) {
                 this.set('typeAudio', true);
+                appInsights.trackEvent('PreviewAudio');
             } else if (type.indexOf('video') > -1) {
                 this.set('typeVideo', true);
+                appInsights.trackEvent('PreviewVideo');
             }
 
             this.set('type', type);

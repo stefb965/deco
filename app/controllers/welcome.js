@@ -42,6 +42,10 @@ export default Ember.Controller.extend({
         toggleAddNew: function () {
             this.toggleProperty('addNewUi');
             this.send('selectize');
+
+            if (this.get('addNewUi')) {
+                appInsights.trackPageView('AddNewAccount');
+            }
         },
 
         /**
@@ -50,6 +54,10 @@ export default Ember.Controller.extend({
         toggleEdit: function () {
             this.toggleProperty('editUi');
             this.send('selectize');
+
+            if (this.get('editUi')) {
+                appInsights.trackPageView('EditAccount');
+            }
         },
 
         /**
@@ -69,6 +77,8 @@ export default Ember.Controller.extend({
 
                 this.send('toggleEdit');
             });
+
+            appInsights.trackEvent('EditAccount');
         },
 
         delete: function () {
@@ -88,6 +98,7 @@ export default Ember.Controller.extend({
             newAccount.save();
 
             this.send('connect', newAccount.get('id'));
+            appInsights.trackEvent('AddNewAccount');
         },
 
         /**
@@ -121,6 +132,8 @@ export default Ember.Controller.extend({
 
                 self.transitionToRoute('explorer');
             });
+
+            appInsights.trackEvent('Connect');
         }
     }
 });

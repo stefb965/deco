@@ -13,6 +13,35 @@
     <link rel="stylesheet" href="assets/azureexplorer.css">
 
     {{content-for 'head-footer'}}
+    <script type="text/javascript">
+      var appInsights = window.appInsights || function (config) {
+          function s(config) {
+              t[config] = function () {
+                  var i = arguments;
+                  t.queue.push(function () {
+                      t[config].apply(t, i)
+                  })
+              }
+          }
+          var t = {
+                  config: config
+              },
+              r = document,
+              f = window,
+              e = "script",
+              o = r.createElement(e),
+              i, u;
+          for (o.src = config.url || "vendor/ai.js", r.getElementsByTagName(e)[0].parentNode.appendChild(o), t.cookie = r.cookie, t.queue = [], i = ["Event", "Exception", "Metric", "PageView", "Trace"]; i.length;) s("track" + i.pop());
+          return config.disableExceptionTracking || (i = "onerror", s("_" + i), u = f[i], f[i] = function (config, r, f, e, o) {
+              var s = u && u(config, r, f, e, o);
+              return s !== !0 && t["_" + i](config, r, f, e, o), s
+          }), t
+      }({
+          instrumentationKey: "fec566d6-2c4e-4c96-833b-2991f5877cb5"
+      });
+
+      window.appInsights = appInsights;
+    </script>
   </head>
   <body>
     {{content-for 'body'}}

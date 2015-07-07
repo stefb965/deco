@@ -113,6 +113,8 @@ export default Ember.Controller.extend({
 
                 self.set('blobs', blobs);
                 self.set('blobsLoading', false);
+                appInsights.trackMetric('BlobsInContainer', blobs.length);
+
                 Ember.run.next(() => {
                     self.set('activeContainer', containerObject.id);
                 });
@@ -150,6 +152,8 @@ export default Ember.Controller.extend({
 
                 self.set('blobs', blobs);
                 self.set('blobsLoading', false);
+
+                appInsights.trackMetric('BlobsInContainer', blobs.length);
             });
         }
     }.observes('containers', 'activeContainer', 'model'),
@@ -169,6 +173,7 @@ export default Ember.Controller.extend({
                 self = this,
                 activeContainer = this.get('activeContainer'),
                 file;
+
             // dataTransfer.files doesn't have forEach
             for (var i in e.dataTransfer.files) {
                 if (i % 1 === 0) {
@@ -193,6 +198,8 @@ export default Ember.Controller.extend({
             self.store.find('container', activeContainer).then(result => {
                 self.set('modalDefaultUploadPath', result.get('name') + ':/' + self.get('currentPath'));
             });
+
+            appInsights.trackEvent('handleFileDragDrop');
         },
 
         /**
@@ -207,6 +214,8 @@ export default Ember.Controller.extend({
             this.set('pathSegments', [{ name: '/' }]);
             this.set('allBlobSelected', false);
             this.set('activeContainer', selectedContainer);
+
+            appInsights.trackEvent('switchActiveContainer');
         },
 
         /**
@@ -223,10 +232,15 @@ export default Ember.Controller.extend({
 
             self.store.find('container', activeContainer).then(foundContainer => {
                 var promises = [];
+
                 paths.forEach(path => {
                     fileName = path.replace(/^.*[\\\/]/, '');
                     promises.push(foundContainer.uploadBlob(path, containerPath + fileName));
                 });
+
+                appInsights.trackEvent('uploadBlobData');
+                appInsights.trackMetric('uploadBlobs', paths.length);
+
                 return Ember.RSVP.all(promises);
             }).then(() => {
                 self.send('refreshBlobs');
@@ -250,6 +264,8 @@ export default Ember.Controller.extend({
             this.set('subDirectories', []);
             this.set('pathSegments', pathSegs);
             this.send('refreshBlobs');
+
+            appInsights.trackEvent('changeDirectory');
         },
 
         /**
@@ -300,6 +316,8 @@ export default Ember.Controller.extend({
             });
 
             nwInput.click();
+
+            appInsights.trackEvent('uploadBlob');
         },
 
         /**
@@ -316,6 +334,8 @@ export default Ember.Controller.extend({
             });
 
             this.toggleProperty('allBlobSelected');
+
+            appInsights.trackEvent('selectAllBlobs');
         },
 
         /**
@@ -362,6 +382,8 @@ export default Ember.Controller.extend({
                     handleInputDirectory(directory);
                 }
             }
+
+            appInsights.trackEvent('downloadBlobs');
         },
 
         /**
@@ -401,6 +423,8 @@ export default Ember.Controller.extend({
             var overlay = Ember.$('#lean-overlay');
             overlay.detach();
             Ember.$('.explorer-container').after(overlay);
+
+            appInsights.trackEvent('deleteBlobs');
         },
 
         /**
@@ -425,7 +449,7 @@ export default Ember.Controller.extend({
         },
 
         /**
-         * Refresh the current blobs. Useful if the blobs have changed/
+         * Refresh the current blobs. Useful if the blobs have changed.
          */
         refreshBlobs: function () {
             var blobs = [],
@@ -453,6 +477,8 @@ export default Ember.Controller.extend({
                 });
                 self.set('subDirectories', subDirs);
             });
+
+            appInsights.trackEvent('refreshBlobs');
         },
 
         /**

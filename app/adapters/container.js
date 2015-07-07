@@ -25,9 +25,10 @@ export default DS.Adapter.extend({
                 var blobService = self.get('azureStorage').createBlobService(account.get('name'),
                     account.get('key'));
 
-                blobService.getContainerProperties(snapshot.attr('name'), function (err, data) {
-                    if (err) {
-                        return Ember.run(null, reject, err);
+                blobService.getContainerProperties(snapshot.attr('name'), function (error, data) {
+                    if (error) {
+                        appInsights.trackException(error);
+                        return Ember.run(null, reject, error);
                     }
                     return Ember.run(null, resolve, [{
                         name: data.name,
@@ -52,9 +53,10 @@ export default DS.Adapter.extend({
             accountUtils.getActiveAccount(store).then(function (account) {
                 var blobService = self.get('azureStorage').createBlobService(account.get('name'),
                     account.get('key'));
-                blobService.createContainerIfNotExists(snapshot.get('name'), function (err) {
-                    if (err) {
-                        return Ember.run(null, reject, err);
+                blobService.createContainerIfNotExists(snapshot.get('name'), function (error) {
+                    if (error) {
+                        appInsights.trackException(error);
+                        return Ember.run(null, reject, error);
                     }
                     return Ember.run(null, resolve, snapshot);
                 });
@@ -82,9 +84,10 @@ export default DS.Adapter.extend({
             accountUtils.getActiveAccount(store).then(function (account) {
                 var blobService = self.get('azureStorage').createBlobService(account.get('name'),
                     account.get('key'));
-                blobService.deleteContainer(snapshot.get('name'), function (err) {
-                    if (err) {
-                        return Ember.run(null, reject, err);
+                blobService.deleteContainer(snapshot.get('name'), function (error) {
+                    if (error) {
+                        appInsights.trackException(error);
+                        return Ember.run(null, reject, error);
                     }
                     return Ember.run(null, resolve, null);
                 });
@@ -105,14 +108,16 @@ export default DS.Adapter.extend({
 
                 try {
                     blobService = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
-                } catch (err) {
-                    return reject(err);
+                } catch (error) {
+                    appInsights.trackException(error);
+                    return reject(error);
                 }
 
                 if (blobService) {
-                    blobService.listContainersSegmented(null, function (err, data) {
-                        if (err) {
-                            return Ember.run(null, reject, err);
+                    blobService.listContainersSegmented(null, function (error, data) {
+                        if (error) {
+                            appInsights.trackException(error);
+                            return Ember.run(null, reject, error);
                         }
 
                         var containerModels = [];
@@ -147,14 +152,16 @@ export default DS.Adapter.extend({
 
                 try {
                     blobService = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
-                } catch (err) {
-                    return reject(err);
+                } catch (error) {
+                    appInsights.trackException(error);
+                    return reject(error);
                 }
 
                 if (blobService) {
-                    blobService.listContainersSegmented(null, function (err, data) {
-                        if (err) {
-                            return Ember.run(null, reject, err);
+                    blobService.listContainersSegmented(null, function (error, data) {
+                        if (error) {
+                            appInsights.trackException(error);
+                            return Ember.run(null, reject, error);
                         }
                         var results = [];
                         for (var i in data.entries) {
