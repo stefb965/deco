@@ -1,6 +1,8 @@
 {{partial "navbar"}}
 {{partial "modals/upload"}}
 {{partial "modals/delete"}}
+{{partial "modals/addcontainer"}}
+
 <div class="explorer-container">
     <div class="folder">
         <div class="search">
@@ -23,10 +25,6 @@
                     {{/if}}
                 {{/each}}
             </ul>
-            <div {{bind-attr class="newContainerEntryDisplay:visible:hidden"}}>
-                {{input placeholder="New Container" value=newContainerName action="createContainer" on="enter"}}
-            </div>
-            <a {{action "showNewContainer"}} href="" class="btn-floating btn-small waves-effect waves-light"><i class="mdi-content-add"></i></a>
         </div>
         {{ax-preview selectedBlob=selectedBlob}}
     </div>

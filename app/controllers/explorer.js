@@ -482,21 +482,29 @@ export default Ember.Controller.extend({
         },
 
         /**
-         * Display the new container name input field
+         * Open the 'add container' modal.
          */
-        showNewContainer: function () {
-            return this.set('newContainerEntryDisplay', true);
+        addContainer: function () {
+            this.set('newContainerName', '');
+
+            Ember.$('#modal-addcontainer').openModal();
+
+            // Ugh: https://github.com/Dogfalo/materialize/issues/1532
+            var overlay = Ember.$('#lean-overlay');
+            overlay.detach();
+            Ember.$('.explorer-container').after(overlay);
         },
 
         /**
          * Create a new container
          */
-        createContainer: function () {
-            var newContainer = this.store.createRecord('container', {name: this.get('newContainerName'), id: this.get('newContainerName')});
-            var self = this;
-            return newContainer.save().then(function () {
-                return self.set('newContainerEntryDisplay', false);
+        addContainerData: function () {
+            var newContainer = this.store.createRecord('container', {
+                name: this.get('newContainerName'),
+                id: this.get('newContainerName')
             });
+
+            return newContainer.save();
         },
 
         /**

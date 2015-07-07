@@ -34,7 +34,7 @@ test('it should create a container', function(assert) {
   // test the controller calls the azure create container api
   // we should see asseets come from the mock node service
   Ember.run(function(){
-      controller.send('createContainer');
+      controller.send('addContainerData');
   });
 });
 
