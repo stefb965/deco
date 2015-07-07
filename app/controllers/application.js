@@ -8,6 +8,7 @@ export default Ember.Controller.extend({
     fs: Ember.computed.alias('nodeServices.fs'),
     nodeServices: Ember.inject.service(),
     activeConnection: null,
+    lastError: '',
 
     /**
      * Init function, run on application launch: overrides the default drag & drop behavior
