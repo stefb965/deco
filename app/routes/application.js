@@ -26,8 +26,49 @@ export default Ember.Route.extend({
             Ember.$('#modal-about').openModal();
         },
 
+        /**
+         * Open the modal containing "first use" info
+         */
+        openFirstUseModal: function () {
+            Ember.$('#modal-firstuse').openModal();
+        },
+
+        /**
+         * Open the modal containing error information
+         */
         openErrorModal: function () {
             Ember.$('#modal-error').openModal();
+        },
+
+        /**
+         * Enable or disable usage statistics (anonymized)
+         */
+        toggleUsageStatistics: function (track) {
+            this.store.find('setting').then(result => {
+                if (result && result.content && result.content.length > 0) {
+                    result.content[0].set('allowUsageStatistics', track);
+
+                    if (!track) {
+                        this.send('disableAppInsights');
+                    }
+                }
+            });
+        },
+
+        /**
+         * Disable usage statistics by overwriting the
+         * window.appInsights object
+         */
+        disableAppInsights: function () {
+            if (window.appInsights) {
+                window.appInsights = {
+                    trackEvent: function () { return; },
+                    trackException: function () { return; },
+                    trackPageView: function () { return; },
+                    trackTrace: function () { return; },
+                    trackMetric: function () { return; }
+                };
+            }
         },
 
         /**
@@ -55,6 +96,8 @@ export default Ember.Route.extend({
                 this.transitionTo('welcome');
                 this.send('openErrorModal');
                 welcomeController.send('selectize');
+
+                appInsights.trackException(error);
             }
         }
     }

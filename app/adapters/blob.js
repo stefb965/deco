@@ -21,6 +21,7 @@ export default DS.Adapter.extend({
         return new Ember.RSVP.Promise((resolve, reject) => {
             blobService.getBlobProperties(snapshot.get('container').name, snapshot.get('name'), (error, result) => {
                 if (error) {
+                    appInsights.trackException(error);
                     return Ember.run(null, reject, error);
                 }
                 return Ember.run(null, resolve, result);
@@ -60,6 +61,7 @@ export default DS.Adapter.extend({
             }).then(container => {
                 blobService.deleteBlob(container.get('name'), snapshot.attr('name'), (error) => {
                     if (error) {
+                        appInsights.trackException(error);
                         return Ember.run(null, reject, error);
                     }
                     return Ember.run(null, resolve);
@@ -95,6 +97,7 @@ export default DS.Adapter.extend({
                     var blobs = [];
 
                     if (error) {
+                        appInsights.trackException(error);
                         return Ember.run(null, reject, error);
                     }
 

@@ -3,16 +3,19 @@ import Application from '../../app';
 import Router from '../../router';
 import config from '../../config/environment';
 import containerAdapter from '../../adapters/container';
+
 export default function startApp(attrs, assert) {
     var application;
     var attributes = Ember.merge({}, config.APP);
     attributes = Ember.merge(attributes, attrs); // use defaults, but you can override;
+
     Ember.run(function () {
         application = Application.create(attributes);
         application.setupForTesting();
         application.injectTestHelpers();
         application.ContainerAdapter = containerAdapter;
     });
+
     var container = application.__container__;
     var nodeServices = container.lookup('service:node-services');
     var fakeData = {
@@ -72,8 +75,8 @@ export default function startApp(attrs, assert) {
             }
         ]
     };
+
     nodeServices.set('azureStorage', {
-        
         createBlobService: function () {
             return {
                 createBlockBlobFromLocalFile: function (containerName, blobName, path, callback) {
@@ -112,6 +115,7 @@ export default function startApp(attrs, assert) {
                         ]
                     });
                 },
+
                 listContainersSegmented: function (shouldBeNull, callback) {
                     assert.ok(shouldBeNull === null, 'expeceted arg shouldBeNull to be null');
                     assert.ok(callback !== null, 'expeceted arg callback to be non-null');
@@ -129,11 +133,13 @@ export default function startApp(attrs, assert) {
                         }]
                     });
                 },
+
                 deleteContainer: function (containerName, callback) {
                     assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
                     assert.ok(callback !== null, 'expeceted arg callback to be non-null');
                     return callback(null);
                 },
+
                 deleteBlob: function(containerName, blobName, callback) {
                     assert.ok(typeof containerName === 'string', 'expeceted arg containerName to be string');
                     assert.ok(typeof containerName === 'string', 'expeceted arg blobName to be string');
@@ -148,6 +154,7 @@ export default function startApp(attrs, assert) {
                     fakeData.entries = keepIndicies;
                     return callback(null);
                 },
+
                 getContainerProperties: function (containerName, callback) {
                     assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
                     assert.ok(callback !== null, 'expeceted arg callback to be non-null');
@@ -156,11 +163,13 @@ export default function startApp(attrs, assert) {
                         lastModified: Date.now()
                     });
                 },
+
                 createContainerIfNotExists: function (containerName, callback) {
                     assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
                     assert.ok(callback !== null, 'expeceted arg callback to be non-null');
                     return callback(null);
                 },
+
                 listBlobDirectoriesSegmentedWithPrefix: function (containerName, prefix, shouldBeNull, callback) {
                     assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
                     assert.ok(shouldBeNull === null, 'expeceted arg shouldBeNull to be null');
@@ -200,6 +209,7 @@ export default function startApp(attrs, assert) {
                         entries: matches     
                     });
                 },
+
                 listBlobsSegmentedWithPrefix: function (containerName, prefix, shouldBeNull, options, callback) {
                     assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
                     assert.ok(shouldBeNull === null, 'expeceted arg shouldBeNull to be null');
@@ -227,6 +237,7 @@ export default function startApp(attrs, assert) {
                         entries: matches
                     });
                 },
+
                 listBlobsSegmented: function (containerName, shouldBeNull, callback) {
                     assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
                     assert.ok(shouldBeNull === null, 'expeceted arg shouldBeNull to be null');
@@ -263,15 +274,18 @@ export default function startApp(attrs, assert) {
                         }]
                     });
                 },
+                
                 generateSharedAccessSignature: function () {
                     assert.ok(true);
                     // litterally just mashed my keyboard here :-)
                     return '32523fdsgjsdkh5r43r89hvsghsdhafkjwerhs';
                 },
+                
                 getUrl: function () {
                     assert.ok(true);
                     return 'https://testaccount.storage.windows.net/somecontainer/test-blob?expiry=2000';
                 },
+                
                 getBlobToStream: function (containerName, blobName, stream, callback) {
                     assert.ok(containerName);
                     assert.ok(blobName);
@@ -279,6 +293,7 @@ export default function startApp(attrs, assert) {
                     assert.ok(callback);
                     return callback(null);
                 },
+                
                 BlobUtilities: {
                     SharedAccessPermissions: {
                         READ: 'READ'
@@ -287,18 +302,22 @@ export default function startApp(attrs, assert) {
             };
         }
     });
+
     nodeServices.set('fs', {
         existsSync: function (path) {
             return false;
         },
+        
         mkdirSync: function (path) {
             assert.ok(path);
             return null;
         },
+        
         createWriteStream: function (path) {
             assert.ok(path);
             return {};
         }
     });
+    
     return application;
 }
