@@ -344,30 +344,33 @@ export default Ember.Controller.extend({
          * @param  {string} directory
          */
         downloadBlobs: function (directory) {
-            var nwInput = Ember.$('#nwSaveInput'),
-                blobs = this.get('blobs'),
-                handleInputDirectory;
-
-            nwInput.attr('nwsaveas', 'directory');
+            var blobs = this.get('blobs'),
+                selectedBlobs = [],
+                nwInput, handleInputDirectory;
 
             handleInputDirectory = function (dir) {
-                blobs.forEach(function (blob) {
-                    // Check if this one is marked for download
-                    if (blob.get('selected')) {
-                        var fileName = blob.get('name').replace(/^.*[\\\/]/, '');
-                        var targetPath = dir + '/' + fileName;
-                        blob.toFile(targetPath);
-                    }
+                selectedBlobs.forEach(function (blob) {
+                    var fileName = blob.get('name').replace(/^.*[\\\/]/, '');
+                    var targetPath = (selectedBlobs.length > 1) ? dir + '/' + fileName : dir;
+                    blob.toFile(targetPath);
                 });
             };
 
-            // Check that at least one blob is selected
-            var noBlobsSelected = blobs.every(blob => {
-                return (!blob.get('selected'));
+            // Check the number of selected blobs, but only count to 2
+            blobs.forEach(function (blob) {
+                if (blob.get('selected')) {
+                    selectedBlobs.push(blob);
+                }
             });
 
             // If no blobs are selected we don't need to show the native dialog
-            if (!noBlobsSelected) {
+            if (selectedBlobs.length > 0) {
+                nwInput = (selectedBlobs.length > 1) ? Ember.$('#nwSaveDirectory') : Ember.$('#nwSaveInput');
+
+                if (selectedBlobs.length === 1) {
+                    nwInput.attr('nwsaveas', selectedBlobs[0].get('name'));
+                }
+
                 // Native dialog won't work in automation so skip in automation
                 if (!directory) {
                     nwInput.change(function () {
