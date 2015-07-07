@@ -27,8 +27,8 @@
                     </div>
                     <div class="col s12">
                         <br />
-                        <a {{action "test"}} class="waves-effect waves-light btn center"><i class="mdi-action-settings-remote left"></i>Test</a>
-                        <a {{action "addNew"}} class="waves-effect waves-light btn center"><i class="mdi-content-add-circle left"></i>Save & Open</a>
+                        <a {{action "toggleAddNew"}} class="waves-effect waves-light btn"><i class="mdi-navigation-cancel left"></i>Cancel</a>
+                        <a {{action "addNew"}} class="waves-effect waves-light btn center"><i class="mdi-action-launch left"></i>Save & Open</a>
                     </div>
                 {{else if editUi}}
                     <div class="col s11">
@@ -60,7 +60,7 @@
                     </div>
                     <div class="col s12">
                         <a {{action "toggleAddNew"}} {{bind-attr disabed=loading}} class="waves-effect waves-light btn"><i class="mdi-content-add-circle left"></i>Add</a>
-                        <a {{action "connect"}} {{bind-attr disabed=loading}} class="waves-effect waves-light btn"><i class="mdi-content-save left"></i>Connect</a>
+                        <a {{action "connect"}} {{bind-attr disabed=loading}} class="waves-effect waves-light btn"><i class="mdi-action-launch left"></i>Connect</a>
                     </div>
                 {{/liquid-if}}
             </div>

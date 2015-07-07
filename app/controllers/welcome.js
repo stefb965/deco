@@ -41,6 +41,7 @@ export default Ember.Controller.extend({
          */
         toggleAddNew: function () {
             this.toggleProperty('addNewUi');
+            this.send('selectize');
         },
 
         /**
@@ -120,41 +121,6 @@ export default Ember.Controller.extend({
 
                 self.transitionToRoute('explorer');
             });
-        },
-
-        /**
-         * Test the selected account and return whether or not we can actually connect
-         */
-        test: function () {
-            var name = this.get('account_name');
-            var key = this.get('account_key');
-            var azureStorage = window.requireNode('azure-storage');
-            var self = this;
-            var blobService;
-
-            if (name && key) {
-                Ember.$('#modal-testing').openModal();
-
-                try {
-                    blobService = azureStorage.createBlobService(name, key);
-                    blobService.listContainersSegmented(null, function (error) {
-                        if (error) {
-                            self.set('result', {
-                                success: false,
-                                reason: error
-                            });
-                        }
-                        self.set('result', {
-                            success: true,
-                            reason: null
-                        });
-                    });
-                } catch (error) {
-                    toast(error, 4000);
-                }
-            } else {
-                return toast('Please enter name and key!');
-            }
         }
     }
 });

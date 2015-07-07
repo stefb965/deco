@@ -101,25 +101,33 @@ export default DS.Adapter.extend({
         var self = this;
         return new Ember.RSVP.Promise(function (resolve, reject) {
             accountUtils.getActiveAccount(store).then(function (account) {
-                var blobService = self.get('azureStorage').createBlobService(account.get('name'),
-                    account.get('key'));
-                blobService.listContainersSegmented(null, function (err, data) {
-                    if (err) {
-                        return Ember.run(null, reject, err);
-                    }
+                var blobService;
 
-                    var containerModels = [];
-                    for (var i in data.entries) {
-                        if (i % 1 === 0) {
-                            containerModels.push({
-                                id: data.entries[i].name,
-                                name: data.entries[i].name,
-                                lastModified: new Date(Date.parse(data.entries[i].properties['last-modified']))
-                            });
+                try {
+                    blobService = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
+                } catch (err) {
+                    return reject(err);
+                }
+
+                if (blobService) {
+                    blobService.listContainersSegmented(null, function (err, data) {
+                        if (err) {
+                            return Ember.run(null, reject, err);
                         }
-                    }
-                    return Ember.run(null, resolve, containerModels);
-                });
+
+                        var containerModels = [];
+                        for (var i in data.entries) {
+                            if (i % 1 === 0) {
+                                containerModels.push({
+                                    id: data.entries[i].name,
+                                    name: data.entries[i].name,
+                                    lastModified: new Date(Date.parse(data.entries[i].properties['last-modified']))
+                                });
+                            }
+                        }
+                        return Ember.run(null, resolve, containerModels);
+                    });
+                }
             });
         });
     },
@@ -135,26 +143,34 @@ export default DS.Adapter.extend({
         var self = this;
         return new Ember.RSVP.Promise(function (resolve, reject) {
             accountUtils.getActiveAccount(store).then(function (account) {
-                var blobService = self.get('azureStorage').createBlobService(account.get('name'),
-                    account.get('key'));
-                blobService.listContainersSegmented(null, function (err, data) {
-                    if (err) {
-                        return Ember.run(null, reject, err);
-                    }
-                    var results = [];
-                    for (var i in data.entries) {
-                        if (i % 1 === 0 &&
-                            data.entries[i].name.indexOf(snapshot.name) > -1) {
+                var blobService;
 
-                            results.push({
-                                name: data.entries[i].name,
-                                id: data.entries[i].name,
-                                lastModified: new Date(Date.parse(data.entries[i].lastModified))
-                            });
+                try {
+                    blobService = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
+                } catch (err) {
+                    return reject(err);
+                }
+
+                if (blobService) {
+                    blobService.listContainersSegmented(null, function (err, data) {
+                        if (err) {
+                            return Ember.run(null, reject, err);
                         }
-                    }
-                    return Ember.run(null, resolve, results);
-                });
+                        var results = [];
+                        for (var i in data.entries) {
+                            if (i % 1 === 0 &&
+                                data.entries[i].name.indexOf(snapshot.name) > -1) {
+
+                                results.push({
+                                    name: data.entries[i].name,
+                                    id: data.entries[i].name,
+                                    lastModified: new Date(Date.parse(data.entries[i].lastModified))
+                                });
+                            }
+                        }
+                        return Ember.run(null, resolve, results);
+                    });
+                }
             });
         });
     },
