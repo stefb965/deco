@@ -29,7 +29,6 @@ moduleFor('controller:explorer', {
     }
 });
 
-
 test('it should create a container', function (assert) {
     assert.expect(2);
     combinedStart(assert);
@@ -37,9 +36,24 @@ test('it should create a container', function (assert) {
     var controller = this.subject();
     controller.store = store;
     // test the controller calls the azure create container api
-    // we should see asseets come from the mock node service
+    // we should see assetts come from the mock node service
     Ember.run(function () {
         controller.send('addContainerData');
+    });
+});
+
+test('it should delete a container', function (assert) {
+    assert.expect(14);
+    combinedStart(assert);
+
+    var controller = this.subject();
+    controller.store = store;
+    controller.set('searchQuery', 'testcontainer');
+    Ember.run(() => {
+        controller.get('containers').then(() => {
+            controller.set('activeContainer', 'testcontainer');
+            controller.send('deleteContainerData');
+        });
     });
 });
 
@@ -112,7 +126,6 @@ test('it should search and return 1 container', function (assert) {
         });
     });
 });
-
 
 test('it should search and return 0 container', function (assert) {
     assert.expect(3);

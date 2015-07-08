@@ -45,7 +45,7 @@ test('Notifications show up for batch download', function (assert) {
             return click('.action-field');
         })
         .then(function () {
-            return click('.mdi-file-file-download');
+            return click('.fa-download');
         })
         .then(function () {
             return triggerEvent('#nwSaveDirectory', 'change');
