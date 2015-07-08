@@ -75,6 +75,10 @@ export default Ember.Route.extend({
             var overlay = Ember.$('#lean-overlay');
             overlay.detach();
             Ember.$('.explorer-container').after(overlay);
+        },
+
+        goHome: function () {
+            this.transitionTo('welcome');
         }
     }
 });

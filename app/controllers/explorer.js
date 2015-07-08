@@ -125,7 +125,6 @@ export default Ember.Controller.extend({
 
     // Actions and Method
     // ------------------------------------------------------------------------------
-    
     deleteSingleBlob: function (blob) {
         blob.deleteRecord();
         this.get('notifications').addPromiseNotification(blob.save(),
@@ -249,7 +248,7 @@ export default Ember.Controller.extend({
                             }
                         });
 
-                        progressUpdateInterval = setInterval(function() {
+                        progressUpdateInterval = setInterval(() => {
                             if (speedSummary) {
                                 // don't report a dead speed. this api reports a speed of 0 for small blobs
                                 var speed = speedSummary.getSpeed() === '0B/S' ? '' : speedSummary.getSpeed();
@@ -285,7 +284,7 @@ export default Ember.Controller.extend({
 
             nwInput.change(function () {
                 nwInput.off('change');
-                
+
                 self.set('modalFileUploadPath', this.value);
                 self.store.find('container', activeContainer).then(result => {
                     self.set('modalDefaultUploadPath', result.get('name') + ':/' + self.get('currentPath'));
@@ -514,30 +513,22 @@ export default Ember.Controller.extend({
          * Refresh the current blobs. Useful if the blobs have changed.
          */
         refreshBlobs: function () {
-            var blobs = [],
-                self = this;
+            var blobs = [], subDirs = [];
 
             this.store.find('container', this.get('activeContainer')).then(result => {
                 if (result) {
-                    result.set('blobPrefixFilter', self.get('currentPath'));
+                    result.set('blobPrefixFilter', this.get('currentPath'));
                     blobs = result.get('blobs');
-                } else {
-                    blobs = [];
                 }
 
-                self.set('blobs', blobs);
-                self.set('blobsLoading', false);
+                this.set('blobs', blobs);
+                this.set('blobsLoading', false);
                 return result;
             }).then(container => {
-                return container.listDirectoriesWithPrefix(self.get('currentPath'));
+                return container.listDirectoriesWithPrefix(this.get('currentPath'));
             }).then(result => {
-                var subDirs = [];
-                result.forEach(dir => {
-                    subDirs.push({
-                        name: dir.name
-                    });
-                });
-                self.set('subDirectories', subDirs);
+                result.forEach(dir => subDirs.push({name: dir.name}));
+                this.set('subDirectories', subDirs);
             });
 
             appInsights.trackEvent('refreshBlobs');
@@ -548,13 +539,7 @@ export default Ember.Controller.extend({
          */
         addContainer: function () {
             this.set('newContainerName', '');
-
-            Ember.$('#modal-addcontainer').openModal();
-
-            // Ugh: https://github.com/Dogfalo/materialize/issues/1532
-            var overlay = Ember.$('#lean-overlay');
-            overlay.detach();
-            Ember.$('.explorer-container').after(overlay);
+            this.send('openModal', '#modal-addcontainer');
         },
 
         /**
@@ -573,13 +558,6 @@ export default Ember.Controller.extend({
                     text: stringResources.addContainerMessage(this.get('newContainerName'))
                 })
             );
-        },
-
-        /**
-         * Go back to the welcome screen
-         */
-        goHome: function () {
-            this.transitionToRoute('welcome');
         }
     }
 });
