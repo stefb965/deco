@@ -34,5 +34,8 @@ export default {
     },
     addContainerMessage: function (containerName) {
         return 'Adding Container ' + containerName;
+    },
+    deleteContainerMessage: function (containerName) {
+        return 'Deleting Container ' + containerName;
     }
 };

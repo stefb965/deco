@@ -77,7 +77,6 @@ export default function startApp(attrs, assert) {
     };
 
     nodeServices.set('azureStorage', {
-
         BlobService: {
             SpeedSummary: function () {
                 this.getSpeed = function() { return '3MB/S'; };
@@ -144,6 +143,7 @@ export default function startApp(attrs, assert) {
                 },
 
                 deleteContainer: function (containerName, callback) {
+                    console.log(containerName, callback);
                     assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
                     assert.ok(callback !== null, 'expeceted arg callback to be non-null');
                     return callback(null);

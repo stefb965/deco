@@ -506,7 +506,7 @@ export default Ember.Controller.extend({
                 }
             });
 
-            this.set('selectBlob', null);
+            this.set('selectedBlob', null);
         },
 
         /**
@@ -535,29 +535,47 @@ export default Ember.Controller.extend({
         },
 
         /**
-         * Open the 'add container' modal.
-         */
-        addContainer: function () {
-            this.set('newContainerName', '');
-            this.send('openModal', '#modal-addcontainer');
-        },
-
-        /**
          * Create a new container
          */
         addContainerData: function () {
-            var newContainer = this.store.createRecord('container', {
-                name: this.get('newContainerName'),
-                id: this.get('newContainerName')
-            });
+            let name = this.get('newContainerName');
+            var newContainer = this.store.createRecord('container', {name: name, id: name});
+
             // Todo - Ember data will assert and not return a promise if the
             // container name already exists (since we are using it as an id)
             this.get('notifications').addPromiseNotification(newContainer.save(), Notification.create(
                 {
                     type: 'AddContainer',
-                    text: stringResources.addContainerMessage(this.get('newContainerName'))
+                    text: stringResources.addContainerMessage(name)
                 })
             );
+            this.set('newContainerName', '');
+        },
+
+        /**
+         * Deletes the current container
+         */
+        deleteContainerData: function () {
+            let name = this.get('activeContainer');
+
+            if (!name) {
+                return;
+            }
+
+            this.store.find('container', name).then(container => {
+                if (container) {
+                    container.deleteRecord();
+                    this.get('notifications').addPromiseNotification(container.save(), Notification.create(
+                        {
+                            type: 'DeleteContainer',
+                            text: stringResources.deleteContainerMessage(name)
+                        })
+                    );
+
+                    let firstContainer = this.get('containers').get('firstObject').get('id');
+                    this.send('switchActiveContainer', firstContainer);
+                }
+            });
         }
     }
 });

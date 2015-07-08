@@ -2,18 +2,19 @@
     <nav>
         <div class="nav-wrapper">
             <span class="logo left" {{action "goHome"}}>
-                <i class="mdi-file-cloud-queue"></i>
+                {{unbound fa-icon "windows"}}
             </span>
             <ul class="left connectionName">
                 <li>{{activeConnection}}</li>
             </ul>
             <ul class="right actions">
-                <li {{action "addContainer"}}><i class="mdi-av-my-library-add"></i></li>
-                <li {{action "deleteBlobs"}}><i class="mdi-action-delete"></i></li>
-                <li {{action "refreshBlobs"}}><i class="mdi-navigation-refresh"></i></li>
-                <li {{action "uploadBlob"}}><i class="mdi-file-file-upload"></i></li>
-                <li {{action "downloadBlobs"}}><i class="mdi-file-file-download"></i></li>
-                <li {{action "openAboutModal"}}><i class="mdi-action-info"></i></li>
+                <li {{action "openModal" "#modal-addcontainer"}}>{{unbound fa-icon "plus-square"}}</li>
+                <li {{action "openModal" "#modal-deletecontainer"}}>{{unbound fa-icon "minus-square"}}</li>
+                <li {{action "deleteBlobs"}}>{{unbound fa-icon "trash-o"}}</li>
+                <li {{action "refreshBlobs"}}>{{unbound fa-icon "refresh"}}</li>
+                <li {{action "uploadBlob"}}>{{unbound fa-icon "upload"}}</li>
+                <li {{action "downloadBlobs"}}>{{unbound fa-icon "download"}}</li>
+                <li {{action "openAboutModal"}}>{{unbound fa-icon "info-circle"}}</li>
             </ul>
         </div>
     </nav>
