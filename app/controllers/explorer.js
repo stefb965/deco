@@ -123,8 +123,19 @@ export default Ember.Controller.extend({
         this.set('subDirectories', []);
     }.observes('pathSegments'),
 
-    // Actions
+    // Actions and Method
     // ------------------------------------------------------------------------------
+    
+    deleteSingleBlob: function (blob) {
+        blob.deleteRecord();
+        this.get('notifications').addPromiseNotification(blob.save(),
+            Notification.create({
+                type: 'DeleteBlob',
+                text: stringResources.deleteBlobMessage(blob.get('name'))
+            })
+        );
+    },
+
     actions: {
         /**
          * Handle a file dragged into the window (by uploading it)
@@ -453,16 +464,10 @@ export default Ember.Controller.extend({
             } else if (folderDeleteCount > 0) {
                 deleteText = `${folderDeleteCount} folder(s)`;
             }
+
             this.set('modalConfirmAction', 'deleteBlobData');
             this.set('modalDeleteText', deleteText);
-
-            // Open delete prompt
-            Ember.$('#modal-delete').openModal();
-
-            // Ugh: https://github.com/Dogfalo/materialize/issues/1532
-            var overlay = Ember.$('#lean-overlay');
-            overlay.detach();
-            Ember.$('.explorer-container').after(overlay);
+            this.send('openModal', '#modal-delete');
 
             appInsights.trackEvent('deleteBlobs');
         },
@@ -479,16 +484,7 @@ export default Ember.Controller.extend({
                     container_id: container.get('id'),
                     prefix: folder
                 }).then(blobs => {
-                    blobs.forEach(blob => {
-                        blob.destroyRecord();
-                        this.get('notifications').addPromiseNotification(blob.save(),
-                            Notification.create({
-                                type: 'DeleteBlob',
-                                text: stringResources.deleteBlobMessage(blob.get('name'))
-                            })
-                        );
-                    });
-
+                    blobs.forEach(blob => this.deleteSingleBlob(blob));
                     this.set('subDirectories', []);
                     this.send('refreshBlobs');
                 });
@@ -501,13 +497,7 @@ export default Ember.Controller.extend({
         deleteBlobData: function () {
             this.get('blobs').forEach(blob => {
                 if (blob.get('selected')) {
-                    blob.deleteRecord();
-                    this.get('notifications').addPromiseNotification(blob.save(),
-                        Notification.create({
-                            type: 'DeleteBlob',
-                            text: stringResources.deleteBlobMessage(blob.get('name'))
-                        })
-                    );
+                    this.deleteSingleBlob(blob);
                 }
             });
 
