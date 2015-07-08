@@ -237,6 +237,16 @@ export default Ember.Controller.extend({
                         speedSummary = result.speedSummary.summary;
                         uploadPromise = result.promise;
 
+                        progressUpdateInterval = setInterval(() => {
+                            if (speedSummary) {
+                                // don't report a dead speed. this api reports a speed of 0 for small blobs
+                                var speed = speedSummary.getSpeed() === '0B/S' ? '' : speedSummary.getSpeed();
+
+                                uploadNotification.set('progress', speedSummary.getCompletePercent());
+                                uploadNotification.set('text', stringResources.uploadMessage(fileName, azurePath, speed, speedSummary.getCompletePercent()));
+                            }
+                        }, 200);
+
                         uploadNotification = Notification.create({
                             type: 'Upload',
                             text: stringResources.uploadMessage(fileName, azurePath),
@@ -247,16 +257,6 @@ export default Ember.Controller.extend({
                                 progressUpdateInterval: progressUpdateInterval
                             }
                         });
-
-                        progressUpdateInterval = setInterval(() => {
-                            if (speedSummary) {
-                                // don't report a dead speed. this api reports a speed of 0 for small blobs
-                                var speed = speedSummary.getSpeed() === '0B/S' ? '' : speedSummary.getSpeed();
-
-                                uploadNotification.set('progress', speedSummary.getCompletePercent());
-                                uploadNotification.set('text', stringResources.uploadMessage(fileName, azurePath, speed, speedSummary.getCompletePercent()));
-                            }
-                        }, 200);
 
                         this.get('notifications').addPromiseNotification(result.promise, uploadNotification);
                         return uploadPromise;
