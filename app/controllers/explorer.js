@@ -1,6 +1,7 @@
 import Ember from 'ember';
+import Notification from '../models/notification';
 import config from '../config/environment';
-
+import stringResources from '../utils/string-resources';
 /**
  * The controller for the file explorer - in many ways the main controller for the application,
  * controlling container/blob selection and interaction.
@@ -227,15 +228,53 @@ export default Ember.Controller.extend({
             var self = this,
                 activeContainer = this.get('activeContainer'),
                 containerPath = azurePath.replace(/.*\:\//, ''),
-                paths = filePaths.split(';'),
-                fileName;
+                paths = filePaths.split(';');
 
             self.store.find('container', activeContainer).then(foundContainer => {
                 var promises = [];
 
                 paths.forEach(path => {
+
+                    var uploadNotification,
+                        speedSummary,
+                        uploadPromise,
+                        progressUpdateInterval,
+                        fileName;
+
                     fileName = path.replace(/^.*[\\\/]/, '');
-                    promises.push(foundContainer.uploadBlob(path, containerPath + fileName));
+                    var promise = foundContainer.uploadBlob(path, containerPath + fileName)
+                    .then(result => {
+                        speedSummary = result.speedSummary.summary;
+                        uploadPromise = result.promise;
+
+                        progressUpdateInterval = setInterval(() => {
+                            if (speedSummary) {
+                                // don't report a dead speed. this api reports a speed of 0 for small blobs
+                                var speed = speedSummary.getSpeed() === '0B/S' ? '' : speedSummary.getSpeed();
+
+                                uploadNotification.set('progress', speedSummary.getCompletePercent());
+                                uploadNotification.set('text', stringResources.uploadMessage(fileName, azurePath, speed, speedSummary.getCompletePercent()));
+                            }
+                        },
+                        200);
+
+                        uploadNotification = Notification.create({
+                            type: 'Upload',
+                            text: stringResources.uploadMessage(fileName, azurePath),
+                            cleanup: function () {
+                                clearInterval(this.get('customData').progressUpdateInterval);
+                            },
+                            customData: {
+                                progressUpdateInterval: progressUpdateInterval
+                            }
+                        });
+
+                        self.get('notifications').addPromiseNotification(result.promise, uploadNotification);
+
+                        return uploadPromise;
+                    });
+
+                    promises.push(promise);
                 });
 
                 appInsights.trackEvent('uploadBlobData');
@@ -244,8 +283,6 @@ export default Ember.Controller.extend({
                 return Ember.RSVP.all(promises);
             }).then(() => {
                 self.send('refreshBlobs');
-            }).catch (error => {
-                toast(error, 4000);
             });
         },
 
@@ -344,15 +381,58 @@ export default Ember.Controller.extend({
          * @param  {string} directory
          */
         downloadBlobs: function (directory) {
-            var blobs = this.get('blobs'),
-                selectedBlobs = [],
-                nwInput, handleInputDirectory;
+
+            var nwInput = Ember.$('#nwSaveInput'),
+                blobs = this.get('blobs'),
+                handleInputDirectory,
+                self = this,
+                selectedBlobs = [];
+
+            nwInput.attr('nwsaveas', 'directory');
 
             handleInputDirectory = function (dir) {
                 selectedBlobs.forEach(function (blob) {
-                    var fileName = blob.get('name').replace(/^.*[\\\/]/, '');
-                    var targetPath = (selectedBlobs.length > 1) ? dir + '/' + fileName : dir;
-                    blob.toFile(targetPath);
+                    // Check if this one is marked for download
+                    if (blob.get('selected')) {
+                        var fileName = blob.get('name').replace(/^.*[\\\/]/, ''),
+                            targetPath = dir + '/' + fileName,
+                            downloadPromise = { isFulfilled : false },
+                            downloadNotification,
+                            speedSummary,
+                            progressUpdateInterval;
+
+                        blob.toFile(targetPath)
+                        .then(result => {
+
+                            speedSummary = result.speedSummary.summary;
+                            downloadPromise = result.promise;
+
+                            progressUpdateInterval = setInterval(() => {
+                                if (speedSummary) {
+                                    // don't report a dead speed. this api reports a speed of 0 for small blobs
+                                    var speed = speedSummary.getSpeed() === '0B/S' ? '' : speedSummary.getSpeed();
+
+                                    downloadNotification.set('progress', speedSummary.getCompletePercent());
+                                    downloadNotification.set('text', stringResources.downloadMessage(blob.get('name'), speed, speedSummary.getCompletePercent()));
+                                }
+                            },
+                            200);
+
+                            downloadNotification = Notification.create({
+                                type: 'Download',
+                                text: stringResources.downloadMessage(blob.get('name')),
+                                cleanup: function () {
+                                    clearInterval(this.get('customData').progressUpdateInterval);
+                                },
+                                customData: {
+                                    progressUpdateInterval: progressUpdateInterval
+                                }
+                            });
+                            self.get('notifications').addPromiseNotification(downloadPromise, downloadNotification);
+
+                            return downloadPromise;
+                        });
+                    }
                 });
             };
 
@@ -379,7 +459,6 @@ export default Ember.Controller.extend({
                         this.value = '';
                         nwInput.off('change');
                     });
-
                     nwInput.click();
                 } else {
                     handleInputDirectory(directory);
@@ -441,7 +520,12 @@ export default Ember.Controller.extend({
                 // check if this one is marked for deleting
                 if (blob.get('selected')) {
                     blob.deleteRecord();
-                    blob.save();
+                    self.get('notifications').addPromiseNotification(blob.save(),
+                        Notification.create({
+                            type: 'DeleteBlob',
+                            text: stringResources.deleteBlobMessage(blob.get('name'))
+                        })
+                    );
                     if (blob === self.get('selectedBlob')) {
                         self.set('selectBlob', null);
                     }
@@ -506,8 +590,14 @@ export default Ember.Controller.extend({
                 name: this.get('newContainerName'),
                 id: this.get('newContainerName')
             });
-
-            return newContainer.save();
+            // Todo - Ember data will assert and not return a promise if the
+            // container name already exists (since we are using it as an id)
+            this.get('notifications').addPromiseNotification(newContainer.save(), Notification.create(
+                {
+                    type: 'AddContainer',
+                    text: stringResources.addContainerMessage(this.get('newContainerName'))
+                })
+            );
         },
 
         /**

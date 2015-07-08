@@ -77,13 +77,22 @@ export default function startApp(attrs, assert) {
     };
 
     nodeServices.set('azureStorage', {
+
+        BlobService: {
+            SpeedSummary: function () {
+                this.getSpeed = function() { return '3MB/S'; };
+                this.getCompeltePercent = function() { return 100; };
+            }
+        },
+
         createBlobService: function () {
             return {
-                createBlockBlobFromLocalFile: function (containerName, blobName, path, callback) {
+                createBlockBlobFromLocalFile: function (containerName, blobName, path, options, callback) {
                     assert.ok(typeof containerName === 'string');
                     assert.ok(typeof blobName === 'string');
                     assert.ok(typeof path === 'string');
                     assert.ok(typeof callback === 'function');
+                    assert.ok(typeof options === 'object');
                     var segments = blobName.split('/');
                     
                     if (segments.length > 1) {
@@ -285,12 +294,13 @@ export default function startApp(attrs, assert) {
                     assert.ok(true);
                     return 'https://testaccount.storage.windows.net/somecontainer/test-blob?expiry=2000';
                 },
-                
-                getBlobToStream: function (containerName, blobName, stream, callback) {
+
+                getBlobToStream: function (containerName, blobName, stream, options, callback) {
                     assert.ok(containerName);
                     assert.ok(blobName);
                     assert.ok(stream);
                     assert.ok(callback);
+                    assert.ok(typeof options === 'object');
                     return callback(null);
                 },
                 

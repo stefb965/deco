@@ -46,7 +46,7 @@ function Menu() {
     menu.append(copy);
     menu.append(paste);
 
-    if (config.environment === 'development') {
+    if (config.environment === 'development' || config.environment === 'test') {
         menu.append(emberInspector);
         menu.append(devTools);
     }

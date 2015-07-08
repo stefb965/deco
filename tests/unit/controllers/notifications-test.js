@@ -4,7 +4,7 @@ import {
   test
 } from 'ember-qunit';
 import startApp from 'azureexplorer/tests/helpers/start-app';
-
+import Notification from 'azureexplorer/models/notification';
 moduleFor('controller:notifications');
 
 test('it exists', function (assert) {
@@ -14,23 +14,22 @@ test('it exists', function (assert) {
 
 test('it adds a notification', function (assert) {
     var ctrl = this.subject();
+    assert.ok(ctrl);
     Ember.run(function () {
         ctrl.set('notifications', []);
     });
 
-    var not = ctrl.addNotification('generic', 'test notification', -1);
-    assert.ok(not);
-});
+    var not = Notification.create({
+        type: 'generic',
+        text: 'test notification',
+        progress: -1});
 
-test('it adds a notification with correct properties', function (assert) {
-    var ctrl = this.subject();
-    Ember.run(function () {
-        ctrl.set('notifications', []);
-    });
-    var not = ctrl.addNotification('generic', 'test notification', -1);
-
-    assert.expect(4);
+    ctrl.addNotification(not);
     assert.ok(not);
+    assert.ok(not.get('id'));
+    assert.ok(not.get('timestamp'));
+    assert.ok(not.get('isErroredOut'));
+    assert.ok(!not.get('isActive'));
     assert.equal(not.get('type'), 'generic');
     assert.equal(not.get('text'), 'test notification');
     assert.equal(not.get('progress'), -1);
@@ -42,7 +41,10 @@ test('it correctly reports whether a notification represents a running process',
         ctrl.set('notifications', []);
     });
 
-    var not = ctrl.addNotification('generic', 'test notification', -1);
+    var not = Notification.create({
+        type: 'generic',
+        text: 'test notification',
+        progress: 0});
 
     assert.expect(3);
     assert.ok(not);
@@ -61,7 +63,10 @@ test('it correctly creates background progress style', function (assert) {
         ctrl.set('notifications', []);
     });
 
-    var not = ctrl.addNotification('generic', 'test notification', 40);
+    var not = Notification.create({
+        type: 'generic',
+        text: 'test notification',
+        progress: 40});
     var expectedStyle = 'background: linear-gradient(90deg, #c2d9a5 40%, #e7e7e8 60%)';
 
     assert.expect(2);
@@ -75,7 +80,11 @@ test('it adds a notification to the notifications array', function (assert) {
         ctrl.set('notifications', []);
     });
 
-    var not = ctrl.addNotification('generic', 'test notification', -1);
+    var not = Notification.create({
+        type: 'generic',
+        text: 'test notification',
+        progress: -1});
+    ctrl.addNotification(not);
     assert.equal(ctrl.get('notifications').length, 1);
 });
 
@@ -85,9 +94,14 @@ test('it removes a notification from the notifications array', function (assert)
         ctrl.set('notifications', []);
     });
 
-    var not = ctrl.addNotification('generic', 'test notification', -1);
+    var not = Notification.create({
+        type: 'generic',
+        text: 'test notification',
+        progress: -1});
+    ctrl.addNotification(not);
+
     Ember.run(function () {
-        not.remove();
+        ctrl.removeNotification(not);
     });
     assert.equal(ctrl.get('notifications').length, 0);
 });
@@ -101,7 +115,11 @@ test('it removes a notification from the notifications array via action', functi
     });
 
     Ember.run(function () {
-        not = ctrl.addNotification('generic', 'test notification', -1);
+        not = Notification.create({
+        type: 'generic',
+        text: 'test notification',
+        progress: -1});
+        ctrl.addNotification(not);
     });
     Ember.run(function () {
         ctrl.send('removeNotification', not);
@@ -118,13 +136,21 @@ test('it correctly reports whether any notification is active', function (assert
 
     assert.expect(2);
 
-    var not = ctrl.addNotification('generic', 'test notification', -1);
-    ctrl.addNotification('generic', 'test notification', 100);
-    ctrl.addNotification('generic', 'test notification', 100);
+    var not1 = Notification.create({
+        type: 'generic',
+        text: 'test notification',
+        progress: 100}),
+        not2 = Notification.create({
+        type: 'generic',
+        text: 'test notification',
+        progress: 0});
+
+    ctrl.addNotification(not1);
+    ctrl.addNotification(not2);
     assert.equal(ctrl.get('isActive'), true);
 
     Ember.run(function () {
-        not.set('progress', 100);
+        not2.set('progress', 100);
     });
 
     assert.equal(ctrl.get('isActive'), false);

@@ -3,7 +3,11 @@
         {{#if notification.isRunning}}
             <i class="mdi-av-loop"></i>
         {{else}}
-            <i class="mdi-action-done"></i>
+            {{#if notification.isErroredOut}}
+                <i class="mdi-action-report-problem"></i>
+            {{else}}
+                <i class="mdi-action-done"></i>
+            {{/if}}
         {{/if}}
     </span>
     <span>
