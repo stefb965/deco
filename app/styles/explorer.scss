@@ -103,8 +103,20 @@ div.folder {
     table {
 
         tr > td > i.mdi-file-folder-open {
+            position: relative;
             font-size: 1.4em;
             color: #474747;
+        }
+        
+        td.type {
+            max-width: 150px;
+        }
+        
+        td.type > div {
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         td, th {
