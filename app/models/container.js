@@ -35,8 +35,8 @@ var Container = DS.Model.extend({
      * @param  {string} prefix - Which prefix to use
      */
     listDirectoriesWithPrefix: function (prefix) {
-        var self = this;
-        var service;
+        var self = this,
+            service;
 
         return new Ember.RSVP.Promise((resolve, reject) => {
             accountUtil.getActiveAccount(self.store).then(account => {
@@ -65,21 +65,31 @@ var Container = DS.Model.extend({
      * Upload a blob to this container
      * @param  {string} path     - Where is the file?
      * @param  {string} blobName - Name of the blob that will be created
+     * @return {object} - An object containing a promise and SpeedSummary tracking object
      */
     uploadBlob: function (path, blobName) {
-        var container = this.get('name');
-        var self = this;
-        var service;
+        var container = this.get('name'),
+            self = this,
+            service,
+            speedSummary = {summary: null};
 
-        return new Ember.RSVP.Promise(function (resolve, reject) {
+        return new Ember.RSVP.Promise(function (resolve) {
             accountUtil.getActiveAccount(self.store).then(account => {
                 service = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
-                service.createBlockBlobFromLocalFile(container, blobName, path, (err, result, response) => {
-                    if (!err) {
-                        return resolve(response.entries);
-                    } else {
-                        return reject(err);
-                    }
+                var SpeedSummary = self.get('azureStorage').BlobService.SpeedSummary;
+                speedSummary.summary = new SpeedSummary();
+
+                resolve({
+                    promise: new Ember.RSVP.Promise(function (resolve, reject) {
+                        service.createBlockBlobFromLocalFile(container, blobName, path, {speedSummary: speedSummary.summary}, (err, result, response) => {
+                            if (!err) {
+                                return resolve(response.entries);
+                            } else {
+                                return reject(err);
+                            }
+                        });
+                    }),
+                    speedSummary: speedSummary
                 });
             });
         });

@@ -1,55 +1,12 @@
 import Ember from 'ember';
 import Uuid from '../utils/uuid';
 
-/**
- * Notification Object, extending Ember.Object.
- * All the Ember benefits, but not using Ember Data.
- * @prop  {string} id                                   - UUID (use utils/uuid)
- * @prop  {string} type                                 - (upload || download || generic)
- * @prop  {string} text                                 - Text on the notification
- * @prop  {int} progress                                - -1: Ongoing, status unknown. 0-100: Progress in %
- * @prop  {string} timestamp                            - When was the notification created?
- * @prop  {Ember.Controller} _notificationsCtrlRef      - Reference to the notifications controller
- *
- *
- * ## Usage Example
- * addNotification('generic', 'Uploading "12323.jpg" to "hjlk:/images"', true);
- */
-var NotificationObject = Ember.Object.extend({
-    id: null,
-    type: null,
-    text: null,
-    progress: null,
-    timestamp: null,
-    _notificationsCtrlRef: null,
-
-    isRunning: function () {
-        return (this.get('progress') && this.get('progress') < 100);
-    }.property('progress'),
-
-    progressStyle: function () {
-        let width = 100 - this.get('progress'),
-            widthDone = this.get('progress'),
-            style = `background: linear-gradient(90deg, #c2d9a5 ${widthDone}%, #e7e7e8 ${width}%)`;
-
-        return (this.get('progress') > -1) ? style.htmlSafe() : '';
-    }.property('progress'),
-
-    remove: function () {
-        var notificationsCtrl = this.get('_notificationsCtrlRef');
-
-        if (notificationsCtrl) {
-            notificationsCtrl.removeNotification(this);
-        }
-
-        this.destroy();
-    }
-});
-
 export default Ember.Controller.extend({
     notifications: [],
     isPulloutVisible: false,
 
+    // Properties
+    // ------------------------------------------------------------------------------
     /**
      * Do we have at least one notification that is representing a
      * currently running process?
@@ -60,7 +17,7 @@ export default Ember.Controller.extend({
 
         if (notifications && notifications.length > 0) {
             let firstActiveNotification = notifications.find((item) => {
-                if (item.get('progress') && item.get('progress') < 100) {
+                if (item.get('progress') !== undefined && item.get('progress') !== null && item.get('progress') >= 0 && item.get('progress') < 100) {
                     return true;
                 } else {
                     return false;
@@ -77,35 +34,23 @@ export default Ember.Controller.extend({
         }
     }.property('notifications.@each.progress'),
 
+    // Class Functions
+    // ------------------------------------------------------------------------------
     /**
      * Add a notification to the notification queue.
-     * @param {string} type          - Type of notification
-     * @param {string} text          - Text of notification
-     * @param {int} progress         - -1: Ongoing, status unknown. 0-100: Progress in %
-     * @return {notification}        - A notification object
+     * @param {Notification} notification          - A notification object
+     * @return {null}
      */
-    addNotification: function (type, text, progress) {
-        var notifications = this.get('notifications'),
-            uuid = Uuid.makeUUID(),
-            notification;
+    addNotification: function (notification) {
+        var notifications = this.get('notifications');
 
-        if (!type || !text || text === '') {
+        if (!notification.type || !notification.text) {
             return false;
         }
 
-        progress = (progress) ? progress : -1;
-
-        notification = NotificationObject.create({
-            id: uuid,
-            type: type,
-            text: text,
-            progress: progress,
-            timestamp: Date.now(),
-            _notificationsCtrlRef: this
-        });
-
+        this._fillInNotification(notification);
         notifications.pushObject(notification);
-        return notification;
+        return;
     },
 
     /**
@@ -124,8 +69,30 @@ export default Ember.Controller.extend({
      * @param {string} type          - Type of batch notification
      * @param {string} text          - Text of batch notification
      */
-    addPromiseNotification: function (promise, type, text) {
-        console.log('Not implemented! ', promise, type, text, name);
+    addPromiseNotification: function (promise, notification) {
+        var notifications = this.get('notifications');
+
+        if (!notification.type || !notification.text) {
+            return false;
+        }
+
+        this._fillInNotification(notification);
+        notifications.pushObject(notification);
+
+        // Todo, it would be nice to display elapsed time to resolution
+        promise
+        .then(() => {
+            notification.set('progress', 100);
+        })
+        .catch (err => {
+            notification.set('text', err);
+            notification.set('progress', -1);
+        })
+        .finally (() => {
+            if (notification.cleanup) {
+                notification.cleanup();
+            }
+        });
     },
 
     /**
@@ -143,6 +110,8 @@ export default Ember.Controller.extend({
         notifications.removeObject(notification);
     },
 
+    // Actions
+    // ------------------------------------------------------------------------------
     actions: {
         /**
          * Toggles the 'isPulloutVisible' property, pulling out the
@@ -158,9 +127,18 @@ export default Ember.Controller.extend({
         },
 
         removeNotification: function (notification) {
-            if (notification) {
-                notification.remove();
+            if (!notification.get('isRunning')) {
+                this.removeNotification(notification);
             }
         }
+    },
+
+    // Helpers
+    // ------------------------------------------------------------------------------
+    _fillInNotification: function (notification) {
+        notification.set('id', notification.get('id') ? notification.get('id') : Uuid.makeUUID());
+        notification.set('timestamp', notification.get('timestamp') ? notification.get('timestamp') :  Date.now());
+        notification.set('progress', (notification.get('progress') !== undefined || notification.get('progress') !== null) ? notification.get('progress') : 0);
+        notification.get('notificationsCtrlRef', notification.notificationsCtrlRef ? notification.notificationsCtrlRef : this);
     }
 });

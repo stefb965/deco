@@ -39,7 +39,7 @@ test('it should create a container', function(assert) {
 });
 
 test('it should download blobs', function(assert) {
-  assert.expect(54);
+  assert.expect(62);
   App = startApp(null, assert);
   store = App.__container__.lookup('store:main');
   Ember.run(function(){
@@ -346,7 +346,7 @@ test('it should change subdirectories', function(assert) {
 
 test('it should upload file to blob', function(assert) {
 
-  assert.expect(24);
+  assert.expect(27);
   App = startApp(null, assert);
   store = App.__container__.lookup('store:main');
   Ember.run(function(){
@@ -372,7 +372,7 @@ test('it should upload file to blob', function(assert) {
 
 test('it should create a subdirectory/folder upon upload', function(assert) {
 
-  assert.expect(16);
+  assert.expect(17);
   App = startApp(null, assert);
   store = App.__container__.lookup('store:main');
   Ember.run(function(){

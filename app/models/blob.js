@@ -7,15 +7,26 @@ import accountUtil from '../utils/account';
  * @param  {FS Stream} stream - The stream to write to
  */
 function startWriteToStream(model, stream) {
-    accountUtil.getActiveAccount(model.store).then(function (account) {
+    return accountUtil.getActiveAccount(model.store).then(function (account) {
         var blobService = model.get('azureStorage').createBlobService(account.get('name'),
-            account.get('key'));
-        blobService.getBlobToStream(model.get('container_id'), model.get('name'), stream, function (err) {
-            if (err) {
-                Ember.Logger.error('Error getting blob to stream:');
-                Ember.Logger.error(err);
-            }
-        });
+            account.get('key')),
+            speedSummary = {summary: null};
+
+        return {
+            promise: new Ember.RSVP.Promise(function (resolve, reject) {
+                        var SpeedSummary = model.get('azureStorage').BlobService.SpeedSummary;
+                        speedSummary.summary = new SpeedSummary();
+                        blobService.getBlobToStream(model.get('container_id'), model.get('name'), stream, {speedSummary:  speedSummary.summary},  function (err) {
+                            if (err) {
+                                Ember.Logger.error('Error getting blob to stream:');
+                                Ember.Logger.error(err);
+                                return reject(err);
+                            }
+                            return resolve();
+                        });
+                    }),
+            speedSummary: speedSummary
+        };
     });
 }
 
@@ -75,8 +86,7 @@ export default DS.Model.extend({
     toFile: function (path) {
         var fileStream = this.get('fileSvc').createWriteStream(path);
         // begin writing to stream
-        startWriteToStream(this, fileStream);
-        return fileStream;
+        return startWriteToStream(this, fileStream);
     },
 
     azureStorage: Ember.computed.alias('nodeServices.azureStorage'),

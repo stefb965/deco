@@ -51,7 +51,7 @@
                     <tbody>
                         {{#each dir in subDirectories}}
                             <tr {{action "changeSubDirectory" dir}}>
-                                <td class="action-field">
+                                <td>
                                     <i class="mdi-file-folder-open"></i>
                                 </td>
                                 <td>{{blob-display-path dir.name currentPath}}</td>
