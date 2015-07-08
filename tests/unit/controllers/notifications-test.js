@@ -67,7 +67,7 @@ test('it correctly creates background progress style', function (assert) {
         type: 'generic',
         text: 'test notification',
         progress: 40});
-    var expectedStyle = 'background: linear-gradient(90deg, #c2d9a5 40%, #e7e7e8 60%)';
+    var expectedStyle = 'background: linear-gradient(90deg, #c2d9a5 40%, #e7e7e8 0%)';
 
     assert.expect(2);
     assert.ok(not);

@@ -44,8 +44,8 @@
                             <th class="action-field" {{action "selectAllBlobs"}}>Action</th>
                             <th data-field="id">Name</th>
                             <th data-field="name">Last Modified</th>
-                            <th data-field="price">Size</th>
-                            <th data-field="price">Type</th>
+                            <th data-field="size">Size</th>
+                            <th data-field="type">Type</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,9 +68,11 @@
                                     <label for={{blob.model.name}}></label>
                                 </td>
                                 <td {{action "selectBlob" blob.model}}>{{blob-display-path blob.model.name currentPath}}</td>
-                                <td {{action "selectBlob" blob.model}}>{{blob.model.lastModified}}</td>
+                                <td {{action "selectBlob" blob.model}} title={{blob.model.lastModified}}>{{ago blob.model.lastModified}}</td>
                                 <td {{action "selectBlob" blob.model}}>{{blob.prettySize}}</td>
-                                <td {{action "selectBlob" blob.model}}>{{blob.model.type}}</td>
+                                <td {{action "selectBlob" blob.model}} class="type" title={{blob.model.type}}>
+                                    <div>{{blob.model.type}}</div>
+                                </td>
                             </tr>
                         {{/each}}
                     </tbody>
