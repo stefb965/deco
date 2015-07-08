@@ -71,7 +71,7 @@ test('it correctly creates background progress style', function (assert) {
 
     assert.expect(2);
     assert.ok(not);
-    assert.equal(not.get('progressStyle'), expectedStyle);
+    assert.equal(not.get('progressStyle').toString(), expectedStyle);
 });
 
 test('it adds a notification to the notifications array', function (assert) {
