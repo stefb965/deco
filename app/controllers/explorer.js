@@ -38,9 +38,8 @@ export default Ember.Controller.extend({
     init: function () {
         if (config.environment !== 'test') {
             Ember.run.scheduleOnce('afterRender', this, () => {
-                var self = this;
                 Ember.$('.files')[0].ondrop = e => {
-                    self.send('handleFileDragDrop', e);
+                    this.send('handleFileDragDrop', e);
                 };
             });
         }
@@ -54,14 +53,12 @@ export default Ember.Controller.extend({
      * @return {Promise}
      */
     containers: function () {
-        var self = this;
-
         if (!this.get('searchQuery')) {
             return this.get('model');
         } else {
             this.set('searchSpinnerDisplay', true);
             var promise = this.store.find('container', {name: this.get('searchQuery')});
-            promise.then(() => self.set('searchSpinnerDisplay', false));
+            promise.then(() => this.set('searchSpinnerDisplay', false));
             return promise;
         }
     }.property('searchQuery'),
@@ -72,15 +69,9 @@ export default Ember.Controller.extend({
      */
     currentPath: function () {
         var path = '';
-        var first = true;
-        this.get('pathSegments').forEach(segment => {
-            // the first slash should be skipped
-            if (first) {
-                first = false;
-                return;
-            }
 
-            path += segment.name;
+        this.get('pathSegments').forEach((segment, index) => {
+            path += (index === 0) ? '' : segment.name; // the first slash should be skipped
         });
 
         return path;
@@ -93,73 +84,39 @@ export default Ember.Controller.extend({
      * setting up blobs
      */
     activeContainerObserver: function () {
-        var activeContainer = this.get('activeContainer'),
-            blobs = [],
-            self = this,
-            containerObject;
-
         if (!this.get('containers') || !this.get('containers').get('firstObject')) {
-            // if there are no containers bail out (in case of empty search)
-            return;
+            return; // if there are no containers bail out (in case of empty search)
         }
+
+        if (!this.get('activeContainer')) {
+            this.set('activeContainer', this.get('containers').get('firstObject').get('id'));
+        }
+
+        var activeContainer = this.get('activeContainer'),
+            blobs = [], subDirs = [];
 
         // clear out subdirs'
         this.set('blobsLoading', true);
         this.set('subDirectories', []);
 
-        if (!activeContainer) {
-            containerObject = self.get('containers').get('firstObject');
-            containerObject.set('blobPrefixFilter', self.get('currentPath'));
-            if (containerObject) {
-                blobs = containerObject.get('blobs');
+        return this.store.find('container', activeContainer).then(result => {
+            if (result) {
+                result.set('blobPrefixFilter', this.get('currentPath'));
+                blobs = result.get('blobs');
 
-                self.set('blobs', blobs);
-                self.set('blobsLoading', false);
-                appInsights.trackMetric('BlobsInContainer', blobs.length);
-
-                Ember.run.next(() => {
-                    self.set('activeContainer', containerObject.id);
-                });
-
-                containerObject.listDirectoriesWithPrefix(this.get('currentPath'))
-                .then(result => {
-                    var subDirs = [];
+                result.listDirectoriesWithPrefix(this.get('currentPath')).then(result => {
                     result.forEach(dir => {
-                        subDirs.push({
-                            name: dir.name,
-                            selected: false
-                        });
+                        subDirs.push({name: dir.name, selected: false});
                     });
-                    self.set('subDirectories', subDirs);
+                    this.set('subDirectories', subDirs);
                 });
             }
-        } else {
-            return this.store.find('container', activeContainer).then(function (result) {
-                if (result) {
-                    result.set('blobPrefixFilter', self.get('currentPath'));
-                    blobs = result.get('blobs');
-                } else {
-                    blobs = [];
-                }
 
-                result.listDirectoriesWithPrefix(self.get('currentPath'))
-                .then(result => {
-                    var subDirs = [];
-                    result.forEach(dir => {
-                        subDirs.push({
-                            name: dir.name,
-                            selected: false
-                        });
-                    });
-                    self.set('subDirectories', subDirs);
-                });
+            this.set('blobs', blobs);
+            this.set('blobsLoading', false);
 
-                self.set('blobs', blobs);
-                self.set('blobsLoading', false);
-
-                appInsights.trackMetric('BlobsInContainer', blobs.length);
-            });
-        }
+            appInsights.trackMetric('BlobsInContainer', blobs.length);
+        });
     }.observes('containers', 'activeContainer', 'model'),
 
     pathSegmentObserver : function () {
@@ -236,15 +193,10 @@ export default Ember.Controller.extend({
                 var promises = [];
 
                 paths.forEach(path => {
-                    var uploadNotification,
-                        speedSummary,
-                        uploadPromise,
-                        progressUpdateInterval,
-                        fileName;
+                    var fileName = path.replace(/^.*[\\\/]/, ''),
+                        uploadNotification, speedSummary, uploadPromise, progressUpdateInterval;
 
-                    fileName = path.replace(/^.*[\\\/]/, '');
-                    var promise = foundContainer.uploadBlob(path, containerPath + fileName)
-                    .then(result => {
+                    var promise = foundContainer.uploadBlob(path, containerPath + fileName).then(result => {
                         speedSummary = result.speedSummary.summary;
                         uploadPromise = result.promise;
 
@@ -256,8 +208,7 @@ export default Ember.Controller.extend({
                                 uploadNotification.set('progress', speedSummary.getCompletePercent());
                                 uploadNotification.set('text', stringResources.uploadMessage(fileName, azurePath, speed, speedSummary.getCompletePercent()));
                             }
-                        },
-                        200);
+                        }, 200);
 
                         uploadNotification = Notification.create({
                             type: 'Upload',
