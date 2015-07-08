@@ -62,6 +62,19 @@ export default Ember.Route.extend({
          */
         refresh: function () {
             return this.refresh();
+        },
+
+        /**
+         * Opens a specified modal
+         * @param  {string} modal jQuery identifier
+         */
+        openModal: function (modal) {
+            Ember.$(modal).openModal();
+
+            // Ugh: https://github.com/Dogfalo/materialize/issues/1532
+            var overlay = Ember.$('#lean-overlay');
+            overlay.detach();
+            Ember.$('.explorer-container').after(overlay);
         }
     }
 });

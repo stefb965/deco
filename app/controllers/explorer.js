@@ -131,7 +131,6 @@ export default Ember.Controller.extend({
          */
         handleFileDragDrop: function (e) {
             var sourcePaths = '',
-                self = this,
                 activeContainer = this.get('activeContainer'),
                 file;
 
@@ -147,18 +146,11 @@ export default Ember.Controller.extend({
                 }
             }
 
-            Ember.$('#modal-upload').openModal();
-
-            // Ugh: https://github.com/Dogfalo/materialize/issues/1532
-            var overlay = Ember.$('#lean-overlay');
-            overlay.detach();
-            Ember.$('.explorer-container').after(overlay);
-
-            self.set('modalFileUploadPath', sourcePaths);
-
-            self.store.find('container', activeContainer).then(result => {
-                self.set('modalDefaultUploadPath', result.get('name') + ':/' + self.get('currentPath'));
+            this.set('modalFileUploadPath', sourcePaths);
+            this.store.find('container', activeContainer).then(result => {
+                this.set('modalDefaultUploadPath', result.get('name') + ':/' + this.get('currentPath'));
             });
+            this.send('openModal', '#modal-upload');
 
             appInsights.trackEvent('handleFileDragDrop');
         },
@@ -168,7 +160,6 @@ export default Ember.Controller.extend({
          * @param  {DS.Record Container} selectedContainer - The container to be selected
          */
         switchActiveContainer: function (selectedContainer) {
-            // reset all blobs selected flag
             if (selectedContainer === this.get('activeContainer')) {
                 return;
             }
@@ -180,69 +171,10 @@ export default Ember.Controller.extend({
         },
 
         /**
-         * Upload one or multiple files to blobs
-         * @param  {Array} filePaths  - Local file paths of the files to upload
-         * @param  {string} azurePath - Remote Azure Storage path
-         */
-        uploadBlobData: function (filePaths, azurePath) {
-            var activeContainer = this.get('activeContainer'),
-                containerPath = azurePath.replace(/.*\:\//, ''),
-                paths = filePaths.split(';');
-
-            this.store.find('container', activeContainer).then(foundContainer => {
-                var promises = [];
-
-                paths.forEach(path => {
-                    var fileName = path.replace(/^.*[\\\/]/, ''),
-                        uploadNotification, speedSummary, uploadPromise, progressUpdateInterval;
-
-                    var promise = foundContainer.uploadBlob(path, containerPath + fileName).then(result => {
-                        speedSummary = result.speedSummary.summary;
-                        uploadPromise = result.promise;
-
-                        progressUpdateInterval = setInterval(() => {
-                            if (speedSummary) {
-                                // don't report a dead speed. this api reports a speed of 0 for small blobs
-                                var speed = speedSummary.getSpeed() === '0B/S' ? '' : speedSummary.getSpeed();
-
-                                uploadNotification.set('progress', speedSummary.getCompletePercent());
-                                uploadNotification.set('text', stringResources.uploadMessage(fileName, azurePath, speed, speedSummary.getCompletePercent()));
-                            }
-                        }, 200);
-
-                        uploadNotification = Notification.create({
-                            type: 'Upload',
-                            text: stringResources.uploadMessage(fileName, azurePath),
-                            cleanup: function () {
-                                clearInterval(this.get('customData').progressUpdateInterval);
-                            },
-                            customData: {
-                                progressUpdateInterval: progressUpdateInterval
-                            }
-                        });
-
-                        this.get('notifications').addPromiseNotification(result.promise, uploadNotification);
-                        return uploadPromise;
-                    });
-
-                    promises.push(promise);
-                });
-
-                appInsights.trackEvent('uploadBlobData');
-                appInsights.trackMetric('uploadBlobs', paths.length);
-
-                return Ember.RSVP.all(promises);
-            }).then(() => {
-                this.send('refreshBlobs');
-            });
-        },
-
-        /**
-         * Change the current "faked" directory
+         * Change the current "faked" directory, ie: the user clicked a path button
          * @param  {string} directory
          */
         changeDirectory: function (directory) {
-            // we have recieved a path segment object, ie: the user clicked a path button
             var pathSegs = [];
 
             this.get('pathSegments').every(segment => {
@@ -277,6 +209,62 @@ export default Ember.Controller.extend({
         },
 
         /**
+         * Upload one or multiple files to blobs
+         * @param  {Array} filePaths  - Local file paths of the files to upload
+         * @param  {string} azurePath - Remote Azure Storage path
+         */
+        uploadBlobData: function (filePaths, azurePath) {
+            var activeContainer = this.get('activeContainer'),
+                containerPath = azurePath.replace(/.*\:\//, ''),
+                paths = filePaths.split(';'), promises = [];
+
+            this.store.find('container', activeContainer).then(foundContainer => {
+                paths.forEach(path => {
+                    var fileName = path.replace(/^.*[\\\/]/, ''),
+                        uploadNotification, speedSummary, uploadPromise, progressUpdateInterval;
+
+                    var promise = foundContainer.uploadBlob(path, containerPath + fileName).then(result => {
+                        speedSummary = result.speedSummary.summary;
+                        uploadPromise = result.promise;
+
+                        uploadNotification = Notification.create({
+                            type: 'Upload',
+                            text: stringResources.uploadMessage(fileName, azurePath),
+                            cleanup: function () {
+                                clearInterval(this.get('customData').progressUpdateInterval);
+                            },
+                            customData: {
+                                progressUpdateInterval: progressUpdateInterval
+                            }
+                        });
+
+                        progressUpdateInterval = setInterval(function() {
+                            if (speedSummary) {
+                                // don't report a dead speed. this api reports a speed of 0 for small blobs
+                                var speed = speedSummary.getSpeed() === '0B/S' ? '' : speedSummary.getSpeed();
+
+                                uploadNotification.set('progress', speedSummary.getCompletePercent());
+                                uploadNotification.set('text', stringResources.uploadMessage(fileName, azurePath, speed, speedSummary.getCompletePercent()));
+                            }
+                        }, 200);
+
+                        this.get('notifications').addPromiseNotification(result.promise, uploadNotification);
+                        return uploadPromise;
+                    });
+
+                    promises.push(promise);
+                });
+
+                appInsights.trackEvent('uploadBlobData');
+                appInsights.trackMetric('uploadBlobs', paths.length);
+
+                return Ember.RSVP.all(promises);
+            }).then(() => {
+                this.send('refreshBlobs');
+            });
+        },
+
+        /**
          * Open the upload file modal
          */
         uploadBlob: function () {
@@ -286,21 +274,14 @@ export default Ember.Controller.extend({
 
             nwInput.change(function () {
                 nwInput.off('change');
-                Ember.$('#modal-upload').openModal();
-
-                // Ugh: https://github.com/Dogfalo/materialize/issues/1532
-                var overlay = Ember.$('#lean-overlay');
-                overlay.detach();
-                Ember.$('.explorer-container').after(overlay);
-
+                
                 self.set('modalFileUploadPath', this.value);
-
                 self.store.find('container', activeContainer).then(result => {
                     self.set('modalDefaultUploadPath', result.get('name') + ':/' + self.get('currentPath'));
                 });
+                self.send('openModal', '#modal-upload');
 
-                // Ensure event fires
-                this.value = '';
+                this.value = ''; // Ensure event fires
             });
 
             nwInput.click();
@@ -312,9 +293,8 @@ export default Ember.Controller.extend({
          * Select all blobs in the current view
          */
         selectAllBlobs: function () {
-            var self = this;
             this.get('blobs').forEach(blob => {
-                if (!self.get('allBlobSelected')) {
+                if (!this.get('allBlobSelected')) {
                     blob.set('selected', true);
                 } else {
                     blob.set('selected', false);
@@ -337,9 +317,7 @@ export default Ember.Controller.extend({
                 var fileName = blob.get('name').replace(/^.*[\\\/]/, ''),
                     targetPath = (saveAs) ? directory : directory + '/' + fileName,
                     downloadPromise = {isFulfilled : false},
-                    downloadNotification,
-                    speedSummary,
-                    progressUpdateInterval;
+                    downloadNotification, speedSummary, progressUpdateInterval;
 
                 blob.toFile(targetPath).then(result => {
                     speedSummary = result.speedSummary.summary;
@@ -379,26 +357,11 @@ export default Ember.Controller.extend({
         downloadBlobs: function (targetDirectory) {
             var blobs = this.get('blobs'),
                 subDirectories = this.get('subDirectories'),
-                selectedBlobs = [],
-                selectedDirectories = [],
-                self = this,
-                nwInput;
+                selectedBlobs = blobs.filterBy('selected', true),
+                selectedDirectories = subDirectories.filter(directory => directory.selected),
+                getBlobPromises = [], self = this, nwInput;
 
             appInsights.trackEvent('downloadBlobs');
-
-            // Get selected blobs
-            blobs.forEach(blob => {
-                if (blob.get('selected')) {
-                    selectedBlobs.push(blob);
-                }
-            });
-
-            // Get selected directories
-            subDirectories.forEach(directory => {
-                if (directory.selected) {
-                    selectedDirectories.push(directory);
-                }
-            });
 
             /**
              * Action-scope download function
@@ -430,8 +393,6 @@ export default Ember.Controller.extend({
             }
 
             this.store.find('container', this.get('activeContainer')).then(container => {
-                var getBlobPromises = [];
-
                 selectedDirectories.forEach(directory => {
                     getBlobPromises.push(this.store.find('blob', {
                         container: container,
