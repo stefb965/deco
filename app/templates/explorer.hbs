@@ -50,11 +50,12 @@
                     </thead>
                     <tbody>
                         {{#each dir in subDirectories}}
-                            <tr {{action "changeSubDirectory" dir}}>
-                                <td>
-                                    <i class="mdi-file-folder-open"></i>
+                            <tr>
+                                <td class="action-field">
+                                    {{input type="checkbox" id=dir.name checked=dir.selected}}
+                                    <label for={{dir.name}}></label>
                                 </td>
-                                <td>{{blob-display-path dir.name currentPath}}</td>
+                                <td {{action "changeSubDirectory" dir}}><i class="mdi-file-folder-open"></i> {{blob-display-path dir.name currentPath}}</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
