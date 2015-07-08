@@ -30,7 +30,7 @@ export default {
         return message;
     },
     deleteBlobMessage: function (blobName) {
-        return 'Downloading Blob ' + blobName;
+        return 'Deleting Blob ' + blobName;
     },
     addContainerMessage: function (containerName) {
         return 'Adding Container ' + containerName;

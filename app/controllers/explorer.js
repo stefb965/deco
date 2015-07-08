@@ -38,9 +38,8 @@ export default Ember.Controller.extend({
     init: function () {
         if (config.environment !== 'test') {
             Ember.run.scheduleOnce('afterRender', this, () => {
-                var self = this;
                 Ember.$('.files')[0].ondrop = e => {
-                    self.send('handleFileDragDrop', e);
+                    this.send('handleFileDragDrop', e);
                 };
             });
         }
@@ -54,14 +53,12 @@ export default Ember.Controller.extend({
      * @return {Promise}
      */
     containers: function () {
-        var self = this;
-
         if (!this.get('searchQuery')) {
             return this.get('model');
         } else {
             this.set('searchSpinnerDisplay', true);
             var promise = this.store.find('container', {name: this.get('searchQuery')});
-            promise.then(() => self.set('searchSpinnerDisplay', false));
+            promise.then(() => this.set('searchSpinnerDisplay', false));
             return promise;
         }
     }.property('searchQuery'),
@@ -72,15 +69,9 @@ export default Ember.Controller.extend({
      */
     currentPath: function () {
         var path = '';
-        var first = true;
-        this.get('pathSegments').forEach(segment => {
-            // the first slash should be skipped
-            if (first) {
-                first = false;
-                return;
-            }
 
-            path += segment.name;
+        this.get('pathSegments').forEach((segment, index) => {
+            path += (index === 0) ? '' : segment.name; // the first slash should be skipped
         });
 
         return path;
@@ -93,88 +84,63 @@ export default Ember.Controller.extend({
      * setting up blobs
      */
     activeContainerObserver: function () {
-        var activeContainer = this.get('activeContainer'),
-            blobs = [],
-            self = this,
-            containerObject;
-
         if (!this.get('containers') || !this.get('containers').get('firstObject')) {
-            // if there are no containers bail out (in case of empty search)
-            return;
+            return; // if there are no containers bail out (in case of empty search)
         }
+
+        if (!this.get('activeContainer')) {
+            this.set('activeContainer', this.get('containers').get('firstObject').get('id'));
+        }
+
+        var activeContainer = this.get('activeContainer'),
+            blobs = [], subDirs = [];
 
         // clear out subdirs'
         this.set('blobsLoading', true);
         this.set('subDirectories', []);
 
-        if (!activeContainer) {
-            containerObject = self.get('containers').get('firstObject');
-            containerObject.set('blobPrefixFilter', self.get('currentPath'));
-            if (containerObject) {
-                blobs = containerObject.get('blobs');
+        return this.store.find('container', activeContainer).then(result => {
+            if (result) {
+                result.set('blobPrefixFilter', this.get('currentPath'));
+                blobs = result.get('blobs');
 
-                self.set('blobs', blobs);
-                self.set('blobsLoading', false);
-                appInsights.trackMetric('BlobsInContainer', blobs.length);
-
-                Ember.run.next(() => {
-                    self.set('activeContainer', containerObject.id);
-                });
-
-                containerObject.listDirectoriesWithPrefix(this.get('currentPath'))
-                .then(result => {
-                    var subDirs = [];
+                result.listDirectoriesWithPrefix(this.get('currentPath')).then(result => {
                     result.forEach(dir => {
-                        subDirs.push({
-                            name: dir.name,
-                            selected: false
-                        });
+                        subDirs.push({name: dir.name, selected: false});
                     });
-                    self.set('subDirectories', subDirs);
+                    this.set('subDirectories', subDirs);
                 });
             }
-        } else {
-            return this.store.find('container', activeContainer).then(function (result) {
-                if (result) {
-                    result.set('blobPrefixFilter', self.get('currentPath'));
-                    blobs = result.get('blobs');
-                } else {
-                    blobs = [];
-                }
 
-                result.listDirectoriesWithPrefix(self.get('currentPath'))
-                .then(result => {
-                    var subDirs = [];
-                    result.forEach(dir => {
-                        subDirs.push({
-                            name: dir.name,
-                            selected: false
-                        });
-                    });
-                    self.set('subDirectories', subDirs);
-                });
+            this.set('blobs', blobs);
+            this.set('blobsLoading', false);
 
-                self.set('blobs', blobs);
-                self.set('blobsLoading', false);
-
-                appInsights.trackMetric('BlobsInContainer', blobs.length);
-            });
-        }
+            appInsights.trackMetric('BlobsInContainer', blobs.length);
+        });
     }.observes('containers', 'activeContainer', 'model'),
 
     pathSegmentObserver : function () {
         this.set('subDirectories', []);
     }.observes('pathSegments'),
 
-    // Actions
+    // Actions and Method
     // ------------------------------------------------------------------------------
+    deleteSingleBlob: function (blob) {
+        blob.deleteRecord();
+        this.get('notifications').addPromiseNotification(blob.save(),
+            Notification.create({
+                type: 'DeleteBlob',
+                text: stringResources.deleteBlobMessage(blob.get('name'))
+            })
+        );
+    },
+
     actions: {
         /**
          * Handle a file dragged into the window (by uploading it)
          */
         handleFileDragDrop: function (e) {
             var sourcePaths = '',
-                self = this,
                 activeContainer = this.get('activeContainer'),
                 file;
 
@@ -190,18 +156,11 @@ export default Ember.Controller.extend({
                 }
             }
 
-            Ember.$('#modal-upload').openModal();
-
-            // Ugh: https://github.com/Dogfalo/materialize/issues/1532
-            var overlay = Ember.$('#lean-overlay');
-            overlay.detach();
-            Ember.$('.explorer-container').after(overlay);
-
-            self.set('modalFileUploadPath', sourcePaths);
-
-            self.store.find('container', activeContainer).then(result => {
-                self.set('modalDefaultUploadPath', result.get('name') + ':/' + self.get('currentPath'));
+            this.set('modalFileUploadPath', sourcePaths);
+            this.store.find('container', activeContainer).then(result => {
+                this.set('modalDefaultUploadPath', result.get('name') + ':/' + this.get('currentPath'));
             });
+            this.send('openModal', '#modal-upload');
 
             appInsights.trackEvent('handleFileDragDrop');
         },
@@ -211,7 +170,6 @@ export default Ember.Controller.extend({
          * @param  {DS.Record Container} selectedContainer - The container to be selected
          */
         switchActiveContainer: function (selectedContainer) {
-            // reset all blobs selected flag
             if (selectedContainer === this.get('activeContainer')) {
                 return;
             }
@@ -223,75 +181,10 @@ export default Ember.Controller.extend({
         },
 
         /**
-         * Upload one or multiple files to blobs
-         * @param  {Array} filePaths  - Local file paths of the files to upload
-         * @param  {string} azurePath - Remote Azure Storage path
-         */
-        uploadBlobData: function (filePaths, azurePath) {
-            var activeContainer = this.get('activeContainer'),
-                containerPath = azurePath.replace(/.*\:\//, ''),
-                paths = filePaths.split(';');
-
-            this.store.find('container', activeContainer).then(foundContainer => {
-                var promises = [];
-
-                paths.forEach(path => {
-                    var uploadNotification,
-                        speedSummary,
-                        uploadPromise,
-                        progressUpdateInterval,
-                        fileName;
-
-                    fileName = path.replace(/^.*[\\\/]/, '');
-                    var promise = foundContainer.uploadBlob(path, containerPath + fileName)
-                    .then(result => {
-                        speedSummary = result.speedSummary.summary;
-                        uploadPromise = result.promise;
-
-                        progressUpdateInterval = setInterval(() => {
-                            if (speedSummary) {
-                                // don't report a dead speed. this api reports a speed of 0 for small blobs
-                                var speed = speedSummary.getSpeed() === '0B/S' ? '' : speedSummary.getSpeed();
-
-                                uploadNotification.set('progress', speedSummary.getCompletePercent());
-                                uploadNotification.set('text', stringResources.uploadMessage(fileName, azurePath, speed, speedSummary.getCompletePercent()));
-                            }
-                        },
-                        200);
-
-                        uploadNotification = Notification.create({
-                            type: 'Upload',
-                            text: stringResources.uploadMessage(fileName, azurePath),
-                            cleanup: function () {
-                                clearInterval(this.get('customData').progressUpdateInterval);
-                            },
-                            customData: {
-                                progressUpdateInterval: progressUpdateInterval
-                            }
-                        });
-
-                        this.get('notifications').addPromiseNotification(result.promise, uploadNotification);
-                        return uploadPromise;
-                    });
-
-                    promises.push(promise);
-                });
-
-                appInsights.trackEvent('uploadBlobData');
-                appInsights.trackMetric('uploadBlobs', paths.length);
-
-                return Ember.RSVP.all(promises);
-            }).then(() => {
-                this.send('refreshBlobs');
-            });
-        },
-
-        /**
-         * Change the current "faked" directory
+         * Change the current "faked" directory, ie: the user clicked a path button
          * @param  {string} directory
          */
         changeDirectory: function (directory) {
-            // we have recieved a path segment object, ie: the user clicked a path button
             var pathSegs = [];
 
             this.get('pathSegments').every(segment => {
@@ -326,6 +219,62 @@ export default Ember.Controller.extend({
         },
 
         /**
+         * Upload one or multiple files to blobs
+         * @param  {Array} filePaths  - Local file paths of the files to upload
+         * @param  {string} azurePath - Remote Azure Storage path
+         */
+        uploadBlobData: function (filePaths, azurePath) {
+            var activeContainer = this.get('activeContainer'),
+                containerPath = azurePath.replace(/.*\:\//, ''),
+                paths = filePaths.split(';'), promises = [];
+
+            this.store.find('container', activeContainer).then(foundContainer => {
+                paths.forEach(path => {
+                    var fileName = path.replace(/^.*[\\\/]/, ''),
+                        uploadNotification, speedSummary, uploadPromise, progressUpdateInterval;
+
+                    var promise = foundContainer.uploadBlob(path, containerPath + fileName).then(result => {
+                        speedSummary = result.speedSummary.summary;
+                        uploadPromise = result.promise;
+
+                        progressUpdateInterval = setInterval(() => {
+                            if (speedSummary) {
+                                // don't report a dead speed. this api reports a speed of 0 for small blobs
+                                var speed = speedSummary.getSpeed() === '0B/S' ? '' : speedSummary.getSpeed();
+
+                                uploadNotification.set('progress', speedSummary.getCompletePercent());
+                                uploadNotification.set('text', stringResources.uploadMessage(fileName, azurePath, speed, speedSummary.getCompletePercent()));
+                            }
+                        }, 200);
+
+                        uploadNotification = Notification.create({
+                            type: 'Upload',
+                            text: stringResources.uploadMessage(fileName, azurePath),
+                            cleanup: function () {
+                                clearInterval(this.get('customData').progressUpdateInterval);
+                            },
+                            customData: {
+                                progressUpdateInterval: progressUpdateInterval
+                            }
+                        });
+
+                        this.get('notifications').addPromiseNotification(result.promise, uploadNotification);
+                        return uploadPromise;
+                    });
+
+                    promises.push(promise);
+                });
+
+                appInsights.trackEvent('uploadBlobData');
+                appInsights.trackMetric('uploadBlobs', paths.length);
+
+                return Ember.RSVP.all(promises);
+            }).then(() => {
+                this.send('refreshBlobs');
+            });
+        },
+
+        /**
          * Open the upload file modal
          */
         uploadBlob: function () {
@@ -335,21 +284,14 @@ export default Ember.Controller.extend({
 
             nwInput.change(function () {
                 nwInput.off('change');
-                Ember.$('#modal-upload').openModal();
-
-                // Ugh: https://github.com/Dogfalo/materialize/issues/1532
-                var overlay = Ember.$('#lean-overlay');
-                overlay.detach();
-                Ember.$('.explorer-container').after(overlay);
 
                 self.set('modalFileUploadPath', this.value);
-
                 self.store.find('container', activeContainer).then(result => {
                     self.set('modalDefaultUploadPath', result.get('name') + ':/' + self.get('currentPath'));
                 });
+                self.send('openModal', '#modal-upload');
 
-                // Ensure event fires
-                this.value = '';
+                this.value = ''; // Ensure event fires
             });
 
             nwInput.click();
@@ -361,9 +303,8 @@ export default Ember.Controller.extend({
          * Select all blobs in the current view
          */
         selectAllBlobs: function () {
-            var self = this;
             this.get('blobs').forEach(blob => {
-                if (!self.get('allBlobSelected')) {
+                if (!this.get('allBlobSelected')) {
                     blob.set('selected', true);
                 } else {
                     blob.set('selected', false);
@@ -386,9 +327,7 @@ export default Ember.Controller.extend({
                 var fileName = blob.get('name').replace(/^.*[\\\/]/, ''),
                     targetPath = (saveAs) ? directory : directory + '/' + fileName,
                     downloadPromise = {isFulfilled : false},
-                    downloadNotification,
-                    speedSummary,
-                    progressUpdateInterval;
+                    downloadNotification, speedSummary, progressUpdateInterval;
 
                 blob.toFile(targetPath).then(result => {
                     speedSummary = result.speedSummary.summary;
@@ -428,26 +367,11 @@ export default Ember.Controller.extend({
         downloadBlobs: function (targetDirectory) {
             var blobs = this.get('blobs'),
                 subDirectories = this.get('subDirectories'),
-                selectedBlobs = [],
-                selectedDirectories = [],
-                self = this,
-                nwInput;
+                selectedBlobs = blobs.filterBy('selected', true),
+                selectedDirectories = subDirectories.filter(directory => directory.selected),
+                getBlobPromises = [], self = this, nwInput;
 
             appInsights.trackEvent('downloadBlobs');
-
-            // Get selected blobs
-            blobs.forEach(blob => {
-                if (blob.get('selected')) {
-                    selectedBlobs.push(blob);
-                }
-            });
-
-            // Get selected directories
-            subDirectories.forEach(directory => {
-                if (directory.selected) {
-                    selectedDirectories.push(directory);
-                }
-            });
 
             /**
              * Action-scope download function
@@ -479,8 +403,6 @@ export default Ember.Controller.extend({
             }
 
             this.store.find('container', this.get('activeContainer')).then(container => {
-                var getBlobPromises = [];
-
                 selectedDirectories.forEach(directory => {
                     getBlobPromises.push(this.store.find('blob', {
                         container: container,
@@ -541,16 +463,10 @@ export default Ember.Controller.extend({
             } else if (folderDeleteCount > 0) {
                 deleteText = `${folderDeleteCount} folder(s)`;
             }
+
             this.set('modalConfirmAction', 'deleteBlobData');
             this.set('modalDeleteText', deleteText);
-
-            // Open delete prompt
-            Ember.$('#modal-delete').openModal();
-
-            // Ugh: https://github.com/Dogfalo/materialize/issues/1532
-            var overlay = Ember.$('#lean-overlay');
-            overlay.detach();
-            Ember.$('.explorer-container').after(overlay);
+            this.send('openModal', '#modal-delete');
 
             appInsights.trackEvent('deleteBlobs');
         },
@@ -567,16 +483,7 @@ export default Ember.Controller.extend({
                     container_id: container.get('id'),
                     prefix: folder
                 }).then(blobs => {
-                    blobs.forEach(blob => {
-                        blob.destroyRecord();
-                        this.get('notifications').addPromiseNotification(blob.save(),
-                            Notification.create({
-                                type: 'DeleteBlob',
-                                text: stringResources.deleteBlobMessage(blob.get('name'))
-                            })
-                        );
-                    });
-
+                    blobs.forEach(blob => this.deleteSingleBlob(blob));
                     this.set('subDirectories', []);
                     this.send('refreshBlobs');
                 });
@@ -589,13 +496,7 @@ export default Ember.Controller.extend({
         deleteBlobData: function () {
             this.get('blobs').forEach(blob => {
                 if (blob.get('selected')) {
-                    blob.deleteRecord();
-                    this.get('notifications').addPromiseNotification(blob.save(),
-                        Notification.create({
-                            type: 'DeleteBlob',
-                            text: stringResources.deleteBlobMessage(blob.get('name'))
-                        })
-                    );
+                    this.deleteSingleBlob(blob);
                 }
             });
 
@@ -612,30 +513,22 @@ export default Ember.Controller.extend({
          * Refresh the current blobs. Useful if the blobs have changed.
          */
         refreshBlobs: function () {
-            var blobs = [],
-                self = this;
+            var blobs = [], subDirs = [];
 
             this.store.find('container', this.get('activeContainer')).then(result => {
                 if (result) {
-                    result.set('blobPrefixFilter', self.get('currentPath'));
+                    result.set('blobPrefixFilter', this.get('currentPath'));
                     blobs = result.get('blobs');
-                } else {
-                    blobs = [];
                 }
 
-                self.set('blobs', blobs);
-                self.set('blobsLoading', false);
+                this.set('blobs', blobs);
+                this.set('blobsLoading', false);
                 return result;
             }).then(container => {
-                return container.listDirectoriesWithPrefix(self.get('currentPath'));
+                return container.listDirectoriesWithPrefix(this.get('currentPath'));
             }).then(result => {
-                var subDirs = [];
-                result.forEach(dir => {
-                    subDirs.push({
-                        name: dir.name
-                    });
-                });
-                self.set('subDirectories', subDirs);
+                result.forEach(dir => subDirs.push({name: dir.name}));
+                this.set('subDirectories', subDirs);
             });
 
             appInsights.trackEvent('refreshBlobs');
@@ -646,13 +539,7 @@ export default Ember.Controller.extend({
          */
         addContainer: function () {
             this.set('newContainerName', '');
-
-            Ember.$('#modal-addcontainer').openModal();
-
-            // Ugh: https://github.com/Dogfalo/materialize/issues/1532
-            var overlay = Ember.$('#lean-overlay');
-            overlay.detach();
-            Ember.$('.explorer-container').after(overlay);
+            this.send('openModal', '#modal-addcontainer');
         },
 
         /**
@@ -671,13 +558,6 @@ export default Ember.Controller.extend({
                     text: stringResources.addContainerMessage(this.get('newContainerName'))
                 })
             );
-        },
-
-        /**
-         * Go back to the welcome screen
-         */
-        goHome: function () {
-            this.transitionToRoute('welcome');
         }
     }
 });

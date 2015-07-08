@@ -81,7 +81,7 @@ export default function startApp(attrs, assert) {
         BlobService: {
             SpeedSummary: function () {
                 this.getSpeed = function() { return '3MB/S'; };
-                this.getCompeltePercent = function() { return 100; };
+                this.getCompletePercent = function() { return 100; };
             }
         },
 
