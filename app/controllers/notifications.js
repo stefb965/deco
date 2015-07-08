@@ -17,18 +17,11 @@ export default Ember.Controller.extend({
 
         if (notifications && notifications.length > 0) {
             let firstActiveNotification = notifications.find((item) => {
-                if (item.get('progress') !== undefined && item.get('progress') !== null && item.get('progress') >= 0 && item.get('progress') < 100) {
-                    return true;
-                } else {
-                    return false;
-                }
+                let pro = item.get('progress');
+                return (pro !== undefined && pro !== null && pro >= 0 && pro < 100) ? true : false;
             });
 
-            if (firstActiveNotification) {
-                return true;
-            } else {
-                return false;
-            }
+            return (firstActiveNotification) ? true : false;
         } else {
             return false;
         }
@@ -80,15 +73,12 @@ export default Ember.Controller.extend({
         notifications.pushObject(notification);
 
         // Todo, it would be nice to display elapsed time to resolution
-        promise
-        .then(() => {
+        promise.then(() => {
             notification.set('progress', 100);
-        })
-        .catch (err => {
+        }).catch (err => {
             notification.set('text', err);
             notification.set('progress', -1);
-        })
-        .finally (() => {
+        }).finally (() => {
             if (notification.cleanup) {
                 notification.cleanup();
             }

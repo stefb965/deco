@@ -28,10 +28,9 @@ export default Ember.Object.extend({
     }.property('progress'),
 
     progressStyle: function () {
-        let width = 100 - this.get('progress'),
-            widthDone = this.get('progress'),
-            style = `background: linear-gradient(90deg, #c2d9a5 ${widthDone}%, #e7e7e8 ${width}%)`;
+        let widthDone = Math.round(this.get('progress')),
+            style = (widthDone && widthDone > 0) ? `background: linear-gradient(90deg, #c2d9a5 ${widthDone}%, #e7e7e8 0%)` : '';
 
-        return (this.get('progress') > -1) ? style.htmlSafe() : '';
+        return (style) ? style.htmlSafe() : '';
     }.property('progress')
 });
