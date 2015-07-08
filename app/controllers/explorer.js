@@ -2,6 +2,7 @@ import Ember from 'ember';
 import Notification from '../models/notification';
 import config from '../config/environment';
 import stringResources from '../utils/string-resources';
+
 /**
  * The controller for the file explorer - in many ways the main controller for the application,
  * controlling container/blob selection and interaction.
@@ -125,7 +126,8 @@ export default Ember.Controller.extend({
                     var subDirs = [];
                     result.forEach(dir => {
                         subDirs.push({
-                            name: dir.name
+                            name: dir.name,
+                            selected: false
                         });
                     });
                     self.set('subDirectories', subDirs);
@@ -145,7 +147,8 @@ export default Ember.Controller.extend({
                     var subDirs = [];
                     result.forEach(dir => {
                         subDirs.push({
-                            name: dir.name
+                            name: dir.name,
+                            selected: false
                         });
                     });
                     self.set('subDirectories', subDirs);
@@ -225,16 +228,14 @@ export default Ember.Controller.extend({
          * @param  {string} azurePath - Remote Azure Storage path
          */
         uploadBlobData: function (filePaths, azurePath) {
-            var self = this,
-                activeContainer = this.get('activeContainer'),
+            var activeContainer = this.get('activeContainer'),
                 containerPath = azurePath.replace(/.*\:\//, ''),
                 paths = filePaths.split(';');
 
-            self.store.find('container', activeContainer).then(foundContainer => {
+            this.store.find('container', activeContainer).then(foundContainer => {
                 var promises = [];
 
                 paths.forEach(path => {
-
                     var uploadNotification,
                         speedSummary,
                         uploadPromise,
@@ -269,8 +270,7 @@ export default Ember.Controller.extend({
                             }
                         });
 
-                        self.get('notifications').addPromiseNotification(result.promise, uploadNotification);
-
+                        this.get('notifications').addPromiseNotification(result.promise, uploadNotification);
                         return uploadPromise;
                     });
 
@@ -282,7 +282,7 @@ export default Ember.Controller.extend({
 
                 return Ember.RSVP.all(promises);
             }).then(() => {
-                self.send('refreshBlobs');
+                this.send('refreshBlobs');
             });
         },
 
@@ -376,96 +376,127 @@ export default Ember.Controller.extend({
         },
 
         /**
-         * Download all the selected blobs in a directory.
-         * Directory parameter is a test hook for automation.
-         * @param  {string} directory
+         * Takes an array of blobs and streams them to a target directory
+         * @param  {array} blobs        - Blobs to download
+         * @param  {string} directory   - Local directory to save them to
+         * @param  {boolean} saveAs     - Is the target a directory or a filename (saveAs)?
          */
-        downloadBlobs: function (directory) {
+        streamBlobsToDirectory: function (blobs, directory, saveAs) {
+            blobs.forEach(blob => {
+                var fileName = blob.get('name').replace(/^.*[\\\/]/, ''),
+                    targetPath = (saveAs) ? directory : directory + '/' + fileName,
+                    downloadPromise = {isFulfilled : false},
+                    downloadNotification,
+                    speedSummary,
+                    progressUpdateInterval;
 
-            var nwInput = Ember.$('#nwSaveInput'),
-                blobs = this.get('blobs'),
-                handleInputDirectory,
-                self = this,
-                selectedBlobs = [];
+                blob.toFile(targetPath).then(result => {
+                    speedSummary = result.speedSummary.summary;
+                    downloadPromise = result.promise;
 
-            nwInput.attr('nwsaveas', 'directory');
+                    progressUpdateInterval = setInterval(() => {
+                        if (speedSummary) {
+                            // Don't report a dead speed. This api reports a speed of 0 for small blobs
+                            var speed = speedSummary.getSpeed() === '0B/S' ? '' : speedSummary.getSpeed();
+                            downloadNotification.set('progress', speedSummary.getCompletePercent());
+                            downloadNotification.set('text', stringResources.downloadMessage(blob.get('name'), speed, speedSummary.getCompletePercent()));
+                        }
+                    }, 200);
 
-            handleInputDirectory = function (dir) {
-                selectedBlobs.forEach(function (blob) {
-                    // Check if this one is marked for download
-                    if (blob.get('selected')) {
-                        var fileName = blob.get('name').replace(/^.*[\\\/]/, ''),
-                            targetPath = dir + '/' + fileName,
-                            downloadPromise = { isFulfilled : false },
-                            downloadNotification,
-                            speedSummary,
-                            progressUpdateInterval;
+                    downloadNotification = Notification.create({
+                        type: 'Download',
+                        text: stringResources.downloadMessage(blob.get('name')),
+                        cleanup: function () {
+                            clearInterval(this.get('customData').progressUpdateInterval);
+                        },
+                        customData: {
+                            progressUpdateInterval: progressUpdateInterval
+                        }
+                    });
 
-                        blob.toFile(targetPath)
-                        .then(result => {
-
-                            speedSummary = result.speedSummary.summary;
-                            downloadPromise = result.promise;
-
-                            progressUpdateInterval = setInterval(() => {
-                                if (speedSummary) {
-                                    // don't report a dead speed. this api reports a speed of 0 for small blobs
-                                    var speed = speedSummary.getSpeed() === '0B/S' ? '' : speedSummary.getSpeed();
-
-                                    downloadNotification.set('progress', speedSummary.getCompletePercent());
-                                    downloadNotification.set('text', stringResources.downloadMessage(blob.get('name'), speed, speedSummary.getCompletePercent()));
-                                }
-                            },
-                            200);
-
-                            downloadNotification = Notification.create({
-                                type: 'Download',
-                                text: stringResources.downloadMessage(blob.get('name')),
-                                cleanup: function () {
-                                    clearInterval(this.get('customData').progressUpdateInterval);
-                                },
-                                customData: {
-                                    progressUpdateInterval: progressUpdateInterval
-                                }
-                            });
-                            self.get('notifications').addPromiseNotification(downloadPromise, downloadNotification);
-
-                            return downloadPromise;
-                        });
-                    }
+                    this.get('notifications').addPromiseNotification(downloadPromise, downloadNotification);
+                    return downloadPromise;
                 });
-            };
+            });
+        },
 
-            // Check the number of selected blobs, but only count to 2
-            blobs.forEach(function (blob) {
+        /**
+         * Download all the selected blobs.
+         * Directory parameter is a test hook for automation.
+         * @param  {string} targetDirectory
+         */
+        downloadBlobs: function (targetDirectory) {
+            var blobs = this.get('blobs'),
+                subDirectories = this.get('subDirectories'),
+                selectedBlobs = [],
+                selectedDirectories = [],
+                self = this,
+                nwInput;
+
+            appInsights.trackEvent('downloadBlobs');
+
+            // Get selected blobs
+            blobs.forEach(blob => {
                 if (blob.get('selected')) {
                     selectedBlobs.push(blob);
                 }
             });
 
-            // If no blobs are selected we don't need to show the native dialog
-            if (selectedBlobs.length > 0) {
-                nwInput = (selectedBlobs.length > 1) ? Ember.$('#nwSaveDirectory') : Ember.$('#nwSaveInput');
-
-                if (selectedBlobs.length === 1) {
-                    nwInput.attr('nwsaveas', selectedBlobs[0].get('name'));
+            // Get selected directories
+            subDirectories.forEach(directory => {
+                if (directory.selected) {
+                    selectedDirectories.push(directory);
                 }
+            });
 
-                // Native dialog won't work in automation so skip in automation
-                if (!directory) {
-                    nwInput.change(function () {
-                        handleInputDirectory(this.value);
-                        // Reset value to ensure change event always fires
-                        this.value = '';
-                        nwInput.off('change');
-                    });
-                    nwInput.click();
-                } else {
-                    handleInputDirectory(directory);
+            /**
+             * Action-scope download function
+             */
+            var executeDownload = function () {
+                if (selectedBlobs.length > 0) {
+                    nwInput = (selectedBlobs.length > 1) ? Ember.$('#nwSaveDirectory') : Ember.$('#nwSaveInput');
+
+                    if (selectedBlobs.length === 1) {
+                        nwInput.attr('nwsaveas', selectedBlobs[0].get('name'));
+                    }
+
+                    if (!targetDirectory) {
+                        nwInput.change(function () {
+                            self.send('streamBlobsToDirectory', selectedBlobs, this.value, (selectedBlobs.length === 1));
+                            this.value = ''; // Reset value to ensure change event always fires
+                            nwInput.off('change');
+                        });
+
+                        nwInput.click();
+                    } else {
+                        self.send('streamBlobsToDirectory', selectedBlobs, targetDirectory, (selectedBlobs.length === 1));
+                    }
                 }
+            };
+
+            if (selectedDirectories.length < 1) {
+                return executeDownload();
             }
 
-            appInsights.trackEvent('downloadBlobs');
+            this.store.find('container', this.get('activeContainer')).then(container => {
+                var getBlobPromises = [];
+
+                selectedDirectories.forEach(directory => {
+                    getBlobPromises.push(this.store.find('blob', {
+                        container: container,
+                        container_id: container.get('id'),
+                        prefix: directory.name
+                    }).then(blobs => {
+                        blobs.forEach(blob => {
+                            selectedBlobs.push(blob);
+                        });
+                    }));
+                });
+
+                Ember.RSVP.all(getBlobPromises).then(function () {
+                    executeDownload();
+                });
+            });
         },
 
         /**
@@ -481,22 +512,37 @@ export default Ember.Controller.extend({
          */
         deleteBlobs: function () {
             var blobs = this.get('blobs'),
-                deleteCount = 0;
+                folderDeleteCount = 0,
+                blobDeleteCount = 0,
+                deleteText;
 
-            blobs.forEach(function (blob) {
+            // Count folder and blobs to delete
+            this.get('subDirectories').forEach(directory => {
+                if (directory.selected) {
+                    folderDeleteCount += 1;
+                }
+            });
+            blobs.forEach(blob => {
                 if (blob.get('selected')) {
-                    deleteCount += 1;
+                    blobDeleteCount += 1;
                 }
             });
 
-            if (deleteCount === 0) {
+            // Bail out if we have nothing to delete
+            if (blobDeleteCount < 1 && folderDeleteCount < 1) {
                 return;
             }
 
             // Setup values expected by delete modal
+            if (blobDeleteCount > 0 && folderDeleteCount > 0) {
+                deleteText = `${blobDeleteCount} blob(s) and ${folderDeleteCount} folder(s)`;
+            } else if (blobDeleteCount > 0) {
+                deleteText = `${blobDeleteCount} blob(s)`;
+            } else if (folderDeleteCount > 0) {
+                deleteText = `${folderDeleteCount} folder(s)`;
+            }
             this.set('modalConfirmAction', 'deleteBlobData');
-            this.set('modalDeleteCount', deleteCount);
-            this.set('modalDeleteType', 'blob');
+            this.set('modalDeleteText', deleteText);
 
             // Open delete prompt
             Ember.$('#modal-delete').openModal();
@@ -510,29 +556,56 @@ export default Ember.Controller.extend({
         },
 
         /**
-         * Delete all the selected blobs
+         * Delete all the blobs in a given "faked" folder
+         * for the current container
+         * @param  {string} folder - The folder to delete
+         */
+        deleteFolderBlobs: function (folder) {
+            this.store.find('container', this.get('activeContainer')).then(container => {
+                this.store.find('blob', {
+                    container: container,
+                    container_id: container.get('id'),
+                    prefix: folder
+                }).then(blobs => {
+                    blobs.forEach(blob => {
+                        blob.destroyRecord();
+                        this.get('notifications').addPromiseNotification(blob.save(),
+                            Notification.create({
+                                type: 'DeleteBlob',
+                                text: stringResources.deleteBlobMessage(blob.get('name'))
+                            })
+                        );
+                    });
+
+                    this.set('subDirectories', []);
+                    this.send('refreshBlobs');
+                });
+            });
+        },
+
+        /**
+         * Delete all the selected blobs, including potentially selected folders
          */
         deleteBlobData: function () {
-            var blobs = this.get('blobs'),
-                self = this;
-
-            blobs.forEach(function (blob) {
-                // check if this one is marked for deleting
+            this.get('blobs').forEach(blob => {
                 if (blob.get('selected')) {
                     blob.deleteRecord();
-                    self.get('notifications').addPromiseNotification(blob.save(),
+                    this.get('notifications').addPromiseNotification(blob.save(),
                         Notification.create({
                             type: 'DeleteBlob',
                             text: stringResources.deleteBlobMessage(blob.get('name'))
                         })
                     );
-                    if (blob === self.get('selectedBlob')) {
-                        self.set('selectBlob', null);
-                    }
                 }
             });
 
-            this.set('blobs', blobs);
+            this.get('subDirectories').forEach(directory => {
+                if (directory.selected) {
+                    this.send('deleteFolderBlobs', directory.name);
+                }
+            });
+
+            this.set('selectBlob', null);
         },
 
         /**
