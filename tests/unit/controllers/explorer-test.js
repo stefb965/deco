@@ -5,10 +5,11 @@ import {
 from 'ember-qunit';
 import startApp from 'azureexplorer/tests/helpers/start-app';
 
-var App, store;
+var App, store, ns;
 
 function combinedStart(assert) {
     App = startApp(null, assert);
+    ns = App.__container__.lookup('service:nodeServices');
     store = App.__container__.lookup('store:main');
     Ember.run(function () {
         var newAccount = store.createRecord('account', {
@@ -21,7 +22,7 @@ function combinedStart(assert) {
 
 moduleFor('controller:explorer', {
     // Specify the other units that are required for this test.
-    needs: ['controller:application', 'controller:notifications', 'model:blob', 'model:container'],
+    needs: ['controller:application', 'controller:notifications', 'controller:uploaddownload','model:blob', 'model:container'],
     teardown: function () {
         Ember.run(App, App.destroy);
         window.localStorage.clear();
@@ -53,35 +54,6 @@ test('it should delete a container', function (assert) {
         controller.get('containers').then(() => {
             controller.set('activeContainer', 'testcontainer');
             controller.send('deleteContainerData');
-        });
-    });
-});
-
-test('it should download blobs', function (assert) {
-    assert.expect(62);
-    combinedStart(assert);
-
-    var controller = this.subject();
-    controller.store = store;
-
-    Ember.run(function () {
-        store.find('container').then(function (containers) {
-            containers.forEach(function (container) {
-                container.get('blobs', {
-                    prefix: '/'
-                }).then(function (blobs) {
-
-                    controller.set('blobs', blobs);
-                    blobs.forEach(function (blob) {
-                        // indicated blob is unchecked
-                        blob.set('selected', false);
-                    });
-                    // controller should select all blobs
-                    controller.send('selectAllBlobs');
-                    controller.send('downloadBlobs', './testdir');
-                    controller.send('selectAllBlobs');
-                });
-            });
         });
     });
 });
@@ -300,29 +272,14 @@ test('it should change subdirectories', function (assert) {
     });
 });
 
-test('it should upload file to blob', function (assert) {
-    assert.expect(27);
-    combinedStart(assert);
-
-    var controller = this.subject();
-    var changed = false;
-    controller.store = store;
-    controller.set('searchQuery', 'testcontainer');
-    controller.set('activeContainer', 'testcontainer');
-    Ember.run(() => {
-        controller.get('containers').then(() => {
-            controller.send('uploadBlobData', '/testdir/testfile.js;/testdir/testfile2.js;/testdir/testfile3.js', 'mydir1/');
-        });
-    });
-});
-
 test('it should create a subdirectory/folder upon upload', function (assert) {
-    assert.expect(17);
+    assert.expect(12);
     combinedStart(assert);
 
     var controller = this.subject();
     var changed = false;
     controller.store = store;
+    
     controller.set('searchQuery', 'testcontainer');
     controller.set('activeContainer', 'testcontainer');
 
@@ -338,7 +295,12 @@ test('it should create a subdirectory/folder upon upload', function (assert) {
 
     Ember.run(() => {
         controller.get('containers').then(() => {
-            controller.send('uploadBlobData', '/testdir/testfile.js', 'mydir5/testfile.js');
+            controller.store.push('blob', {
+                id: 'testcontainersubdir',
+                name: 'mydir5/file.txt'
+            });
+        }).then(() => {
+            controller.send('refreshBlobs');
         });
     });
 });

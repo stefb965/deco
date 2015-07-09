@@ -10,9 +10,10 @@ import stringResources from '../utils/string-resources';
 export default Ember.Controller.extend({
     // Services & Aliases
     // ------------------------------------------------------------------------------
-    needs: ['application', 'notifications'],
+    needs: ['application', 'notifications', 'uploaddownload'],
     activeConnection: Ember.computed.alias('controllers.application.activeConnection'),
     notifications: Ember.computed.alias('controllers.notifications'),
+    uploaddownload: Ember.computed.alias('controllers.uploaddownload'),
     azureStorage: Ember.computed.alias('nodeServices.azureStorage'),
     fileSvc: Ember.computed.alias('nodeServices.fs'),
     nodeServices: Ember.inject.service(),
@@ -125,6 +126,11 @@ export default Ember.Controller.extend({
 
     // Actions and Method
     // ------------------------------------------------------------------------------
+
+    /**
+     * Delete a single blob
+     * @param  {DS.Record} blob
+     */
     deleteSingleBlob: function (blob) {
         blob.deleteRecord();
         this.get('notifications').addPromiseNotification(blob.save(),
@@ -224,54 +230,8 @@ export default Ember.Controller.extend({
          * @param  {string} azurePath - Remote Azure Storage path
          */
         uploadBlobData: function (filePaths, azurePath) {
-            var activeContainer = this.get('activeContainer'),
-                containerPath = azurePath.replace(/.*\:\//, ''),
-                paths = filePaths.split(';'), promises = [];
-
-            this.store.find('container', activeContainer).then(foundContainer => {
-                paths.forEach(path => {
-                    var fileName = path.replace(/^.*[\\\/]/, ''),
-                        uploadNotification, speedSummary, uploadPromise, progressUpdateInterval;
-
-                    var promise = foundContainer.uploadBlob(path, containerPath + fileName).then(result => {
-                        speedSummary = result.speedSummary.summary;
-                        uploadPromise = result.promise;
-
-                        progressUpdateInterval = setInterval(() => {
-                            if (speedSummary) {
-                                // don't report a dead speed. this api reports a speed of 0 for small blobs
-                                var speed = speedSummary.getSpeed() === '0B/S' ? '' : speedSummary.getSpeed();
-
-                                uploadNotification.set('progress', speedSummary.getCompletePercent());
-                                uploadNotification.set('text', stringResources.uploadMessage(fileName, azurePath, speed, speedSummary.getCompletePercent()));
-                            }
-                        }, 200);
-
-                        uploadNotification = Notification.create({
-                            type: 'Upload',
-                            text: stringResources.uploadMessage(fileName, azurePath),
-                            cleanup: function () {
-                                clearInterval(this.get('customData').progressUpdateInterval);
-                            },
-                            customData: {
-                                progressUpdateInterval: progressUpdateInterval
-                            }
-                        });
-
-                        this.get('notifications').addPromiseNotification(result.promise, uploadNotification);
-                        return uploadPromise;
-                    });
-
-                    promises.push(promise);
-                });
-
-                appInsights.trackEvent('uploadBlobData');
-                appInsights.trackMetric('uploadBlobs', paths.length);
-
-                return Ember.RSVP.all(promises);
-            }).then(() => {
-                this.send('refreshBlobs');
-            });
+            var activeContainer = this.get('activeContainer');
+            this.get('uploaddownload').send('uploadBlobData', filePaths, azurePath, activeContainer);
         },
 
         /**
@@ -317,49 +277,6 @@ export default Ember.Controller.extend({
         },
 
         /**
-         * Takes an array of blobs and streams them to a target directory
-         * @param  {array} blobs        - Blobs to download
-         * @param  {string} directory   - Local directory to save them to
-         * @param  {boolean} saveAs     - Is the target a directory or a filename (saveAs)?
-         */
-        streamBlobsToDirectory: function (blobs, directory, saveAs) {
-            blobs.forEach(blob => {
-                var fileName = blob.get('name').replace(/^.*[\\\/]/, ''),
-                    targetPath = (saveAs) ? directory : directory + '/' + fileName,
-                    downloadPromise = {isFulfilled : false},
-                    downloadNotification, speedSummary, progressUpdateInterval;
-
-                blob.toFile(targetPath).then(result => {
-                    speedSummary = result.speedSummary.summary;
-                    downloadPromise = result.promise;
-
-                    progressUpdateInterval = setInterval(() => {
-                        if (speedSummary) {
-                            // Don't report a dead speed. This api reports a speed of 0 for small blobs
-                            var speed = speedSummary.getSpeed() === '0B/S' ? '' : speedSummary.getSpeed();
-                            downloadNotification.set('progress', speedSummary.getCompletePercent());
-                            downloadNotification.set('text', stringResources.downloadMessage(blob.get('name'), speed, speedSummary.getCompletePercent()));
-                        }
-                    }, 200);
-
-                    downloadNotification = Notification.create({
-                        type: 'Download',
-                        text: stringResources.downloadMessage(blob.get('name')),
-                        cleanup: function () {
-                            clearInterval(this.get('customData').progressUpdateInterval);
-                        },
-                        customData: {
-                            progressUpdateInterval: progressUpdateInterval
-                        }
-                    });
-
-                    this.get('notifications').addPromiseNotification(downloadPromise, downloadNotification);
-                    return downloadPromise;
-                });
-            });
-        },
-
-        /**
          * Download all the selected blobs.
          * Directory parameter is a test hook for automation.
          * @param  {string} targetDirectory
@@ -386,14 +303,14 @@ export default Ember.Controller.extend({
 
                     if (!targetDirectory) {
                         nwInput.change(function () {
-                            self.send('streamBlobsToDirectory', selectedBlobs, this.value, (selectedBlobs.length === 1));
+                            self.get('uploaddownload').send('streamBlobsToDirectory', selectedBlobs, this.value, (selectedBlobs.length === 1));
                             this.value = ''; // Reset value to ensure change event always fires
                             nwInput.off('change');
                         });
 
                         nwInput.click();
                     } else {
-                        self.send('streamBlobsToDirectory', selectedBlobs, targetDirectory, (selectedBlobs.length === 1));
+                        self.get('uploaddownload').send('streamBlobsToDirectory', selectedBlobs, targetDirectory, (selectedBlobs.length === 1));
                     }
                 }
             };
@@ -485,7 +402,6 @@ export default Ember.Controller.extend({
                 }).then(blobs => {
                     blobs.forEach(blob => this.deleteSingleBlob(blob));
                     this.set('subDirectories', []);
-                    this.send('refreshBlobs');
                 });
             });
         },
@@ -506,7 +422,6 @@ export default Ember.Controller.extend({
                 }
             });
 
-            this.set('selectedBlob', null);
         },
 
         /**
