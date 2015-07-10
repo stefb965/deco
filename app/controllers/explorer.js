@@ -33,6 +33,7 @@ export default Ember.Controller.extend({
     searchQuery: '',                    // Search query for containers
     blobsLoading: true,                 // Are we loading blobs
     selectedBlob: null,                 // DS.Record of the currently selected blob
+    blobsSortProperty: ['name'],        // Property indicating the sorting of blobs
 
     // Init & Setup
     // ------------------------------------------------------------------------------
@@ -53,6 +54,8 @@ export default Ember.Controller.extend({
      * all the containers matching the query.
      * @return {Promise}
      */
+    blobsSorted: Ember.computed.sort('blobs', 'blobsSortProperty'),
+
     containers: function () {
         if (!this.get('searchQuery')) {
             return this.get('model');
@@ -277,8 +280,7 @@ export default Ember.Controller.extend({
         },
 
         /**
-         * Download all the selected blobs.
-         * Directory parameter is a test hook for automation.
+         * Download all the selected blobs. Directory parameter is a test hook for automation.
          * @param  {string} targetDirectory
          */
         downloadBlobs: function (targetDirectory) {
@@ -389,8 +391,7 @@ export default Ember.Controller.extend({
         },
 
         /**
-         * Delete all the blobs in a given "faked" folder
-         * for the current container
+         * Delete all the blobs in a given "faked" folder for the current container
          * @param  {string} folder - The folder to delete
          */
         deleteFolderBlobs: function (folder) {
@@ -491,6 +492,23 @@ export default Ember.Controller.extend({
                     this.send('switchActiveContainer', firstContainer);
                 }
             });
+        },
+
+        /**
+         * Changes the sorting of the blobs, using a given property
+         * @param  {string} sortProperty
+         */
+        changeBlobsSorting: function (sortProperty) {
+            let curSortProp = this.get('blobsSortProperty').get('firstObject');
+
+            // Switch ascending or descending sorting
+            if (curSortProp.indexOf(sortProperty) > -1) {
+                sortProperty = (curSortProp.indexOf(':asc') > -1) ? sortProperty + ':desc' : sortProperty + ':asc';
+            } else {
+                sortProperty = sortProperty + ':asc';
+            }
+
+            this.set('blobsSortProperty', [sortProperty]);
         }
     }
 });
