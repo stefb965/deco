@@ -1,6 +1,6 @@
 {
   "name": "azureexplorer",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "A cross-platform tool to explore Azure Storage Accounts",
   "scripts": {
     "start": "ember server",
