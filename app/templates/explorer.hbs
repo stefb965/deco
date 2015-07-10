@@ -43,10 +43,10 @@
                     <thead>
                         <tr>
                             <th class="action-field" {{action "selectAllBlobs"}}>Action</th>
-                            <th data-field="id">Name</th>
-                            <th data-field="name">Last Modified</th>
-                            <th data-field="size">Size</th>
-                            <th data-field="type">Type</th>
+                            <th data-field="name" {{action "changeBlobsSorting" "name"}}>Name</th>
+                            <th data-field="lastmodified" {{action "changeBlobsSorting" "lastModified"}}>Last Modified</th>
+                            <th data-field="size" {{action "changeBlobsSorting" "size"}}>Size</th>
+                            <th data-field="type" {{action "changeBlobsSorting" "type"}}>Type</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -62,7 +62,7 @@
                                 <td></td>
                             </tr>
                         {{/each}}
-                        {{#each blob in blobs itemController="blob"}}
+                        {{#each blob in blobsSorted itemController="blob"}}
                             <tr {{bind-attr class="blob.selected:selected"}}>
                                 <td>
                                     {{input type="checkbox" id=blob.model.name checked=blob.model.selected}}
