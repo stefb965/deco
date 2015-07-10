@@ -9,7 +9,6 @@ var App, store, ns;
 
 function combinedStart(assert) {
     App = startApp(null, assert);
-    ns = App.__container__.lookup('service:nodeServices');
     store = App.__container__.lookup('store:main');
     Ember.run(function () {
         var newAccount = store.createRecord('account', {
@@ -273,19 +272,16 @@ test('it should change subdirectories', function (assert) {
 });
 
 test('it should create a subdirectory/folder upon upload', function (assert) {
-    assert.expect(12);
+    assert.expect(29);
     combinedStart(assert);
 
     var controller = this.subject();
-    var changed = false;
     controller.store = store;
-    
-    controller.set('searchQuery', 'testcontainer');
-    controller.set('activeContainer', 'testcontainer');
 
     controller.addObserver('subDirectories', controller, () => {
-        if (controller.get('subDirectories').length === 3) {
+        if (controller.get('subDirectories').length === 2) {
             controller.get('subDirectories').forEach(subDir => {
+                console.log(subDir);
                 if (subDir.name === 'mydir5/') {
                     assert.ok(true);
                 }
@@ -294,13 +290,17 @@ test('it should create a subdirectory/folder upon upload', function (assert) {
     });
 
     Ember.run(() => {
-        controller.get('containers').then(() => {
-            controller.store.push('blob', {
-                id: 'testcontainersubdir',
-                name: 'mydir5/file.txt'
+        controller.set('searchQuery', 'testcontainer');
+
+        controller.get('containers').then((containers) => {
+            containers.forEach((container) => {
+                if (container.id === 'testcontainer') {
+                    return container.uploadBlob('testpath/file1.jpg', 'mydir5/file1.jpg');
+                }
             });
         }).then(() => {
-            controller.send('refreshBlobs');
+            controller.set('activeContainer', 'testcontainer');
+            controller.send('refreshBlobs');   
         });
     });
 });

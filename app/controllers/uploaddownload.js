@@ -10,7 +10,7 @@ export default Ember.Controller.extend({
     nodeServices: Ember.inject.service(),
 
     actions: {
-	    /**
+        /**
         * Upload one or multiple files to blobs
         * @param  {Array} filePaths  - Local file paths of the files to upload
         * @param  {string} azurePath - Remote Azure Storage path
@@ -109,5 +109,5 @@ export default Ember.Controller.extend({
                 });
             });
         }
-	}
+    }
 });
