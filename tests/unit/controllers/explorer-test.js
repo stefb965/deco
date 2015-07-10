@@ -5,7 +5,7 @@ import {
 from 'ember-qunit';
 import startApp from 'azureexplorer/tests/helpers/start-app';
 
-var App, store;
+var App, store, ns;
 
 function combinedStart(assert) {
     App = startApp(null, assert);
@@ -21,7 +21,7 @@ function combinedStart(assert) {
 
 moduleFor('controller:explorer', {
     // Specify the other units that are required for this test.
-    needs: ['controller:application', 'controller:notifications', 'model:blob', 'model:container'],
+    needs: ['controller:application', 'controller:notifications', 'controller:uploaddownload','model:blob', 'model:container'],
     teardown: function () {
         Ember.run(App, App.destroy);
         window.localStorage.clear();
@@ -53,35 +53,6 @@ test('it should delete a container', function (assert) {
         controller.get('containers').then(() => {
             controller.set('activeContainer', 'testcontainer');
             controller.send('deleteContainerData');
-        });
-    });
-});
-
-test('it should download blobs', function (assert) {
-    assert.expect(62);
-    combinedStart(assert);
-
-    var controller = this.subject();
-    controller.store = store;
-
-    Ember.run(function () {
-        store.find('container').then(function (containers) {
-            containers.forEach(function (container) {
-                container.get('blobs', {
-                    prefix: '/'
-                }).then(function (blobs) {
-
-                    controller.set('blobs', blobs);
-                    blobs.forEach(function (blob) {
-                        // indicated blob is unchecked
-                        blob.set('selected', false);
-                    });
-                    // controller should select all blobs
-                    controller.send('selectAllBlobs');
-                    controller.send('downloadBlobs', './testdir');
-                    controller.send('selectAllBlobs');
-                });
-            });
         });
     });
 });
@@ -300,35 +271,17 @@ test('it should change subdirectories', function (assert) {
     });
 });
 
-test('it should upload file to blob', function (assert) {
-    assert.expect(27);
-    combinedStart(assert);
-
-    var controller = this.subject();
-    var changed = false;
-    controller.store = store;
-    controller.set('searchQuery', 'testcontainer');
-    controller.set('activeContainer', 'testcontainer');
-    Ember.run(() => {
-        controller.get('containers').then(() => {
-            controller.send('uploadBlobData', '/testdir/testfile.js;/testdir/testfile2.js;/testdir/testfile3.js', 'mydir1/');
-        });
-    });
-});
-
 test('it should create a subdirectory/folder upon upload', function (assert) {
-    assert.expect(17);
+    assert.expect(29);
     combinedStart(assert);
 
     var controller = this.subject();
-    var changed = false;
     controller.store = store;
-    controller.set('searchQuery', 'testcontainer');
-    controller.set('activeContainer', 'testcontainer');
 
     controller.addObserver('subDirectories', controller, () => {
-        if (controller.get('subDirectories').length === 3) {
+        if (controller.get('subDirectories').length === 2) {
             controller.get('subDirectories').forEach(subDir => {
+                console.log(subDir);
                 if (subDir.name === 'mydir5/') {
                     assert.ok(true);
                 }
@@ -337,8 +290,17 @@ test('it should create a subdirectory/folder upon upload', function (assert) {
     });
 
     Ember.run(() => {
-        controller.get('containers').then(() => {
-            controller.send('uploadBlobData', '/testdir/testfile.js', 'mydir5/testfile.js');
+        controller.set('searchQuery', 'testcontainer');
+
+        controller.get('containers').then((containers) => {
+            containers.forEach((container) => {
+                if (container.id === 'testcontainer') {
+                    return container.uploadBlob('testpath/file1.jpg', 'mydir5/file1.jpg');
+                }
+            });
+        }).then(() => {
+            controller.set('activeContainer', 'testcontainer');
+            controller.send('refreshBlobs');   
         });
     });
 });

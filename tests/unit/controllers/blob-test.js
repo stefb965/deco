@@ -15,6 +15,6 @@ test('it exists', function (assert) {
             size: 123456
         })
     });
-    console.log(this);
+
     assert.ok(controller);
 });
