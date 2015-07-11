@@ -1,14 +1,12 @@
 <div class="preview">
     <div class="content">
         {{#if typeVideo}}
-                <video height="125" class="materialboxed" controls autoplay name="media"> 
-                    <source src={{previewLink}} type={{type}} >
+                <video src={{previewLink}} type={{type}} id="previewMedia" height="125" class="materialboxed" controls autoplay name="media"> 
                 </video>
         {{/if}}
         {{#if typeAudio}}
-                <video height="110" class="materialboxed" controls autoplay name="media"> 
-                    <source src={{previewLink}} type={{type}} >
-                </video>
+                <audio src={{previewLink}} type={{type}} id="previewMedia" height="110" class="materialboxed" controls autoplay name="media"> 
+                </audio>
         {{/if}}
         {{#if typeImage}}
                 <img class="materialboxed" src={{previewLink}} />

@@ -49,5 +49,19 @@ export default Ember.Component.extend({
         Ember.run.scheduleOnce('afterRender', this, function () {
             Ember.$('.materialboxed').materialbox();
         });
-    }.observes('selectedBlob')
+    }.observes('selectedBlob'),
+
+    /**
+     * Works around a Chrome issue, reloading multimedia tags.
+     */
+    previewLinkObserver: function () {
+        Ember.run.scheduleOnce('afterRender', this, () => {
+            if (this.get('typeAudio') || this.get('typeVideo')) {
+                let mediaElement = Ember.$('#previewMedia');
+                if (mediaElement && mediaElement[0]) {
+                    mediaElement[0].load();
+                }
+            }
+        });
+    }.observes('previewLink')
 });
