@@ -67,7 +67,8 @@
     "toolbar": false,
     "frame": true,
     "position": "center",
-    "resizable": true
+    "resizable": true,
+    "icon": "./public/icon/ase.png"
   },
   "dependencies": {
     "azure-storage": "^0.4.3",
