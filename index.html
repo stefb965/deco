@@ -1,147 +1,84 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
-    <meta charset="UTF-8">
-    <title>Azure Storage Explorer (Cross-Platform)</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen"></head>
-<body>
-    <section class="page-header">
-        <h1 class="project-name">Azure Storage Explorer</h1>
-        <h2 class="project-tagline">
-            Cross-Platform Azure Storage Explorer for OS X, Linux, and Windows
-        </h2>
-        <a href="https://github.com/azure-storage/xplat" class="btn">Source on GitHub</a>
-        <a href="#releases" class="btn">Download Beta</a>
-        <a href="#devbuilds" class="btn">Download Dev Builds</a>
-    </section>
-    <section class="main-content">
-        <h1>
+    <head>
+        <meta charset="UTF-8">
+        <title>Azure Storage Explorer (Cross-Platform)</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    </head>
+    <body>
+        <section class="page-header">
+            <h1 class="project-name">Azure Storage Explorer</h1>
+            <h2 class="project-tagline">
+            for OS X, Linux, and Windows (and it's free!)
+            </h2>
+            <a id="mainDownload" href="#releases" class="btn hidden">Download</a>
+            <a href="https://github.com/azure-storage/xplat" class="btn">Source on GitHub</a>
+        </section>
+        <section class="main-content">
+            <h1>
             <a id="azure-cross-platform-storage-explorer" class="anchor" href="#azure-cross-platform-storage-explorer" aria-hidden="true">
                 <span class="octicon octicon-link"></span>
-            </a>
-            Azure Cross-Platform Storage Explorer
-        </h1>
-        <p>
-            <img src="https://raw.githubusercontent.com/azure-storage/xplat/gh-pages/imgs/screenshot.png" alt=""></p>
-        <p>
-            A Cross-Platform Azure Storage Explorer allowing the manipulation of Azure
-            <a href="http://azure.microsoft.com/en-us/documentation/articles/storage-introduction/">Blob Storage</a>
-            accounts, enabling you to easily work with your assets and containers from any platform.
-        </p>
-        <h1>
-            <a id="features" class="anchor" href="#features" aria-hidden="true">
-                <span class="octicon octicon-link"></span>
-            </a>
-            Features
-        </h1>
-        <ul>
-            <li>Create Containers</li>
-            <li>Search Containers</li>
-            <li>Virtualized Directories</li>
-            <li>Bulk upload and download of blobs</li>
-            <li>Preview media blobs such as images, audio and video</li>
-        </ul>
-        <h1>
-            <a id="releases" class="anchor" href="#releases" aria-hidden="true">
-                <span class="octicon octicon-link"></span>
-            </a>
-            Releases
-        </h1>
-        <h2>
-            <a id="031" class="anchor" href="#031" aria-hidden="true">
-                <span class="octicon octicon-link"></span>
-            </a>
-            0.3.1 (Beta)
-        </h2>
-        <ul>
-            <li>
-                <a href="https://github.com/azure-storage/xplat/releases/download/v0.3.1-beta/azure-storage-explorer_osx_031beta.zip">Mac OS X (64-bit)</a>
-            </li>
-            <li>
-                <a href="https://github.com/azure-storage/xplat/releases/download/v0.3.1-beta/azure-storage-explorer_win_031beta.zip">0.3.1 Beta (32-bit)</a>
-            </li>            
-            <li>
-                <a href="https://github.com/azure-storage/xplat/releases/download/v0.3.1-beta/azure-storage-explorer_linux_031beta.zip">Linux (64-bit)</a>
-            </li>            
-        </ul>
-        <h2>
-            <a id="020" class="anchor" href="#020" aria-hidden="true">
-                <span class="octicon octicon-link"></span>
-            </a>
-            0.2.0 (Beta)
-        </h2>
-        <ul>
-        <li>
-            <a href="https://github.com/azure-storage/xplat/releases/download/v0.2.0-beta/azure-storage-explorer_osx_020beta.zip">Mac OS X (64-bit)</a>
-        </li>
-        <li>
-            <a href="https://github.com/azure-storage/xplat/releases/download/v0.2.0-beta/azure-storage-explorer_win_020beta.zip">Windows (32-bit)</a>
-        </li>
-        <li>
-            <a href="https://github.com/azure-storage/xplat/releases/download/v0.2.0-beta/azure-storage-explorer_linux_020beta.zip">Linux (64-bit)</a>
-        </li>        
-    </ul>
-    <h2>
-        <a id="010" class="anchor" href="#010" aria-hidden="true">
-            <span class="octicon octicon-link"></span>
-        </a>
-        0.1.0 (Preview)
-    </h2>
-    <ul>
-        <li>
-            <a href="https://github.com/azure-storage/xplat/releases/download/v0.1.0-beta/azure-storage-explorer-osx64.tar.gz">Mac OS X (64-bit)</a>
-        </li>
-        <li>
-            <a href="https://github.com/azure-storage/xplat/releases/download/v0.1.0-beta/azure-storage-explorer-windows32.zip">Windows (32-bit)</a>
-        </li>
-        <li>
-            <a href="https://github.com/azure-storage/xplat/releases/download/v0.1.0-beta/azure-storage-explorer-linux64.tar.gz">Linux (64-bit)</a>
-        </li>
-    </ul>
-    <h1>
-        <a id="devbuilds" class="anchor" href="#releases" aria-hidden="true">
-            <span class="octicon octicon-link"></span>
-        </a>
-        Development Builds
-    </h1>
-    <p>
-        These builds are automatically built off of the latest source code in the master branch. 
-        They may contain some bugs here and there.
-    </p>
-    <ul>
-        <li>
-            <a href="https://azurestoragexplat.blob.core.windows.net/builds/live/osx64/build.zip">Mac OS X (64-bit)</a>
-        </li>
-        <li>
-            <a href="https://azurestoragexplat.blob.core.windows.net/builds/live/linux64/build.zip">Linux (64-bit)</a>
-        </li>
-        <li>
-            <a href="https://azurestoragexplat.blob.core.windows.net/builds/live/win32/build.zip">Windows (32-bit)</a>
-        </li>
-    </ul>
-    <footer class="site-footer">
-        <span class="site-footer-owner">
-            <a href="https://github.com/azure-storage/xplat">Azure Storage Explorer</a>
-            is maintained by
-            <a href="https://github.com/sedouard">Steven Edouard</a>
-            and
-            <a href="https://github.com/felixrieseberg">Felix Rieseberg</a>
-            , Microsoft. (C) 2015 Copyright Microsoft Corporation. Source Code released under the MIT License.
-        </span>
-        <span class="site-footer-credits">
-            This page was generated by
-            <a href="https://pages.github.com">GitHub Pages</a>
-            using the
-            <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a>
-            by
-            <a href="https://twitter.com/jasonlong">Jason Long</a>
-            .
-        </span>
-    </footer>
-</section>
-</body>
+            </a>Manage Your Storage Accounts like a Pro
+            </h1>
+            <p>
+            <img src="https://raw.githubusercontent.com/azure-storage/xplat/764e4e379101a7f8b39633b25580a203929471cd/imgs/screenshot.png" alt=""></p>
+            <p>
+                A file explorer for your Azure <a href="http://azure.microsoft.com/en-us/documentation/articles/storage-introduction/">Blob Storage</a>
+                accounts, enabling you to easily work with your assets and containers from any platform. Create and delete containers, upload, download, and delete whole folders and files, preview media assets - with the free Azure Storage Explorer, you're in full control of your assets.
+            </p>
+            <h1><a id="download" class="anchor" href="#releases" aria-hidden="true"></a>Download</h1>
+            <p>The latest available version is 0.4.0. While we are still working on the app, we invite you to check it out:</p>
+            <div class="downloads">
+                <div>
+                    <i class="fa fa-apple"></i>
+                    <a href="https://github.com/azure-storage/xplat/releases/download/v0.4.0/azure-storage-explorer_osx_040.dmg">Mac OS X</a>
+                </div>
+                <div>
+                    <i class="fa fa-linux"></i>
+                    <a href="https://github.com/azure-storage/xplat/releases/download/v0.4.0/azure-storage-explorer_linux_040.zip">Linux</a>
+                </div>
+                <div>
+                    <i class="fa fa-windows"></i>
+                    <a href="https://github.com/azure-storage/xplat/releases/download/v0.4.0/azure-storage-explorer_win_040.msi">Windows</a>
+                </div>
+                <div>
+                    <i class="fa fa-windows"></i>
+                    <a href="https://github.com/azure-storage/xplat/releases/download/v0.4.0/azure-storage-explorer_win_standalone_040.zip">Windows (ZIP)</a>
+                </div>
+            </div>
+        </section>
+        <section class="main-content secondary-content">
+            <h1><a id="devbuilds" class="anchor" href="#releases" aria-hidden="true"></a>Development Builds</h1>
+            <p>These builds are automatically created using the latest source code. They might contain more features than the official release, but they probably also contain some surprise bugs.</p>
+            <div class="downloads">
+                <div>
+                    <i class="fa fa-apple"></i>
+                    <a href="https://azurestoragexplat.blob.core.windows.net/builds/live/osx64/build.zip">Mac OS X</a>
+                </div>
+                <div>
+                    <i class="fa fa-linux"></i>
+                    <a href="https://azurestoragexplat.blob.core.windows.net/builds/live/linux64/build.zip">Linux</a>
+                </div>
+                <div>
+                    <i class="fa fa-windows"></i>
+                    <a href="https://azurestoragexplat.blob.core.windows.net/builds/live/win32/build.zip">Windows</a>
+                </div>
+            </div>
+            <footer class="site-footer">
+                <span class="site-footer-owner">
+                    Maintained by <a href="https://github.com/sedouard">Steven Edouard</a>
+                    and <a href="https://github.com/felixrieseberg">Felix Rieseberg</a>. (C) 2015 Copyright Microsoft Corporation.
+                </span>
+                <span class="site-footer-credits">
+                    Released under the GNU GPL v3 license. See <a href="https://github.com/azure-storage/xplat">source code</a> for details.
+                </span>
+            </footer>
+        </section>
+        <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+        <script src="./js/main.js"></script>
+    </body>
 </html>
