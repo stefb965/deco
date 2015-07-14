@@ -1,7 +1,9 @@
 # Azure Cross-Platform Storage Explorer
 [![Build Status](https://travis-ci.org/azure-storage/xplat.svg)](https://travis-ci.org/azure-storage/xplat) [![Code Climate](https://codeclimate.com/github/azure-storage/xplat/badges/gpa.svg)](https://codeclimate.com/github/azure-storage/xplat)
 
-A cross-platform implementation of azure storage explorer allowing the manipulation of azure [blob storage](http://azure.microsoft.com/en-us/documentation/articles/storage-introduction/) accounts and eventually tables and queues.
+A file explorer for your [Azure Blob Storage](http://azure.microsoft.com/en-us/documentation/articles/storage-introduction/) accounts, enabling you to easily work with your assets and containers from Mac OS X, Windows, and Linux. Create and delete containers, upload, download, and delete whole folders and files, preview media assets - with the free Azure Storage Explorer, you're in full control of your assets. Check out [storageexplorer.com](http://storageexplorer.com) for more infos and downloads.
+
+![Screenshot](https://raw.githubusercontent.com/azure-storage/xplat/764e4e379101a7f8b39633b25580a203929471cd/imgs/screenshot.png)
 
 ## Development
 #### Prerequisites
@@ -14,14 +16,14 @@ You will need the following things properly installed on your computer.
 * [PhantomJS](http://phantomjs.org/)
 
 #### Running / Development
-To run a small dev server with autoreload, simply execute `ember nw`. Since we're running Node and UI JavaScript on the same thread, running `ember serve` alone won't suffice.
+The explorer is written using Ember Cli, ES2015 and Node. The environemt is somewhat unique in that we're running Node and Chromium's JavaScript on the same thread, allowing us to consume the official Azure Storage Node API from within Ember/Chromium.
+
+To run a small development environment with autoreload, simply execute `ember nw`. Since we're running Node and UI JavaScript on the same thread, running `ember serve` alone won't suffice.
 
 #### Running Tests
 All tests suites can be run with `npm test`. 
 
-Functional and unit tests can be run with `ember nw:test`. You can also do `ember nw:test --server` to run tests continuously. 
-
-Code Style tests with JSHint and JSCS can be run with `grunt test`.
+Functional and unit tests can be run with `ember nw:test`. You can also do `ember nw:test --server` to run tests continuously. Code Style tests with JSHint and JSCS can be run with `grunt test`.
 
 #### Building the App
 Building packaged apps is automated via Grunt. From any Unix machine, run `grunt compile`, which will first build the latest version of the Ember app followed by packaging it for OS X, Linux, Windows, and a transfer of the changed ffmpeg binaries.
