@@ -138,7 +138,19 @@ module.exports = function (grunt) {
             bin_windows: {
                 src: './bin/windows/32/ffmpegsumo.dll',
                 dest: './webkitbuilds/azureexplorer/win32/ffmpegsumo.dll'
-            }
+            },
+            license_linux: {
+                src: './LICENSE',
+                dest: './webkitbuilds/azureexplorer/linux64/'
+            },
+            license_osx: {
+                src: './LICENSE',
+                dest: './webkitbuilds/azureexplorer/osx64/'
+            },
+            license_windows: {
+                src: './LICENSE',
+                dest: './webkitbuilds/azureexplorer/win32/'
+            },
         },
         zip: {
             linux: {
@@ -255,6 +267,6 @@ module.exports = function (grunt) {
     // Development Builds
     // To deploy a build with an official build number, set env var RELEASE_VERSION to release number
     // otherwise application is tagged with git hash
-    grunt.registerTask('compileDevBuild', ['prebuild', 'nodewebkit:osx', 'copy:bin_osx', 'nodewebkit:windows', 'copy:bin_windows', 'nodewebkit:linux', 'copy:bin_linux']);
+    grunt.registerTask('compileDevBuild', ['prebuild', 'nodewebkit:osx', 'copy:bin_osx', 'nodewebkit:windows', 'copy:bin_windows', 'nodewebkit:linux', 'copy:bin_linux', 'copy:license_windows', 'copy:license_osx', 'copy:license_linux']);
     grunt.registerTask('createDevBuild', ['compileDevBuild', 'zip', 'if:trusted-deploy-to-azure-cdn']);
 };
