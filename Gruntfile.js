@@ -256,7 +256,10 @@ module.exports = function (grunt) {
     grunt.registerTask('compileWindows', ['nodewebkit:windows', 'copy:bin_windows']);
     grunt.registerTask('compileWindowsWithIcon', ['nodewebkit:windowsWithIcon', 'copy:bin_windows']);
     grunt.registerTask('compile', ['prebuild', 'compileOSX', 'compileWindows', 'compileLinux']);
-    // to deploy a build with an official build number, set env var RELEASE_VERSION to release number
+
+    // Development Builds
+    // To deploy a build with an official build number, set env var RELEASE_VERSION to release number
     // otherwise application is tagged with git hash
-    grunt.registerTask('deployBuild', ['compile', 'zip', 'if:trusted-deploy-to-azure-cdn']);
+    grunt.registerTask('compileDevBuild', ['compileDevBuild', 'nodewebkit:osx', 'copy:bin_osx', 'nodewebkit:windows', 'copy:bin_windows', 'nodewebkit:linux', 'copy:bin_linux']);
+    grunt.registerTask('createDevBuild', ['compileDevBuild', 'zip', 'if:trusted-deploy-to-azure-cdn']);
 };
