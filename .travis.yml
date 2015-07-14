@@ -23,4 +23,4 @@ install:
 script:
   - xvfb-run ember nw:test
   - grunt test
-  - grunt deployBuild
+  - grunt createDevBuild

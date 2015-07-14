@@ -54,8 +54,11 @@
     "grunt-node-webkit-builder": "^1.0.2",
     "grunt-zip": "^0.16.2",
     "liquid-fire": "ef4/liquid-fire#8fcefd057478ab6852d7b8b3fc8526aa5079553c",
-    "load-grunt-tasks": "^1.0.0",
+    "load-grunt-tasks": "^3.2.0",
     "nw": "0.12.2"
+  },
+  "optionalDependencies": {
+    "grunt-appdmg": "^0.3.1"
   },
   "main": "dist/index.html",
   "window": {
