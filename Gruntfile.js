@@ -1,9 +1,14 @@
 module.exports = function (grunt) {
-    // load all grunt tasks matching the `grunt-*` pattern
-    require('load-grunt-tasks')(grunt);
+    // Load all grunt tasks matching the `grunt-*` pattern,
+    // unless we're on Linux or Windows
+    if (process.platform && process.platform === 'darwin') {
+        require('load-grunt-tasks')(grunt);
+    } else {
+        require('load-grunt-tasks')(grunt, {scope: ['devDependencies', 'dependencies']});
+    }
 
     var files = ['app/**/*.js', 'Brocfile.js'];
-    // tagged builds get their own folders. live builds just go to live folder
+    // Tagged builds get their own folders. live builds just go to live folder
     var cdnPath = process.env.RELEASE_VERSION ? process.env.RELEASE_VERSION : 'live';
 
     grunt.initConfig({
@@ -235,22 +240,12 @@ module.exports = function (grunt) {
         clean: ['./nwbuildcache', './dist', './webkitbuilds'],
     });
 
-    grunt.loadNpmTasks('grunt-node-webkit-builder');
-    grunt.loadNpmTasks('grunt-js-beautify');
-    grunt.loadNpmTasks('grunt-exec');
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-azure-cdn-deploy');
-    grunt.loadNpmTasks('grunt-zip');
-    grunt.loadNpmTasks('grunt-file-creator');
-    grunt.loadNpmTasks('grunt-appdmg');
-
     grunt.registerTask('codestyle', ['jshint', 'jscs']);
     grunt.registerTask('test', ['codestyle']);
     grunt.registerTask('default', ['test']);
     grunt.registerTask('beautify', ['js_beautify']);
     grunt.registerTask('copyForBuild', ['copy:nwbuildcache', 'copy:azure_storage', 'copy:memorystream', 'copy:pack', 'copy:version_file']);
-    grunt.registerTask('prebuild', ['clean', 'exec', 'file-creator:version_file', 'copyForBuild']);
+    grunt.registerTask('prebuild', ['clean', 'exec:build', 'file-creator:version_file', 'copyForBuild']);
     grunt.registerTask('compileOSX', ['nodewebkit:osx', 'copy:bin_osx', 'appdmg', 'exec:dmgLicense']);
     grunt.registerTask('compileLinux', ['nodewebkit:linux', 'copy:bin_linux']);
     grunt.registerTask('compileWindows', ['nodewebkit:windows', 'copy:bin_windows']);
@@ -260,6 +255,6 @@ module.exports = function (grunt) {
     // Development Builds
     // To deploy a build with an official build number, set env var RELEASE_VERSION to release number
     // otherwise application is tagged with git hash
-    grunt.registerTask('compileDevBuild', ['compileDevBuild', 'nodewebkit:osx', 'copy:bin_osx', 'nodewebkit:windows', 'copy:bin_windows', 'nodewebkit:linux', 'copy:bin_linux']);
+    grunt.registerTask('compileDevBuild', ['prebuild', 'nodewebkit:osx', 'copy:bin_osx', 'nodewebkit:windows', 'copy:bin_windows', 'nodewebkit:linux', 'copy:bin_linux']);
     grunt.registerTask('createDevBuild', ['compileDevBuild', 'zip', 'if:trusted-deploy-to-azure-cdn']);
 };
