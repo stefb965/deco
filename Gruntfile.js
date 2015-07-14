@@ -1,11 +1,34 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     // load all grunt tasks matching the `grunt-*` pattern
     require('load-grunt-tasks')(grunt);
 
     var files = ['app/**/*.js', 'Brocfile.js'];
     // tagged builds get their own folders. live builds just go to live folder
     var cdnPath = process.env.RELEASE_VERSION ? process.env.RELEASE_VERSION : 'live';
+
     grunt.initConfig({
+        appdmg: {
+            options: {
+                title: 'Azure Storage Exporer',
+                icon: './public/icon/ase.icns',
+                background: './postcompile/osx/background.tiff',
+                'icon-size': 156,
+                contents: [{
+                    x: 470,
+                    y: 430,
+                    type: 'link',
+                    path: '/Applications'
+                }, {
+                    x: 120,
+                    y: 430,
+                    type: 'file',
+                    path: './webkitbuilds/azureexplorer/osx64/azureexplorer.app'
+                }]
+            },
+            target: {
+                dest: './webkitbuilds/azureexplorer/osx64/azureexplorer.dmg'
+            }
+        },
         jshint: {
             files: files,
             options: {
@@ -70,6 +93,9 @@ module.exports = function(grunt) {
         exec: {
             build: {
                 command: 'ember build --environment=production'
+            },
+            dmgLicense: {
+                command: 'python ./postcompile/osx/licenseDMG.py ./webkitbuilds/azureexplorer/osx64/azureexplorer.dmg ./LICENSE'
             }
         },
         copy: {
@@ -129,7 +155,7 @@ module.exports = function(grunt) {
         'if': {
             'trusted-deploy-to-azure-cdn': {
                 options: {
-                    test: function () { 
+                    test: function () {
                         // these variables will only be valid and set during trusted builds
                         var trustedBuild = (typeof process.env.AZURE_STORAGE_ACCOUNT === 'string' && typeof process.env.AZURE_STORAGE_ACCESS_KEY === 'string');
                         return trustedBuild;
@@ -196,9 +222,9 @@ module.exports = function(grunt) {
                 cwd: './webkitbuilds/azureexplorer'
             }
         },
-        "file-creator": {
+        'file-creator': {
             version_file: {
-                ".version": function(fs, fd, done) {
+                '.version': function (fs, fd, done) {
                     var githash = require('githash');
                     var version = process.env.RELEASE_VERSION ? process.env.RELEASE_VERSION : githash();
                     fs.writeSync(fd, version);
@@ -206,7 +232,7 @@ module.exports = function(grunt) {
                 }
             }
         },
-        clean: ['./nwbuildcache', './dist']
+        clean: ['./nwbuildcache', './dist', './webkitbuilds'],
     });
 
     grunt.loadNpmTasks('grunt-node-webkit-builder');
@@ -217,6 +243,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-azure-cdn-deploy');
     grunt.loadNpmTasks('grunt-zip');
     grunt.loadNpmTasks('grunt-file-creator');
+    grunt.loadNpmTasks('grunt-appdmg');
 
     grunt.registerTask('codestyle', ['jshint', 'jscs']);
     grunt.registerTask('test', ['codestyle']);
@@ -224,7 +251,7 @@ module.exports = function(grunt) {
     grunt.registerTask('beautify', ['js_beautify']);
     grunt.registerTask('copyForBuild', ['copy:nwbuildcache', 'copy:azure_storage', 'copy:memorystream', 'copy:pack', 'copy:version_file']);
     grunt.registerTask('prebuild', ['clean', 'exec', 'file-creator:version_file', 'copyForBuild']);
-    grunt.registerTask('compileOSX', ['nodewebkit:osx', 'copy:bin_osx']);
+    grunt.registerTask('compileOSX', ['nodewebkit:osx', 'copy:bin_osx', 'appdmg', 'exec:dmgLicense']);
     grunt.registerTask('compileLinux', ['nodewebkit:linux', 'copy:bin_linux']);
     grunt.registerTask('compileWindows', ['nodewebkit:windows', 'copy:bin_windows']);
     grunt.registerTask('compileWindowsWithIcon', ['nodewebkit:windowsWithIcon', 'copy:bin_windows']);
