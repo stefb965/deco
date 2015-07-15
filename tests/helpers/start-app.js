@@ -4,7 +4,7 @@ import Router from '../../router';
 import config from '../../config/environment';
 import containerAdapter from '../../adapters/container';
 
-export default function startApp(attrs, assert) {
+export default function startApp(attrs, assert, noNodeServices) {
     var application;
     var attributes = Ember.merge({}, config.APP);
     attributes = Ember.merge(attributes, attrs); // use defaults, but you can override;
@@ -15,7 +15,10 @@ export default function startApp(attrs, assert) {
         application.injectTestHelpers();
         application.ContainerAdapter = containerAdapter;
     });
-
+   
+    if(noNodeServices) {
+      return;
+    }
     var container = application.__container__;
     var nodeServices = container.lookup('service:node-services');
     var fakeData = {
