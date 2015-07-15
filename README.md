@@ -13,7 +13,8 @@ You will need the following things properly installed on your computer.
 * [Node.js](http://nodejs.org/) (with NPM)
 * [Bower](http://bower.io/)
 * [Ember CLI](http://www.ember-cli.com/)
-
+* [Grunt CLI](http://npmjs.com/grunt-cli)
+* 
 #### Running / Development
 The explorer is written using Ember Cli, ES2015 and Node. The environemt is somewhat unique in that we're running Node and Chromium's JavaScript on the same thread, allowing us to consume the official Azure Storage Node API from within Ember/Chromium.
 
