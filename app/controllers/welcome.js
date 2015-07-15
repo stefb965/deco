@@ -122,6 +122,8 @@ export default Ember.Controller.extend({
             newAccount.save();
 
             this.send('connect', newAccount.get('id'));
+            this.set('account_name', '');
+            this.set('account_key', '');
             appInsights.trackEvent('AddNewAccount');
         },
 
