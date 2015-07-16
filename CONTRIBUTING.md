@@ -22,7 +22,7 @@ Closes #156
 ```
 
 ###### Cleaning-up History
-Please make sure to ![squash commits](https://robots.thoughtbot.com/git-interactive-rebase-squash-amend-rewriting-history) and rebase if appropriate.
+Please make sure to [squash commits](https://robots.thoughtbot.com/git-interactive-rebase-squash-amend-rewriting-history) and rebase if appropriate.
 
 ###### Not Breaking the Build
 Please run `npm test` locally before submitting a PR. We cannot accept any Pull Request that fails tests. If you're having trouble with it (no worries, we all have it all the time), make a PR and we can help you out.
@@ -34,12 +34,12 @@ The explorer is written entirely in JavaScript (ES2015). It uses the popular MVC
 
 You might be wondering how we're using Node in a web-based app: The Azure Storage Explorer is compiled down to a NW.js application, which allows running Chromium's frontend JavaScript and Node.js code on the same thread.
 
-`app/` - The core application, compiled with Babel and Ember Cli
-`bin/` - ffmpeg binaries for media playback, added to the build during compilation
-`config/` - Ember Cli environment configuration variables
-`postcompile/` - Various supporting files and scripts for installer creation
-`public/` - Files available in the app namespace (like fonts, images, etc.)
-`tests`/ - All our tests!
+* `app/` - The core application, compiled with Babel and Ember Cli
+* `bin/` - ffmpeg binaries for media playback, added to the build during compilation
+* `config/` - Ember Cli environment configuration variables
+* `postcompile/` - Various supporting files and scripts for installer creation
+* `public/` - Files available in the app namespace (like fonts, images, etc.)
+* `tests`/ - All our tests!
 
 ### Getting Ready For Development
 You'll need recent versions of Node, Grunt, Bower, Git, and Ember Cli. To install Ember Cli, [follow the official installation guide](http://www.ember-cli.com/user-guide/#getting-started).
