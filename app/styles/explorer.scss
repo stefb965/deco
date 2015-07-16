@@ -78,6 +78,7 @@ div.folder {
     div.tableContainer {
         height: calc(100% - 62px);
         overflow: scroll;
+        padding-bottom: 20px;
     }
 
     .btn-download {
