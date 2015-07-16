@@ -81,12 +81,16 @@
     }
 
     div.col.edit {
-        padding-top: 17px;
+        padding-top: 7px;
         padding-left: 5px;
         font-size: 1.8rem;
     }
 
     div.col.s11 > span.caret {
         display: none;
+    }
+
+    .input-field .fa.prefix {
+        line-height: 50px;
     }
 }
