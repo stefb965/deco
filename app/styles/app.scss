@@ -42,6 +42,10 @@ body {
     overflow: auto;
 }
 
+a:not(.btn-flat, .btn) {
+    text-decoration: underline;
+}
+
 .visible {
     visibility: visible;
 }

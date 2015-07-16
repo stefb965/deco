@@ -41,6 +41,17 @@ export default Ember.Route.extend({
         },
 
         /**
+         * Open a file or a link in the user's preferred app
+         * @param {string} uri
+         * @param {string} application name
+         */
+        open: function () {
+            var nodeOpen = window.requireNode('open');
+
+            nodeOpen(...arguments);
+        },
+
+        /**
          * Enable or disable usage statistics (anonymized)
          */
         toggleUsageStatistics: function (track) {
