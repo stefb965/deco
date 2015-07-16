@@ -16,12 +16,12 @@
             <div class="row">
                 {{#liquid-if addNewUi}}
                     <div class="input-field col s12">
-                        <i class="mdi-action-bookmark-outline prefix"></i>
+                        <i class="fa fa-server prefix"></i>
                         {{input value=account_name id="account_name" type="text" class="validate"}}
                         <label for="account_name">Storage Account Name</label>
                     </div>
                     <div class="input-field col s12">
-                        <i class="mdi-communication-phone prefix"></i>
+                        <i class="fa fa-key prefix"></i>
                         {{input value=account_key id="account_key" type="text" class="validate"}}
                         <label for="account_key">Storage Account Key</label>
                     </div>
@@ -38,12 +38,12 @@
                         <i {{action "delete"}} class="fa fa-trash-o"></i>
                     </div>
                     <div id="editAccountName" class="input-field col s12">
-                        <i class="mdi-action-bookmark-outline prefix"></i>
+                        <i class="fa fa-server prefix"></i>
                         {{input value=editAccountName id="edit_account_name" type="text" class="validate"}}
                         <label for="account_name" class="active">Storage Account Name</label>
                     </div>
                     <div id="editAccountKey" class="input-field col s12">
-                        <i class="mdi-communication-phone prefix"></i>
+                        <i class="fa fa-key prefix"></i>
                         {{input value=editAccountKey id="edit_account_key" type="text" class="validate"}}
                         <label for="account_key" class="active">Storage Account Key</label>
                     </div>
