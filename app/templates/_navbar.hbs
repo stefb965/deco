@@ -1,20 +1,20 @@
 <div class="navbar-fixed">
     <nav>
         <div class="nav-wrapper">
-            <span class="logo left" {{action "goHome"}}>
+            <span title="Switch Storage Account" class="logo left" {{action "goHome"}}>
                 {{unbound fa-icon "windows"}}
             </span>
             <ul class="left connectionName">
                 <li>{{activeConnection}}</li>
             </ul>
             <ul class="right actions">
-                <li {{action "openModal" "#modal-addcontainer"}}>{{unbound fa-icon "plus-square"}}</li>
-                <li {{action "openModal" "#modal-deletecontainer"}}>{{unbound fa-icon "minus-square"}}</li>
-                <li {{action "deleteBlobs"}}>{{unbound fa-icon "trash-o"}}</li>
-                <li {{action "refreshBlobs"}}>{{unbound fa-icon "refresh"}}</li>
-                <li {{action "uploadBlob"}}>{{unbound fa-icon "upload"}}</li>
-                <li {{action "downloadBlobs"}}>{{unbound fa-icon "download"}}</li>
-                <li {{action "openAboutModal"}}>{{unbound fa-icon "info-circle"}}</li>
+                <li title="Add Container" {{action "openModal" "#modal-addcontainer"}}>{{unbound fa-icon "plus-square"}}</li>
+                <li title="Delete Current Container" {{action "openModal" "#modal-deletecontainer"}}>{{unbound fa-icon "minus-square"}}</li>
+                <li title="Delete Selected Blobs" {{action "deleteBlobs"}}>{{unbound fa-icon "trash-o"}}</li>
+                <li title="Refresh Blobs List" {{action "refreshBlobs"}}>{{unbound fa-icon "refresh"}}</li>
+                <li title="Upload Blobs or Folders" {{action "uploadBlob"}}>{{unbound fa-icon "upload"}}</li>
+                <li title="Download Selected Blobs" {{action "downloadBlobs"}}>{{unbound fa-icon "download"}}</li>
+                <li title="About Azure Storage Explorer" {{action "openAboutModal"}}>{{unbound fa-icon "info-circle"}}</li>
             </ul>
         </div>
     </nav>
