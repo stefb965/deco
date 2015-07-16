@@ -72,7 +72,7 @@ export default Ember.Route.extend({
             Ember.$(modal).openModal();
 
             // Ugh: https://github.com/Dogfalo/materialize/issues/1532
-            var overlay = Ember.$('#lean-overlay');
+            var overlay = Ember.$('.lean-overlay');
             overlay.detach();
             Ember.$('.explorer-container').after(overlay);
         },
