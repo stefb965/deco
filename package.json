@@ -3,8 +3,7 @@
   "version": "0.4.0",
   "description": "A cross-platform tool to explore Azure Storage Accounts",
   "scripts": {
-    "start": "ember server",
-    "build": "ember build",
+    "start": "ember nw",
     "test": "ember build && grunt test && ember nw:test"
   },
   "repository": "",
@@ -53,7 +52,7 @@
     "grunt-jscs": "^0.8.1",
     "grunt-node-webkit-builder": "^1.0.2",
     "grunt-zip": "^0.16.2",
-    "liquid-fire": "ef4/liquid-fire#8fcefd057478ab6852d7b8b3fc8526aa5079553c",
+    "liquid-fire": "^0.19.3",
     "load-grunt-tasks": "^3.2.0",
     "nw": "0.12.2"
   },

@@ -58,3 +58,11 @@ body {
 [data-ember-action] {
     cursor: pointer;
 }
+
+// Fix Materialize Select Cut-off issue
+div.card-content, div.card, 
+div.card .liquid-container:not(.liquid-animating),
+div.card .liquid-child:not(.liquid-animating) {
+    overflow: visible!important;
+}
+
