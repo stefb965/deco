@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import contextMenu from '../utils/context-menu';
+import windowMenu from '../utils/window-menu';
 
 /**
  * Ember Application Route
@@ -13,6 +14,7 @@ export default Ember.Route.extend({
         Ember.run.scheduleOnce('afterRender', this, function () {
             Ember.$('select').material_select();
             contextMenu.setup();
+            windowMenu.setup();
         });
 
         this.transitionTo('welcome');
@@ -47,7 +49,6 @@ export default Ember.Route.extend({
          */
         open: function () {
             var nodeOpen = window.requireNode('open');
-
             nodeOpen(...arguments);
         },
 
