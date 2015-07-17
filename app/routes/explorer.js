@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import windowMenu from '../utils/window-menu';
 
 /**
  * Ember Explorer Route
@@ -16,6 +17,22 @@ export default Ember.Route.extend({
      */
     afterModel: function () {
         appInsights.trackPageView('Explorer');
+    },
+
+    setupController: function (controller, model) {
+        this._super(controller, model);
+
+        var handlers = {
+            uploadBlob: () => { controller.send('uploadBlob'); },
+            downloadBlobs: () => { controller.send('downloadBlobs'); },
+            deleteBlobs: () => { controller.send('deleteBlobs'); },
+            refreshBlobs: () => { controller.send('refreshBlobs'); },
+            addContainer: () => { controller.send('openModal', '#modal-addcontainer'); },
+            removeContainer: () => { controller.send('openModal', '#modal-deletecontainer'); },
+            switchAccount: () => { controller.send('goHome'); }
+        };
+
+        windowMenu.setup(handlers);
     },
 
     /**
@@ -52,6 +69,7 @@ export default Ember.Route.extend({
 
             Ember.run.next(() => {
                 controller.set('activeContainer', null);
+                windowMenu.setup(false);
             });
         }
     },
