@@ -54,6 +54,16 @@ Once setup, you can run a live-reloading version of the app with `ember nw`. Onc
 
 To get access to the Chromium Developer Tools, simply make a right click and select 'DevTools' - we're also pulling down the Ember Inspector, which can also be launched with a right click.
 
+##### Windows
+On Windows, getting all the dependencies to work can sometimes be a bit tricky. If things fail, try to run these commands before running `npm install`:
+
+```
+npm install --no-optional --no-bin-links Automattic/engine.io-client
+npm install --no-optional --no-bin-links socket.io
+npm install --no-optional --no-bin-links testem
+npm install --global --no-optional --no-bin-links ember-cli
+```
+
 ### Running Tests
 All tests suites can be run with `npm test`. 
 
