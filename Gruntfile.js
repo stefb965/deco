@@ -259,8 +259,8 @@ module.exports = function (grunt) {
     grunt.registerTask('copyForBuild', ['copy:nwbuildcache', 'copy:azure_storage', 'copy:memorystream', 'copy:pack', 'copy:version_file']);
     grunt.registerTask('prebuild', ['clean', 'exec:build', 'file-creator:version_file', 'copyForBuild']);
     grunt.registerTask('compileOSX', ['nodewebkit:osx', 'copy:bin_osx', 'appdmg', 'exec:dmgLicense']);
-    grunt.registerTask('compileLinux', ['nodewebkit:linux', 'copy:bin_linux']);
-    grunt.registerTask('compileWindows', ['nodewebkit:windows', 'copy:bin_windows']);
+    grunt.registerTask('compileLinux', ['nodewebkit:linux', 'copy:bin_linux', 'copy:license_linux']);
+    grunt.registerTask('compileWindows', ['nodewebkit:windows', 'copy:bin_windows', 'copy:license_windows']);
     grunt.registerTask('compileWindowsWithIcon', ['nodewebkit:windowsWithIcon', 'copy:bin_windows']);
     grunt.registerTask('compile', ['prebuild', 'compileOSX', 'compileWindows', 'compileLinux']);
 
