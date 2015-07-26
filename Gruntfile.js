@@ -123,6 +123,11 @@ module.exports = function (grunt) {
                 src: ['node_modules/memorystream/**'],
                 dest: 'nwbuildcache/'
             },
+            open: {
+                expand: true,
+                src: ['node_modules/open/**'],
+                dest: 'nwbuildcache/'
+            },
             pack: {
                 src: './package.json',
                 dest: './nwbuildcache/package.json'
@@ -256,7 +261,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', ['codestyle']);
     grunt.registerTask('default', ['test']);
     grunt.registerTask('beautify', ['js_beautify']);
-    grunt.registerTask('copyForBuild', ['copy:nwbuildcache', 'copy:azure_storage', 'copy:memorystream', 'copy:pack', 'copy:version_file']);
+    grunt.registerTask('copyForBuild', ['copy:nwbuildcache', 'copy:azure_storage', 'copy:memorystream', 'copy:open', 'copy:pack', 'copy:version_file']);
     grunt.registerTask('prebuild', ['clean', 'exec:build', 'file-creator:version_file', 'copyForBuild']);
     grunt.registerTask('compileOSX', ['nodewebkit:osx', 'copy:bin_osx', 'appdmg', 'exec:dmgLicense']);
     grunt.registerTask('compileLinux', ['nodewebkit:linux', 'copy:bin_linux', 'copy:license_linux']);
