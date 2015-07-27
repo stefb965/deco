@@ -68,7 +68,11 @@
                                     {{input type="checkbox" id=blob.model.name checked=blob.model.selected}}
                                     <label for={{blob.model.name}}></label>
                                 </td>
-                                <td {{action "selectBlob" blob.model}}>{{blob-display-path blob.model.name currentPath}}</td>
+                                {{#if blob.isLocked}}
+                                    <td {{action "selectBlob" blob.model}}><i class="mdi-action-lock-outline"></i> {{blob-display-path blob.model.name currentPath}}</td>
+                                {{else}}
+                                    <td {{action "selectBlob" blob.model}}>{{blob-display-path blob.model.name currentPath}}</td>
+                                {{/if}}
                                 <td {{action "selectBlob" blob.model}} title={{blob.model.lastModified}}>{{ago blob.model.lastModified}}</td>
                                 <td {{action "selectBlob" blob.model}}>{{blob.prettySize}}</td>
                                 <td {{action "selectBlob" blob.model}} class="type" title={{blob.model.type}}>
