@@ -107,9 +107,9 @@ export default DS.Adapter.extend({
                             blobs.push({
                                 id: result.entries[i].name,
                                 name: result.entries[i].name,
-                                size: result.entries[i].properties['content-length'],
+                                size: parseInt(result.entries[i].properties['content-length']),
                                 type: result.entries[i].properties['content-type'],
-                                lastModified: result.entries[i].properties['last-modified'],
+                                lastModified: new Date(Date.parse(result.entries[i].properties['last-modified'])),
                                 container: snapshot.container,
                                 container_id: snapshot.container_id
                             });
