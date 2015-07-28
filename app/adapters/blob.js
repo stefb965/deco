@@ -111,6 +111,8 @@ export default DS.Adapter.extend({
                                 type: result.entries[i].properties['content-type'],
                                 lastModified: new Date(Date.parse(result.entries[i].properties['last-modified'])),
                                 container: snapshot.container,
+                                leaseState: result.entries[i].properties.leasestate,
+                                leaseStatus: result.entries[i].properties.leasestatus,
                                 container_id: snapshot.container_id
                             });
                         }

@@ -41,6 +41,8 @@ export default DS.Model.extend({
     fileSystem: Ember.inject.service(),     // Node FS service (injected)
     name: DS.attr('string'),                // Name of the blob
     size: DS.attr('number'),                // Size of the blob, in bytes
+    leaseState: DS.attr('string'),          // Lease State (available/unavailable)
+    leaseStatus: DS.attr('string'),         // Lease State (locked/unlocked)
     lastModified: DS.attr('date'),          // Timestamp: Last modified
     container_id: DS.attr('string'),        // ID of the container this blob lives in
     type: DS.attr('string'),                // Filetype of the blob (example: image/png)
