@@ -86,8 +86,11 @@ export default Ember.Route.extend({
          * Opens a specified modal
          * @param  {string} modal jQuery identifier
          */
-        openModal: function (modal) {
-            Ember.$(modal).openModal();
+        openModal: function (modal, dismissible=true) {
+
+            Ember.$(modal).openModal({
+                dismissible: dismissible
+            });
 
             // Ugh: https://github.com/Dogfalo/materialize/issues/1532
             var overlay = Ember.$('.lean-overlay');

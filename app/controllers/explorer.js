@@ -509,6 +509,23 @@ export default Ember.Controller.extend({
             }
 
             this.set('blobsSortProperty', [sortProperty]);
-        }
+        },
+
+        /**
+         * Invokes the property modal for the specified model and id.
+         * @param  {string} modelName The name of the model type
+         * @param  {string} id  The ID for the model record to use
+         */
+         invokePropDialog: function (modelName, id) {
+             this.store.find(modelName, id)
+             .then(blob => {
+
+                 if (!blob) {
+                     return;
+                 }
+                 this.send('selectBlob', blob);
+                 this.send('openModal', '#modal-properties', false);
+             });
+         }
     }
 });

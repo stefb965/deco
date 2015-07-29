@@ -307,6 +307,10 @@ export default function startApp(attrs, assert, noNodeServices) {
                     return callback(null);
                 },
                 
+                setBlobProperties: function (containerName, blobName, properties, callback) {
+                    return callback();
+                },
+                
                 BlobUtilities: {
                     SharedAccessPermissions: {
                         READ: 'READ'

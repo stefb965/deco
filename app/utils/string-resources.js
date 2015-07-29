@@ -37,5 +37,8 @@ export default {
     },
     deleteContainerMessage: function (containerName) {
         return 'Deleting Container ' + containerName;
+    },
+    updateBlobPropsMessage: function (blobName) {
+        return 'Updating Blob Properties for ' + blobName;
     }
 };

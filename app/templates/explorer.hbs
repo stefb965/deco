@@ -3,6 +3,7 @@
 {{partial "modals/delete"}}
 {{partial "modals/addcontainer"}}
 {{partial "modals/deletecontainer"}}
+{{render "modals/blob-properties" selectedBlob controller='blob'}}
 
 <div class="explorer-container">
     <div class="folder">
@@ -64,18 +65,18 @@
                         {{/each}}
                         {{#each blob in blobsSorted itemController="blob"}}
                             <tr {{bind-attr class="blob.selected:selected"}}>
-                                <td>
-                                    {{input type="checkbox" id=blob.model.name checked=blob.model.selected}}
-                                    <label for={{blob.model.name}}></label>
+                                <td data-properties-controller="explorer" data-properties-model="blob" data-properties-id="{{blob.model.id}}" data-properties-controller="explorer">
+                                    {{input type="checkbox" id=blob.model.id checked=blob.model.selected}}
+                                    <label for={{blob.model.id}}></label>
                                 </td>
                                 {{#if blob.isLocked}}
-                                    <td {{action "selectBlob" blob.model}}><i class="mdi-action-lock-outline"></i> {{blob-display-path blob.model.name currentPath}}</td>
+                                    <td {{action "selectBlob" blob.model}} data-properties-model="blob" data-properties-id="{{blob.model.id}}" data-properties-controller="explorer"><i class="mdi-action-lock-outline"></i> {{blob-display-path blob.model.id currentPath}}</td>
                                 {{else}}
-                                    <td {{action "selectBlob" blob.model}}>{{blob-display-path blob.model.name currentPath}}</td>
+                                    <td {{action "selectBlob" blob.model}} data-properties-model="blob" data-properties-id="{{blob.model.id}}" data-properties-controller="explorer">{{blob-display-path blob.model.id currentPath}}</td>
                                 {{/if}}
-                                <td {{action "selectBlob" blob.model}} title={{blob.model.lastModified}}>{{ago blob.model.lastModified}}</td>
-                                <td {{action "selectBlob" blob.model}}>{{blob.prettySize}}</td>
-                                <td {{action "selectBlob" blob.model}} class="type" title={{blob.model.type}}>
+                                <td {{action "selectBlob" blob.model}} title={{blob.model.lastModified}} data-properties-model="blob" data-properties-id="{{blob.model.id}}" data-properties-controller="explorer">{{ago blob.model.lastModified}}</td>
+                                <td {{action "selectBlob" blob.model}} data-properties-model="blob" data-properties-id="{{blob.model.id}}" data-properties-controller="explorer">{{blob.prettySize}}</td>
+                                <td {{action "selectBlob" blob.model}} class="type" title={{blob.model.type}} data-properties-model="blob" data-properties-id="{{blob.model.id}}" data-properties-controller="explorer">
                                     <div>{{blob.model.type}}</div>
                                 </td>
                             </tr>
