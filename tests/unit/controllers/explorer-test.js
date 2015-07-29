@@ -18,11 +18,18 @@ moduleFor('controller:explorer', {
 });
 
 test('it should create a container', function (assert) {
-    var ctrl = combinedStart(assert, globals, 2, this.subject());
+    var ctrl = combinedStart(assert, globals, 3, this.subject());
     
     // Test the controller calls the azure create container api.
     // We should see assetts come from the mock node service
     Ember.run(() => ctrl.send('addContainerData'));
+
+    // test the controller calls the azure create container api
+    // we should see asserts come from the mock node service
+    Ember.run(function () {
+        ctrl.set('newContainerName', 'testcontainer');
+        ctrl.send('addContainerData');
+    });
 });
 
 test('it should delete a container', function (assert) {
@@ -308,4 +315,44 @@ test('it should delete no blobs', function (assert) {
             ctrl.set('activeContainer', 'testcontainer');
         });
     });
+});
+
+test('it should copy a selected blob from one container to another', function (assert) {
+    var ctrl = combinedStart(assert, globals, 19, this.subject()),
+        uri = '';
+
+    ctrl.set('searchQuery', 'testcontainer');
+    ctrl.set('modalCopyDestinationPath', 'testcontainer3');
+
+    ctrl.addObserver('blobs', ctrl, () => {
+        ctrl.get('blobs')
+            .then(blobs => {
+                var count = 0;
+                blobs.forEach(function (blob) {
+                    if (count > 0) {
+                        return;
+                    }
+                    blob.set('selected', true);
+                    count++;
+                    blob.getLink().then(result => {
+                        uri = result;
+                        
+                        ctrl.get('containers').then((containers) => {
+                            containers.forEach((container) => {
+                                if (container.id === 'testcontainer') {
+                                    container.copyBlob(uri, 'testcontainer3', 'test-blob-1.mp4');
+                                }
+                            });
+                        });
+                    });
+                });
+            });
+        });
+
+    Ember.run(() => {
+        ctrl.get('containers').then(() => {
+            ctrl.set('activeContainer', 'testcontainer');
+        });
+    });
+    
 });

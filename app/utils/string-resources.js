@@ -2,32 +2,23 @@
  * A helper module for displaying messages with the intent of keeping application logic
  * and localizable strings separate.
  */
+
+function prettyProgressMessage(message, speed, progress) {
+    message += (speed) ? message += speed += ' ' : message;
+    message += (progress) ? progress + '%' : message;
+
+    return message;
+}
+
 export default {
     downloadMessage: function (blobName, speed, progress) {
-        var message = 'Downloading Blob ' + blobName + ' ';
-
-        if (speed) {
-            message += speed += ' ';
-        }
-
-        if (progress) {
-            message += progress + '%';
-        }
-
-        return message;
+        return prettyProgressMessage('Downloading Blob ' + blobName + ' ', speed, progress);
     },
     uploadMessage: function (filePath, azurePath, speed, progress) {
-        var message = 'Uploading file ' + filePath + ' to ' + azurePath + ' ';
-
-        if (speed) {
-            message += speed += ' ';
-        }
-
-        if (progress) {
-            message += progress + '%';
-        }
-
-        return message;
+        return prettyProgressMessage('Uploading file ' + filePath + ' to ' + azurePath + ' ', speed, progress);
+    },
+    copyMessage: function (fileName, azurePath, speed, progress) {
+        return prettyProgressMessage('Copying file ' + fileName + ' to ' + azurePath + ' ', speed, progress);
     },
     deleteBlobMessage: function (blobName) {
         return 'Deleting Blob ' + blobName;

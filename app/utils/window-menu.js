@@ -23,6 +23,7 @@ function Menu(handlers) {
         uploadBlob: new gui.MenuItem({label: 'Upload Blobs', enabled: toolsEnabled}),
         downloadBlobs: new gui.MenuItem({label: 'Download Blobs', enabled: toolsEnabled}),
         deleteBlobs: new gui.MenuItem({label: 'Delete Selected Blobs', enabled: toolsEnabled}),
+        copyBlobs: new gui.MenuItem({label: 'Copy Selected Blobs', enabled: toolsEnabled}),
         refreshBlobs: new gui.MenuItem({label: 'Refresh Blobs', enabled: toolsEnabled}),
         addContainer: new gui.MenuItem({label: 'Create Container', enabled: toolsEnabled}),
         removeContainer: new gui.MenuItem({label: 'Delete Current Container', enabled: toolsEnabled}),
@@ -34,6 +35,7 @@ function Menu(handlers) {
         toolsItems.uploadBlob.click = handlers.uploadBlob;
         toolsItems.downloadBlobs.click = handlers.downloadBlobs;
         toolsItems.deleteBlobs.click = handlers.deleteBlobs;
+        toolsItems.copyBlobs.click = handlers.copyBlobs;
         toolsItems.refreshBlobs.click = handlers.refreshBlobs;
         toolsItems.addContainer.click = handlers.addContainer;
         toolsItems.removeContainer.click = handlers.removeContainer;
@@ -43,6 +45,7 @@ function Menu(handlers) {
     toolsSubMenu.append(toolsItems.uploadBlob);
     toolsSubMenu.append(toolsItems.downloadBlobs);
     toolsSubMenu.append(toolsItems.deleteBlobs);
+    toolsSubMenu.append(toolsItems.copyBlobs);
     toolsSubMenu.append(toolsItems.refreshBlobs);
     toolsSubMenu.append(seperator());
     toolsSubMenu.append(toolsItems.addContainer);

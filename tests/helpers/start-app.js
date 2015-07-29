@@ -86,6 +86,11 @@ export default function startApp(attrs, assert, noNodeServices) {
                 this.getCompletePercent = function() { return 100; };
             }
         },
+        BlobUtilities: {
+            SharedAccessPermissions: {
+                READ: 'READ'
+            }
+        },
 
         createBlobService: function () {
             return {
@@ -128,8 +133,8 @@ export default function startApp(attrs, assert, noNodeServices) {
                 },
 
                 listContainersSegmented: function (shouldBeNull, callback) {
-                    assert.ok(shouldBeNull === null, 'expeceted arg shouldBeNull to be null');
-                    assert.ok(callback !== null, 'expeceted arg callback to be non-null');
+                    assert.ok(shouldBeNull === null, 'expected arg shouldBeNull to be null');
+                    assert.ok(callback !== null, 'expected arg callback to be non-null');
                     return callback(null, {
                         entries: [{
                             name: 'testcontainer',
@@ -147,15 +152,15 @@ export default function startApp(attrs, assert, noNodeServices) {
 
                 deleteContainer: function (containerName, callback) {
                     console.log(containerName, callback);
-                    assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
-                    assert.ok(callback !== null, 'expeceted arg callback to be non-null');
+                    assert.ok(containerName !== null, 'expected arg containerName to be non-null');
+                    assert.ok(callback !== null, 'expected arg callback to be non-null');
                     return callback(null);
                 },
 
                 deleteBlob: function(containerName, blobName, callback) {
-                    assert.ok(typeof containerName === 'string', 'expeceted arg containerName to be string');
-                    assert.ok(typeof containerName === 'string', 'expeceted arg blobName to be string');
-                    assert.ok(typeof callback === 'function', 'expeceted arg callback to be function');
+                    assert.ok(typeof containerName === 'string', 'expected arg containerName to be string');
+                    assert.ok(typeof containerName === 'string', 'expected arg blobName to be string');
+                    assert.ok(typeof callback === 'function', 'expected arg callback to be function');
                     var keepIndicies = [];
 
                     fakeData.entries.forEach( function(entry, index) {
@@ -167,9 +172,22 @@ export default function startApp(attrs, assert, noNodeServices) {
                     return callback(null);
                 },
 
+                 startCopyBlob: function(sourceUri, targetContainer, targetBlob, options, callback) {
+                    assert.ok(typeof sourceUri === 'string', 'expected sourceUri to be string');
+                    assert.ok(typeof targetContainer === 'string', 'expected arg targetContainer to be string');
+                    assert.ok(typeof targetBlob === 'string', 'expected arg targetBlob to be string');
+                    assert.ok(typeof options === 'object', 'expected arg options to be object');
+                    assert.ok(typeof callback === 'function', 'expected arg callback to be function');
+
+                    return callback(null, null, {
+                        entries: [{
+                        }]
+                    });
+                },
+
                 getContainerProperties: function (containerName, callback) {
-                    assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
-                    assert.ok(callback !== null, 'expeceted arg callback to be non-null');
+                    assert.ok(containerName !== null, 'expected arg containerName to be non-null');
+                    assert.ok(callback !== null, 'expected arg callback to be non-null');
                     return callback(null, {
                         name: containerName,
                         lastModified: Date.now()
@@ -177,14 +195,15 @@ export default function startApp(attrs, assert, noNodeServices) {
                 },
 
                 createContainerIfNotExists: function (containerName, callback) {
-                    assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
-                    assert.ok(callback !== null, 'expeceted arg callback to be non-null');
+                    assert.ok(containerName !== null, 'expected arg containerName to be non-null');
+                    assert.ok(containerName !== '', 'expected arg containerName to be non-empty');
+                    assert.ok(callback !== null, 'expected arg callback to be non-null');
                     return callback(null);
                 },
 
                 listBlobDirectoriesSegmentedWithPrefix: function (containerName, prefix, shouldBeNull, callback) {
-                    assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
-                    assert.ok(shouldBeNull === null, 'expeceted arg shouldBeNull to be null');
+                    assert.ok(containerName !== null, 'expected arg containerName to be non-null');
+                    assert.ok(shouldBeNull === null, 'expected arg shouldBeNull to be null');
                     assert.ok(typeof callback === 'function');
                     assert.ok(typeof prefix === 'string');
 
@@ -223,8 +242,8 @@ export default function startApp(attrs, assert, noNodeServices) {
                 },
 
                 listBlobsSegmentedWithPrefix: function (containerName, prefix, shouldBeNull, options, callback) {
-                    assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
-                    assert.ok(shouldBeNull === null, 'expeceted arg shouldBeNull to be null');
+                    assert.ok(containerName !== null, 'expected arg containerName to be non-null');
+                    assert.ok(shouldBeNull === null, 'expected arg shouldBeNull to be null');
                     assert.ok(typeof callback === 'function');
                     assert.ok(typeof prefix === 'string');
                     assert.ok(typeof options === 'object');
@@ -232,7 +251,6 @@ export default function startApp(attrs, assert, noNodeServices) {
                     
 
                     var matches = [];
-
                     if(prefix === '') {
                         matches.push(fakeData.entries[0]);
                         matches.push(fakeData.entries[1]);
@@ -251,9 +269,9 @@ export default function startApp(attrs, assert, noNodeServices) {
                 },
 
                 listBlobsSegmented: function (containerName, shouldBeNull, callback) {
-                    assert.ok(containerName !== null, 'expeceted arg containerName to be non-null');
-                    assert.ok(shouldBeNull === null, 'expeceted arg shouldBeNull to be null');
-                    assert.ok(callback !== null, 'expeceted arg callback to be non-null');
+                    assert.ok(containerName !== null, 'expected arg containerName to be non-null');
+                    assert.ok(shouldBeNull === null, 'expected arg shouldBeNull to be null');
+                    assert.ok(callback !== null, 'expected arg callback to be non-null');
                     return callback(null, {
                         entries: [{
                             name: 'test-blob-1.mp4',
@@ -309,14 +327,8 @@ export default function startApp(attrs, assert, noNodeServices) {
                 
                 setBlobProperties: function (containerName, blobName, properties, callback) {
                     return callback();
-                },
-                
-                BlobUtilities: {
-                    SharedAccessPermissions: {
-                        READ: 'READ'
-                    }
                 }
-            };
+            }; 
         }
     });
 

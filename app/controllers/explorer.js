@@ -35,6 +35,7 @@ export default Ember.Controller.extend({
     selectedBlob: null,                 // DS.Record of the currently selected blob
     blobsSortProperty: ['name'],        // Property indicating the sorting of blobs
     allBlobsCheckboxSelected: false,     // Bound to the 'select all blobs' checkbox
+    modalCopyDestinationPath: '',       // Path used for destination to copy blobs
 
     // Init & Setup
     // ------------------------------------------------------------------------------
@@ -137,6 +138,19 @@ export default Ember.Controller.extend({
 
     // Actions and Method
     // ------------------------------------------------------------------------------
+     /**
+     * Copy a single blob
+     * @param  {DS.Record} blob
+     */
+    copySingleBlob: function (blob) {
+        var activeContainer = this.get('activeContainer');
+        var azureDestPath = this.get('modalCopyDestinationPath');
+        if (!azureDestPath) {
+            return;
+        }
+        azureDestPath = azureDestPath.toLowerCase();
+        this.get('uploaddownload').send('copyBlobData', blob, azureDestPath, activeContainer);
+    },
 
     /**
      * Delete a single blob
@@ -355,6 +369,83 @@ export default Ember.Controller.extend({
             this.set('selectedBlob', blob);
         },
 
+                /**
+         * Open the 'copy blobs' modal.
+         */
+        copyBlobs: function () {
+            var blobs = this.get('blobs'),
+                folderCopyCount = 0,
+                blobCopyCount = 0,
+                copyText;
+            // Count folder and blobs to copy
+            this.get('subDirectories').forEach(directory => {
+                if (directory.selected) {
+                    folderCopyCount += 1;
+                }
+            });
+            blobs.forEach(blob => {
+                if (blob.get('selected')) {
+                    blobCopyCount += 1;
+                }
+            });
+
+            // Bail out if we have nothing to copy
+            if (blobCopyCount < 1 && folderCopyCount < 1) {
+                return;
+            }
+
+            // Setup values expected by copy modal
+            if (blobCopyCount > 0 && folderCopyCount > 0) {
+                copyText = `${blobCopyCount} blob(s) and ${folderCopyCount} folder(s)`;
+            } else if (blobCopyCount > 0) {
+                copyText = `${blobCopyCount} blob(s)`;
+            } else if (folderCopyCount > 0) {
+                copyText = `${folderCopyCount} folder(s)`;
+            }
+
+            this.set('modalConfirmAction', 'copyBlobData');
+            this.set('modalCopyText', copyText);
+            this.send('openModal', '#modal-copy');
+            appInsights.trackEvent('copyBlobs');
+        },
+
+        /**
+         * Copy all the selected blobs, including potentially selected folders
+         */
+        copyBlobData: function () {
+            this.get('blobs').forEach(blob => {
+                if (blob.get('selected')) {
+                    this.copySingleBlob(blob);
+                }
+            });
+
+            this.get('subDirectories').forEach(directory => {
+                if (directory.selected) {
+                    this.send('copyFolderBlobs', directory.name);
+                }
+            });
+
+            this.set('modalCopyDestinationPath', '');
+
+        },
+
+        /**
+         * Copy all the blobs in a given folder for the current container
+         * @param  {string} folder - The folder to delete
+         */
+        copyFolderBlobs: function (folder) {
+            this.store.find('container', this.get('activeContainer')).then(container => {
+                this.store.find('blob', {
+                    container: container,
+                    container_id: container.get('id'),
+                    prefix: folder
+                }).then(blobs => {
+                    blobs.forEach(blob => this.copySingleBlob(blob));
+                    this.set('subDirectories', []);
+                });
+            });
+        },
+
         /**
          * Open the 'delete blobs' modal.
          */
@@ -462,6 +553,11 @@ export default Ember.Controller.extend({
          */
         addContainerData: function () {
             let name = this.get('newContainerName');
+            if (!name){
+                return;
+            }
+            name = name.toLowerCase();
+
             var newContainer = this.store.createRecord('container', {name: name, id: name});
 
             // Todo - Ember data will assert and not return a promise if the

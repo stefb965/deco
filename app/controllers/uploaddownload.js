@@ -8,6 +8,7 @@ export default Ember.Controller.extend({
     notifications: Ember.computed.alias('controllers.notifications'),
     explorer: Ember.computed.alias('controllers.explorer'),
     nodeServices: Ember.inject.service(),
+    sourceUri: null,
 
     actions: {
         /**
@@ -107,6 +108,60 @@ export default Ember.Controller.extend({
                     this.get('notifications').addPromiseNotification(downloadPromise, downloadNotification);
                     return downloadPromise;
                 });
+            });
+        },
+
+        /**
+        * Copy a blob to azure storage
+        * @param  {array} blobs        - Blobs to copy
+        * @param  {string} azurePath - Remote Azure Storage path
+        */
+        copyBlobData: function (blob, azureDestPath, activeContainer) {
+            var targetContainerName = azureDestPath, promises = [];
+
+            this.store.find('container', activeContainer).then(foundContainer => {
+                blob.getLink().then(result => {
+                    this.set('sourceUri', result);
+
+                    var sourceUri = this.get('sourceUri');
+                    var fileName = blob.get('name').replace(/^.*[\\\/]/, ''), copyNotification, speedSummary, copyPromise, progressCopyInterval;
+                    var promise = foundContainer.copyBlob(sourceUri, targetContainerName, fileName).then(result => {
+                        speedSummary = result.speedSummary.summary;
+                        copyPromise = result.promise;
+                        progressCopyInterval = setInterval(() => {
+                            if (speedSummary) {
+                                // don't report a dead speed. this api reports a speed of 0 for small blobs
+                                var speed = speedSummary.getSpeed() === '0B/S' ? '' : speedSummary.getSpeed();
+
+                                copyNotification.set('progress', speedSummary.getCompletePercent());
+                                copyNotification.set('text', stringResources.copyMessage(fileName, targetContainerName, speed, speedSummary.getCompletePercent()));
+                            }
+                        }, 200);
+
+                        copyNotification = Notification.create({
+                            type: 'Copy',
+                            text: stringResources.copyMessage(fileName, targetContainerName),
+                            cleanup: function () {
+                                clearInterval(this.get('customData').progressCopyInterval);
+                            },
+                            customData: {
+                                progressCopyInterval: progressCopyInterval
+                            }
+                        });
+
+                        this.get('notifications').addPromiseNotification(result.promise, copyNotification);
+
+                        return copyPromise;
+                    });
+                    promises.push(promise);
+                });
+                appInsights.trackEvent('copyBlobData');
+
+                return Ember.RSVP.all(promises);
+            }).then(() => {
+                if (config.environment !== 'test') {
+                    this.get('explorer').send('refreshBlobs');
+                }
             });
         }
     }
