@@ -12,6 +12,8 @@ module.exports = function(environment) {
         // e.g. 'with-controller': true
       }
     },
+    
+    exportApplicationGlobal: true,
 
     APP: {
       // Here you can pass flags/options to your application instance
