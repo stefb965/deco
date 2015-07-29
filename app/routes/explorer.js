@@ -87,7 +87,6 @@ export default Ember.Route.extend({
          * @param  {string} modal jQuery identifier
          */
         openModal: function (modal, dismissible=true) {
-
             Ember.$(modal).openModal({
                 dismissible: dismissible
             });

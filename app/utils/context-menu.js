@@ -56,23 +56,20 @@ function Menu() {
 
 var contextMenu = {
     /**
-     * Changes the sorting of the blobs, using a given property
+     * Opens the properties modal on the explorer controller, if a blob is contextMenu-clicked
      */
     _setup_property_menu: function (e, menu) {
-        var element = document.elementFromPoint(e.originalEvent.x, e.originalEvent.y),
-                id = element.getAttribute('data-properties-id'),
-                propModel = element.getAttribute('data-properties-model'),
-                controllerName = element.getAttribute('data-properties-controller');
+        var el = document.elementFromPoint(e.originalEvent.x, e.originalEvent.y),
+            blobContext = (el.getAttribute('data-context') && el.getAttribute('data-context') === 'blob');
 
-        if (id && propModel && controllerName) {
+        if (blobContext) {
             var gui = window.requireNode('nw.gui');
             menu.append(new gui.MenuItem({
                 label: 'Properties',
                 click: function () {
-                    var controller = window.Azureexplorer.__container__.lookup('controller:' + controllerName);
-
+                    var controller = window.Azureexplorer.__container__.lookup('controller:explorer');
                     if (controller) {
-                        controller.send('invokePropDialog', propModel, id);
+                        controller.send('openModal', '#modal-properties', false);
                     }
                 }
             }));
