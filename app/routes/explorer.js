@@ -51,19 +51,20 @@ export default Ember.Route.extend({
     resetController: function (controller, isExiting) {
         if (isExiting) {
             // Reset the whole explorer controller on exit
-            controller.set('model', null);
-            controller.set('blobs', []);
-            controller.set('subDirectories', []);
-            controller.set('pathSegments', [{name: '/'}]);
-            controller.set('allBlobSelected', false);
-            controller.set('newContainerEntryDisplay', false);
-            controller.set('modalFileUploadPath', '');
-            controller.set('modalDefaultUploadPath', '');
-            controller.set('searchSpinnerDisplay', false);
-            controller.set('newContainerName', '');
-            controller.set('searchQuery', '');
-            controller.set('blobsLoading', true);
-            controller.set('selectedBlob', null);
+            controller.setProperties({
+                model: null,
+                blobs: [],
+                subDirectories: [],
+                pathSegments: [{name: '/'}],
+                allBlobSelected: false,
+                newContainerEntryDisplay: false,
+                modalFileUploadPath: '',
+                searchSpinnerDisplay: false,
+                newContainerName: '',
+                searchQuery: '',
+                blobsLoading: true,
+                selectedBlob: null
+            });
 
             this.store.unloadAll('container');
 

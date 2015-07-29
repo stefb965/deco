@@ -24,6 +24,10 @@ export default Ember.Component.extend({
         var selectedBlob = this.get('selectedBlob');
         var type;
 
+        if (!selectedBlob) {
+            return;
+        }
+
         if (selectedBlob) {
             type = selectedBlob.get('type');
 
