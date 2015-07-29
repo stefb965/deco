@@ -45,6 +45,10 @@ export default DS.Model.extend({
     leaseStatus: DS.attr('string'),         // Lease State (locked/unlocked)
     lastModified: DS.attr('date'),          // Timestamp: Last modified
     container_id: DS.attr('string'),        // ID of the container this blob lives in
+    blobType: DS.attr('string'),            // Blob Type (Page/Block Blob)
+    contentLanguage: DS.attr('string'),     // Content Language
+    contentDisposition: DS.attr('string'),  // Content Disposition
+    contentMd5: DS.attr('string'),          // Content MD5
     type: DS.attr('string'),                // Filetype of the blob (example: image/png)
     selected: DS.attr('boolean'),           // Is this blob selected?
 

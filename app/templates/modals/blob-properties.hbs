@@ -1,0 +1,72 @@
+<div id="modal-properties" class="modal" >
+    <nav class="props">
+        <div class="nav-wrapper">
+            <a class="brand-logo right">Properties</a>
+        </div>
+    </nav>
+    <div class="modal-content">
+        <table class="striped properties">
+            <thead>
+                
+            </thead>
+            <tr>
+                <th>Name:</th>
+                <th>{{model.name}}</th>
+            </tr>
+            <tr>
+                <th>Last Modified:</th>
+                <th>{{model.lastModified}}</th>
+            </tr>
+            <tr>
+                <td >Size (bytes):</td>
+                <td >{{model.size}}</td>
+            </tr>
+            <tr>
+                <td >Blob Type:</td>
+                <td>{{model.blobType}}</td>
+            </tr>
+            <tr>
+                <td >Lease Status:</td>
+                <td >{{model.leaseStatus}}</td>
+            </tr>
+            <tr>
+                <td >Lease State:</td>
+                <td>{{model.leaseState}}</td>
+            </tr>
+            {{#if model.leaseID}}
+                <tr>
+                    <td >Lease State:</td>
+                    <td>{{model.leaseState}}</td>
+                </tr>
+            {{/if}}
+            {{#if model.etag}}
+                <tr>
+                    <td >ETag:</td>
+                    <td>{{model.etag}}</td>
+                </tr>
+            {{/if}}
+            <tr>
+                <td >Content MD5:</td>
+                <td>{{input value=model.contentMd5 disabled=isLocked}}</td>
+            </tr>
+            <tr>
+                <td >Content Language:</td>
+                <td>{{input value=model.contentLanguage disabled=isLocked}}</td>
+            </tr>
+            <tr>
+                <td >Content Disposition:</td>
+                <td>{{input value=model.contentDisposition disabled=isLocked}}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <a {{action "discardUnsavedChanges"}} class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+        {{#if isLocked}}
+        {{else}}
+            <a {{action "setProperties"}} class=" modal-action modal-close waves-effect waves-green btn-flat">Update</a>
+        {{/if}}
+    </div>
+    <!--<div class="modal-footer">
+        <a {{action 'uploadBlobData' modalFileUploadPath modalDefaultUploadPath}} class=" modal-action modal-close waves-effect waves-green btn-flat">Upload</a>
+    </div>-->
+</div>

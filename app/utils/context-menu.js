@@ -55,11 +55,38 @@ function Menu() {
 }
 
 var contextMenu = {
-    setup: function () {
-        var menu = new Menu();
+    /**
+     * Changes the sorting of the blobs, using a given property
+     */
+    _setup_property_menu: function (e, menu) {
+        var element = document.elementFromPoint(e.originalEvent.x, e.originalEvent.y),
+                id = element.getAttribute('data-properties-id'),
+                propModel = element.getAttribute('data-properties-model'),
+                controllerName = element.getAttribute('data-properties-controller');
 
-        Ember.$(document).on('contextmenu', function (e) {
+        if (id && propModel && controllerName) {
+            var gui = window.requireNode('nw.gui');
+            menu.append(new gui.MenuItem({
+                label: 'Properties',
+                click: function () {
+                    var controller = window.Azureexplorer.__container__.lookup('controller:' + controllerName);
+
+                    if (controller) {
+                        controller.send('invokePropDialog', propModel, id);
+                    }
+                }
+            }));
+        }
+    },
+
+    /**
+     * Listens to the contextmenu event to provide a customized context menu
+     */
+    setup: function () {
+        Ember.$(document).on('contextmenu', (e) => {
             e.preventDefault();
+            var menu = new Menu();
+            this._setup_property_menu(e, menu);
             menu.popup(e.originalEvent.x, e.originalEvent.y);
         });
     }

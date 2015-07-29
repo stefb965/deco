@@ -1,7 +1,6 @@
 import DS from 'ember-data';
 import serializer from '../serializers/azure-storage';
 import accountUtils from '../utils/account';
-
 /**
  * Adapter for Blobs, briding Ember Data and the Azure Storage Node Module
  */
@@ -37,10 +36,34 @@ export default DS.Adapter.extend({
     },
 
     /**
-     * Ember Data's updateRecord method - not implemented (because blobs are read-only)
+     * Ember Data's updateRecord method - Only Updates Valid Property Fields
+     * @param  {DS.Store} store             - The DS.Store, containing all data for records loaded
+     * @param  {DS.Model} type              - The DS.Model class of the record
+     * @param  {DS.Snapshot} snapshot       - The DS.Snapshot (private) of the record
+     * @return {Promise}
      */
-    updateRecord: function () {
-        throw 'not implemented';
+    updateRecord: function (store, type, snapshot) {
+        var self = this;
+        return accountUtils.getActiveAccount(store).then(account => {
+            return new Ember.RSVP.Promise((resolve, reject) => {
+                var blobService = self.get('azureStorage').createBlobService(account.get('name'), account.get('key')),
+                    properties = {};
+
+                properties.contentLanguage = snapshot.get('contentLanguage');
+                properties.contentMD5 = snapshot.get('contentMd5');
+                properties.contentDisposition = snapshot.get('contentDisposition');
+
+                blobService.setBlobProperties(snapshot.get('container_id'), snapshot.get('name'), properties,
+                    err => {
+                        if (err) {
+                            return reject(err);
+                        }
+
+                        return resolve();
+                    }
+                );
+            });
+        });
     },
 
     /**
@@ -113,7 +136,13 @@ export default DS.Adapter.extend({
                                 container: snapshot.container,
                                 leaseState: result.entries[i].properties.leasestate,
                                 leaseStatus: result.entries[i].properties.leasestatus,
-                                container_id: snapshot.container_id
+                                container_id: snapshot.container_id,
+                                blobType: result.entries[i].properties.blobtype,
+                                contentLanguage: result.entries[i].properties['content-language'],
+                                contentMd5: result.entries[i].properties['content-md5'],
+                                contentDisposition: result.entries[i].properties['content-disposition'],
+                                leaseID: result.entries[i].properties.leaseid,
+                                etag: result.entries[i].properties.etag
                             });
                         }
                     }
