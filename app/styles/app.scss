@@ -64,6 +64,15 @@ a:not(.btn-flat, .btn) {
     cursor: pointer;
 }
 
+.modal {
+    nav.props {
+        background-color: $secondary-color;
+        
+        a.brand-logo {
+            font-size: 20px
+        }
+    }
+}
 // Fix Materialize Select Cut-off issue
 div.card-content, div.card, 
 div.card .liquid-container:not(.liquid-animating),

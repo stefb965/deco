@@ -1,6 +1,6 @@
 <div id="modal-about" class="modal">
+    {{view 'modal-navbar' modalTitle="About"}}
     <div class="modal-content">
-        <h4>About</h4>
         <p><strong>Azure Storage Explorer v{{versionNumber}}</strong></p>
         <p>This app is maintained by Steven Edouard and Felix Rieseberg. If you find any issues or bugs, <a {{action "open" "https://github.com/azure-storage/xplat/issues/"}}>please let us know</a>!</p>
         <p>(C) Copyright 2015 Microsoft Coporation.</p>
