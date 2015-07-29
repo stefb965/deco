@@ -26,9 +26,7 @@ export default Ember.Controller.extend({
          * Save properties for Blob model
          */
         setProperties: function () {
-
-            if (this.get('isLocked'))
-            {
+            if (this.get('isLocked')) {
                 return;
             }
 
@@ -39,6 +37,7 @@ export default Ember.Controller.extend({
                 })
             );
         },
+
         /**
          * Clears unsaved attributes on the Blob model
          */

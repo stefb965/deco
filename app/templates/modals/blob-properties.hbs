@@ -1,10 +1,6 @@
 <div id="modal-properties" class="modal" >
-    <nav class="props">
-        <div class="nav-wrapper">
-            <a class="brand-logo right">Properties</a>
-        </div>
-    </nav>
     <div class="modal-content">
+        <h4>Properties</h4>
         <table class="striped properties">
             <thead>
                 
@@ -15,11 +11,11 @@
             </tr>
             <tr>
                 <th>Last Modified:</th>
-                <th>{{model.lastModified}}</th>
+                <th>{{moment model.lastModified}}</th>
             </tr>
             <tr>
-                <td >Size (bytes):</td>
-                <td >{{model.size}}</td>
+                <td >Size:</td>
+                <td >{{prettySize}} ({{model.size}} bytes)</td>
             </tr>
             <tr>
                 <td >Blob Type:</td>
