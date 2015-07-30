@@ -70,7 +70,7 @@
                                     <label for={{blob.model.id}}></label>
                                 </td>
                                 {{#if blob.isLocked}}
-                                    <td {{action "selectBlob" blob.model}}>
+                                    <td {{action "selectBlob" blob.model}} data-context="blob">
                                         <i class="mdi-action-lock-outline"></i> {{blob-display-path blob.model.id currentPath}}
                                     </td>
                                 {{else}}
