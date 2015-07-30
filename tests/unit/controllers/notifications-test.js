@@ -1,10 +1,8 @@
-import Ember from "ember";
-import {
-  moduleFor,
-  test
-} from 'ember-qunit';
+import Ember from 'ember';
+import {moduleFor, test} from 'ember-qunit';
 import startApp from 'azureexplorer/tests/helpers/start-app';
 import Notification from 'azureexplorer/models/notification';
+
 moduleFor('controller:notifications');
 
 test('it exists', function (assert) {

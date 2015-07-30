@@ -1,76 +1,52 @@
 import Ember from "ember";
-import {
-    moduleFor, test
-}
-from 'ember-qunit';
-import startApp from 'azureexplorer/tests/helpers/start-app';
+import { moduleFor, test } from 'ember-qunit';
+import combinedStart from 'azureexplorer/tests/helpers/combined-start';
 
-var App, store, ns;
-
-function combinedStart(assert) {
-    App = startApp(null, assert);
-    store = App.__container__.lookup('store:main');
-    Ember.run(function () {
-        var newAccount = store.createRecord('account', {
-            name: 'Testaccount',
-            key: '5555-5555-5555-5555',
-            active: true
-        });
-    });
-}
+var globals = {
+    App: null,
+    store: null
+};
 
 moduleFor('controller:explorer', {
     // Specify the other units that are required for this test.
     needs: ['controller:application', 'controller:notifications', 'controller:uploaddownload','model:blob', 'model:container'],
     teardown: function () {
-        Ember.run(App, App.destroy);
+        Ember.run(globals.App, globals.App.destroy);
         window.localStorage.clear();
-        store = null;
+        globals.store = null;
     }
 });
 
 test('it should create a container', function (assert) {
-    assert.expect(2);
-    combinedStart(assert);
-
-    var controller = this.subject();
-    controller.store = store;
-    // test the controller calls the azure create container api
-    // we should see assetts come from the mock node service
-    Ember.run(function () {
-        controller.send('addContainerData');
-    });
+    var ctrl = combinedStart(assert, globals, 2, this.subject());
+    
+    // Test the controller calls the azure create container api.
+    // We should see assetts come from the mock node service
+    Ember.run(() => ctrl.send('addContainerData'));
 });
 
 test('it should delete a container', function (assert) {
-    assert.expect(14);
-    combinedStart(assert);
+    var ctrl = combinedStart(assert, globals, 14, this.subject());
 
-    var controller = this.subject();
-    controller.store = store;
-    controller.set('searchQuery', 'testcontainer');
+    ctrl.set('searchQuery', 'testcontainer');
     Ember.run(() => {
-        controller.get('containers').then(() => {
-            controller.set('activeContainer', 'testcontainer');
-            controller.send('deleteContainerData');
+        ctrl.get('containers').then(() => {
+            ctrl.set('activeContainer', 'testcontainer');
+            ctrl.send('deleteContainerData');
         });
     });
 });
 
 test('it should not download any blobs', function (assert) {
-    assert.expect(14);
-    combinedStart(assert);
-
-    var controller = this.subject();
-    controller.store = store;
+    var ctrl = combinedStart(assert, globals, 14, this.subject());
 
     Ember.run(function () {
-        store.find('container').then(function (containers) {
+        ctrl.store.find('container').then(function (containers) {
             containers.forEach(function (container) {
                 container.get('blobs').then(function (blobs) {
-                    controller.set('blobs', blobs);
+                    ctrl.set('blobs', blobs);
                     // no blobs are selected, so none should download
-                    controller.send('downloadBlobs', './testdir');
+                    ctrl.send('downloadBlobs', './testdir');
                 });
             });
         });
@@ -78,16 +54,12 @@ test('it should not download any blobs', function (assert) {
 });
 
 test('it should search and return 1 container', function (assert) {
-    assert.expect(4);
-    combinedStart(assert);
-
-    var controller = this.subject();
-    controller.store = store;
+    var ctrl = combinedStart(assert, globals, 4, this.subject());
 
     Ember.run(function () {
-        controller.set('searchQuery', 'testcontainer2');
+        ctrl.set('searchQuery', 'testcontainer2');
 
-        controller.get('containers').then((containers) => {
+        ctrl.get('containers').then((containers) => {
             var count = 0;
             containers.forEach((container) => {
                 assert.ok(container.get('name').indexOf('testcontainer2') > -1);
@@ -99,15 +71,11 @@ test('it should search and return 1 container', function (assert) {
 });
 
 test('it should search and return 0 container', function (assert) {
-    assert.expect(3);
-    combinedStart(assert);
-
-    var controller = this.subject();
-    controller.store = store;
+    var ctrl = combinedStart(assert, globals, 3, this.subject());
 
     Ember.run(function () {
-        controller.set('searchQuery', 'nonexistentcontainer');
-        controller.get('containers').then((containers) => {
+        ctrl.set('searchQuery', 'nonexistentcontainer');
+        ctrl.get('containers').then((containers) => {
             var count = 0;
             containers.forEach((container) => {
                 count++;
@@ -118,170 +86,147 @@ test('it should search and return 0 container', function (assert) {
 });
 
 test('it should have the correct subdirectories', function (assert) {
-    assert.expect(13);
-    combinedStart(assert);
+    var ctrl = combinedStart(assert, globals, 13, this.subject());
 
-    var controller = this.subject();
-    controller.addObserver('subDirectories', controller, () => {
-
-        if (controller.get('subDirectories').length === 1 &&
-            controller.get('subDirectories')[0].name === 'mydir1/') {
+    ctrl.addObserver('subDirectories', ctrl, () => {
+        if (ctrl.get('subDirectories').length === 1 && ctrl.get('subDirectories')[0].name === 'mydir1/') {
             assert.ok(true);
         }
     });
-    controller.store = store;
-    controller.set('searchQuery', 'testcontainer');
+
+    ctrl.set('searchQuery', 'testcontainer');
     Ember.run(() => {
-        controller.get('containers').then(() => {
-            controller.set('activeContainer', 'testcontainer');
+        ctrl.get('containers').then(() => {
+            ctrl.set('activeContainer', 'testcontainer');
         });
     });
 });
 
 test('it should reset path segments when switching containers', function (assert) {
-    assert.expect(34);
-    combinedStart(assert);
-
-    var controller = this.subject();
-    var sentChangeAction = false,
+    var ctrl = combinedStart(assert, globals, 34, this.subject()),
+        sentChangeAction = false,
         sentPathSegmentChangeAction = false;
 
-    controller.addObserver('subDirectories', controller, () => {
+    ctrl.addObserver('subDirectories', ctrl, () => {
         if (!sentChangeAction) {
             sentChangeAction = true;
-            controller.send('changeSubDirectory', {
+            ctrl.send('changeSubDirectory', {
                 name: 'mydir1/'
             });
             return;
         }
 
         // we will receieve this handler multiple times as the
-        // controller changes state and clears/refills subdirectories
-        if (controller.get('subDirectories').length === 1 &&
-            controller.get('subDirectories')[0].name === 'mydir1/mydir2' &&
-            sentPathSegmentChangeAction === false) {
-            assert.ok(controller.get('pathSegments').length === 2);
+        // ctrl changes state and clears/refills subdirectories
+        if (ctrl.get('subDirectories').length === 1 &&
+            ctrl.get('subDirectories')[0].name === 'mydir1/mydir2' && sentPathSegmentChangeAction === false) {
+            assert.ok(ctrl.get('pathSegments').length === 2);
             sentPathSegmentChangeAction = true;
+
             // this specifcally tests clicking a button to go up
-            controller.addObserver('pathSegments', controller, () => {
-                if (controller.get('pathSegments').length === 1 &&
-                    controller.get('pathSegments')[0].name === '/') {
+            ctrl.addObserver('pathSegments', ctrl, () => {
+                if (ctrl.get('pathSegments').length === 1 && ctrl.get('pathSegments')[0].name === '/') {
                     assert.ok(true);
                 }
             });
-            controller.send('switchActiveContainer', 'testcontainer2');
+            ctrl.send('switchActiveContainer', 'testcontainer2');
             return;
         }
     });
 
-    controller.store = store;
-    controller.set('searchQuery', 'testcontainer');
+    ctrl.set('searchQuery', 'testcontainer');
     Ember.run(() => {
-        controller.get('containers').then(() => {
-            controller.set('activeContainer', 'testcontainer');
+        ctrl.get('containers').then(() => {
+            ctrl.set('activeContainer', 'testcontainer');
         });
     });
 });
 
 test('it should change directory based on path segment', function (assert) {
-    assert.expect(34);
-    combinedStart(assert);
-
-    var controller = this.subject();
-    var sentChangeAction = false,
+    var ctrl = combinedStart(assert, globals, 34, this.subject()),
+        sentChangeAction = false,
         sentPathSegmentChangeAction = false;
 
-    controller.addObserver('subDirectories', controller, () => {
+    ctrl.addObserver('subDirectories', ctrl, () => {
         if (!sentChangeAction) {
             sentChangeAction = true;
-            controller.send('changeSubDirectory', {
+            ctrl.send('changeSubDirectory', {
                 name: 'mydir1/'
             });
             return;
         }
 
-        // we will receieve this handler multiple times as the
+        // We will receieve this handler multiple times as the
         // controller changes state and clears/refills subdirectories
-        if (controller.get('subDirectories').length === 1 &&
-            controller.get('subDirectories')[0].name === 'mydir1/mydir2' &&
-            sentPathSegmentChangeAction === false) {
-            assert.ok(true);
-            sentPathSegmentChangeAction = true;
-            // this specifcally tests clicking a button to go up
-            controller.send('changeSubDirectory', controller.get('pathSegments')[0]);
+        if (ctrl.get('subDirectories').length === 1 &&
+            ctrl.get('subDirectories')[0].name === 'mydir1/mydir2' && sentPathSegmentChangeAction === false) {
+                assert.ok(true);
+                sentPathSegmentChangeAction = true;
+                // this specifcally tests clicking a button to go up
+                ctrl.send('changeSubDirectory', ctrl.get('pathSegments')[0]);
         }
 
-        if (controller.get('subDirectories').length === 1 &&
-            controller.get('subDirectories')[0].name === 'mydir1/') {
+        if (ctrl.get('subDirectories').length === 1 &&
+            ctrl.get('subDirectories')[0].name === 'mydir1/') {
             assert.ok(true);
         }
 
     });
-    controller.store = store;
-    controller.set('searchQuery', 'testcontainer');
+
+    ctrl.set('searchQuery', 'testcontainer');
     Ember.run(() => {
-        controller.get('containers').then(() => {
-            controller.set('activeContainer', 'testcontainer');
+        ctrl.get('containers').then(() => {
+            ctrl.set('activeContainer', 'testcontainer');
         });
     });
 });
 
 test('it should change subdirectories', function (assert) {
-    assert.expect(34);
-    combinedStart(assert);
-
-    var controller = this.subject();
-    var sentChangeAction = false,
+    var ctrl = combinedStart(assert, globals, 34, this.subject()),
+        sentChangeAction = false,
         sentChangeUpAction = false;
 
-    controller.addObserver('subDirectories', controller, () => {
+    ctrl.addObserver('subDirectories', ctrl, () => {
         if (!sentChangeAction) {
             // change to subdirectory
             sentChangeAction = true;
-            controller.send('changeSubDirectory', {
+            ctrl.send('changeSubDirectory', {
                 name: 'mydir1/'
             });
             return;
         }
 
-        // we will receieve this handler multiple times as the
+        // We will receieve this handler multiple times as the
         // controller changes state and clears/refills subdirectories
-        if (controller.get('subDirectories').length === 1 &&
-            controller.get('subDirectories')[0].name === 'mydir1/mydir2' &&
-            !sentChangeUpAction) {
+        if (ctrl.get('subDirectories').length === 1 &&
+            ctrl.get('subDirectories')[0].name === 'mydir1/mydir2' && !sentChangeUpAction) {
             assert.ok(true);
             sentChangeUpAction = true;
-            controller.send('changeSubDirectory', {
-                name: ''
-            });
+            ctrl.send('changeSubDirectory', {name: ''});
         }
 
-        if (controller.get('subDirectories').length === 1 &&
-            controller.get('subDirectories')[0].name === 'mydir1/') {
+        if (ctrl.get('subDirectories').length === 1 &&
+            ctrl.get('subDirectories')[0].name === 'mydir1/') {
             assert.ok(true);
         }
 
     });
-    controller.store = store;
-    controller.set('searchQuery', 'testcontainer');
+
+    ctrl.set('searchQuery', 'testcontainer');
     Ember.run(() => {
-        controller.get('containers').then(() => {
-            controller.set('activeContainer', 'testcontainer');
+        ctrl.get('containers').then(() => {
+            ctrl.set('activeContainer', 'testcontainer');
         });
     });
 });
 
 test('it should create a subdirectory/folder upon upload', function (assert) {
-    assert.expect(29);
-    combinedStart(assert);
+    var ctrl = combinedStart(assert, globals, 29, this.subject()),
+        subDirs;
 
-    var controller = this.subject();
-    controller.store = store;
-
-    controller.addObserver('subDirectories', controller, () => {
-        if (controller.get('subDirectories').length === 2) {
-            controller.get('subDirectories').forEach(subDir => {
-                console.log(subDir);
+    ctrl.addObserver('subDirectories', ctrl, () => {
+        if (ctrl.get('subDirectories').length === 2) {
+            ctrl.get('subDirectories').forEach(subDir => {
                 if (subDir.name === 'mydir5/') {
                     assert.ok(true);
                 }
@@ -290,91 +235,77 @@ test('it should create a subdirectory/folder upon upload', function (assert) {
     });
 
     Ember.run(() => {
-        controller.set('searchQuery', 'testcontainer');
-
-        controller.get('containers').then((containers) => {
+        ctrl.set('searchQuery', 'testcontainer');
+        ctrl.get('containers').then((containers) => {
             containers.forEach((container) => {
                 if (container.id === 'testcontainer') {
                     return container.uploadBlob('testpath/file1.jpg', 'mydir5/file1.jpg');
                 }
             });
         }).then(() => {
-            controller.set('activeContainer', 'testcontainer');
-            controller.send('refreshBlobs');   
+            ctrl.set('activeContainer', 'testcontainer');
+            ctrl.send('refreshBlobs');   
         });
     });
 });
 
 test('it should delete all but 1 blobs', function (assert) {
-    assert.expect(22);
-    combinedStart(assert);
+    var ctrl = combinedStart(assert, globals, 22, this.subject()),
+        initialBlobCount, blobCount = 0, count = 0;
 
-    var controller = this.subject(),
-        initialBlobCount;
+    ctrl.set('searchQuery', 'testcontainer');
+    ctrl.addObserver('blobs', ctrl, () => {
+        ctrl.get('blobs').then(blobs => {
+            initialBlobCount = blobs.get('length');
 
-    controller.store = store;
-    controller.set('searchQuery', 'testcontainer');
+            blobs.forEach(function (blob) {
+                if (count > 2) {
+                    return;
+                }
 
-    controller.addObserver('blobs', controller, () => {
-        controller.get('blobs')
-            .then(blobs => {
-                var count = 0;
-                blobs.forEach(function (blob) {
-                    if (count > 2) {
-                        return;
-                    }
-
-                    blob.set('selected', true);
-                    count++;
-                });
-
-                initialBlobCount = blobs.get('length');
-                var blobCount = 0;
-                // bind to the record array as it changes
-                controller.addObserver('blobs.@each', controller, () => {
-                    controller.get('blobs').then(blobs => {
-                        blobCount += 1;
-                        if (blobCount === 3) {
-                            assert.ok(blobs.get('length') === initialBlobCount - 3);
-                        }
-                    });
-                });
-                controller.send('deleteBlobData');
+                blob.set('selected', true);
+                count++;
             });
+
+            // bind to the record array as it changes
+            ctrl.addObserver('blobs.@each', ctrl, () => {
+                ctrl.get('blobs').then(blobs => {
+                    blobCount += 1;
+                    if (blobCount === 3) {
+                        assert.ok(blobs.get('length') === initialBlobCount - 3);
+                    }
+                });
+            });
+
+            ctrl.send('deleteBlobData');
+        });
     });
 
     Ember.run(() => {
-        controller.get('containers').then(() => {
-            controller.set('activeContainer', 'testcontainer');
+        ctrl.get('containers').then(() => {
+            ctrl.set('activeContainer', 'testcontainer');
         });
     });
 });
 
 test('it should delete no blobs', function (assert) {
-    assert.expect(13);
-    combinedStart(assert);
-
-    var controller = this.subject(),
+    var ctrl = combinedStart(assert, globals, 13, this.subject()),
         initialBlobCount;
 
-    controller.store = store;
-    controller.set('searchQuery', 'testcontainer');
-
-    controller.addObserver('blobs', controller, () => {
-        controller.get('blobs')
-            .then(blobs => {
-                initialBlobCount = blobs.get('length');
-                controller.send('deleteBlobData');
-
-                return controller.get('blobs');
-            }).then(blobs => {
-                assert.ok(blobs.get('length') === initialBlobCount);
-            });
+    ctrl.set('searchQuery', 'testcontainer');
+    ctrl.addObserver('blobs', ctrl, () => {
+        ctrl.get('blobs').then(blobs => {
+            initialBlobCount = blobs.get('length');
+            ctrl.send('deleteBlobData');
+            return ctrl.get('blobs');
+        }).then(blobs => {
+            assert.ok(blobs.get('length') === initialBlobCount);
+        });
     });
 
     Ember.run(() => {
-        controller.get('containers').then(() => {
-            controller.set('activeContainer', 'testcontainer');
+        ctrl.get('containers').then(() => {
+            ctrl.set('activeContainer', 'testcontainer');
         });
     });
 });
