@@ -43,7 +43,10 @@
                 <table class="striped">
                     <thead>
                         <tr>
-                            <th class="action-field" {{action "selectAllBlobs"}}>Action</th>
+                            <th class="action-field">
+                                {{input type="checkbox" id="selectAllCheckbox" checked=allBlobsCheckboxSelected}}
+                                <label for="selectAllCheckbox"></label>
+                            </th>
                             <th data-field="name" {{action "changeBlobsSorting" "name"}}>Name</th>
                             <th data-field="lastmodified" {{action "changeBlobsSorting" "lastModified"}}>Last Modified</th>
                             <th data-field="size" {{action "changeBlobsSorting" "size"}}>Size</th>

@@ -34,6 +34,7 @@ export default Ember.Controller.extend({
     blobsLoading: true,                 // Are we loading blobs
     selectedBlob: null,                 // DS.Record of the currently selected blob
     blobsSortProperty: ['name'],        // Property indicating the sorting of blobs
+    allBlobsCheckboxSelected: false,     // Bound to the 'select all blobs' checkbox
 
     // Init & Setup
     // ------------------------------------------------------------------------------
@@ -126,6 +127,13 @@ export default Ember.Controller.extend({
     pathSegmentObserver : function () {
         this.set('subDirectories', []);
     }.observes('pathSegments'),
+
+    /**
+     * Observes the value boundt to the 'select all blobs' checkbox
+     */
+    allBlobsCheckboxObserver: function () {
+        this.send('selectAllBlobs');
+    }.observes('allBlobsCheckboxSelected'),
 
     // Actions and Method
     // ------------------------------------------------------------------------------
@@ -275,7 +283,6 @@ export default Ember.Controller.extend({
             });
 
             this.toggleProperty('allBlobSelected');
-
             appInsights.trackEvent('selectAllBlobs');
         },
 
