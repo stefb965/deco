@@ -1,62 +1,40 @@
-import Ember from "ember";
-import {
-    moduleFor, test
-}
-from 'ember-qunit';
-import startApp from 'azureexplorer/tests/helpers/start-app';
+import Ember from 'ember';
+import { moduleFor, test } from 'ember-qunit';
+import combinedStart from 'azureexplorer/tests/helpers/combined-start';
 
-var App, store;
-
-function combinedStart(assert) {
-    App = startApp(null, assert);
-    store = App.__container__.lookup('store:main');
-    Ember.run(function () {
-        var newAccount = store.createRecord('account', {
-            name: 'Testaccount',
-            key: '5555-5555-5555-5555',
-            active: true
-        });
-    });
-}
+var globals = {
+    App: null,
+    store: null
+};
 
 moduleFor('controller:uploaddownload', {
     // Specify the other units that are required for this test.
     needs: ['controller:application', 'controller:notifications', 'controller:explorer', 'model:blob', 'model:container'],
     teardown: function () {
-        Ember.run(App, App.destroy);
+        Ember.run(globals.App, globals.App.destroy);
         window.localStorage.clear();
-        store = null;
+        globals.store = null;
     }
 });
 
 test('it should upload file to blob', function (assert) {
-    assert.expect(17);
-    combinedStart(assert);
-
-    var controller = this.subject();
-    controller.store = store;
+    var ctrl = combinedStart(assert, globals, 17, this.subject());
     
     Ember.run(() => {
-        store.find('container').then(container => {
-            controller.send('uploadBlobData', '/testdir/testfile.js;/testdir/testfile2.js;/testdir/testfile3.js', 'mydir1/', 'testcontainer');  
+        globals.store.find('container').then(container => {
+            ctrl.send('uploadBlobData', '/testdir/testfile.js;/testdir/testfile2.js;/testdir/testfile3.js', 'mydir1/', 'testcontainer');  
         });
     });
 });
 
 test('it should download blobs', function (assert) {
-    assert.expect(62);
-    combinedStart(assert);
-
-    var controller = this.subject();
-    controller.store = store;
+    var ctrl = combinedStart(assert, globals, 62, this.subject());
 
     Ember.run(function () {
-        store.find('container').then(function (containers) {
+        globals.store.find('container').then(function (containers) {
             containers.forEach(function (container) {
-                container.get('blobs', {
-                    prefix: '/'
-                }).then(function (blobs) {
-                    controller.send('streamBlobsToDirectory', blobs, './testdir', true);
+                container.get('blobs', {prefix: '/'}).then(function (blobs) {
+                    ctrl.send('streamBlobsToDirectory', blobs, './testdir', true);
                 });
             });
         });

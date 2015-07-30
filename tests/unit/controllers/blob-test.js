@@ -1,32 +1,23 @@
-import Ember from 'ember';
-import {
-    moduleFor,
-    test
-}
-from 'ember-qunit';
-import startApp from 'azureexplorer/tests/helpers/start-app';
+import Ember from "ember";
+import { moduleFor, test } from 'ember-qunit';
+import combinedStart from 'azureexplorer/tests/helpers/combined-start';
 
-var App, store, ns;
+var globals = {
+    App: null,
+    store: null
+};
 
 moduleFor('controller:blob', {
-    needs: ['util:filesize', 'model:container', 'model:blob', 'controller:notifications']
+    needs: ['util:filesize', 'model:container', 'model:blob', 'controller:notifications'],
+    teardown: function () {
+        Ember.run(globals.App, globals.App.destroy);
+        window.localStorage.clear();
+        globals.store = null;
+    }
 });
 
-function combinedStart(assert) {
-    App = startApp(null, assert);
-    store = App.__container__.lookup('store:main');
-    Ember.run(function () {
-        var newAccount = store.createRecord('account', {
-            name: 'Testaccount',
-            key: '5555-5555-5555-5555',
-            active: true
-        });
-    });
-}
-
 function getBlobs() {
-   return store.find('container')
-    .then(function (containers) {
+    return globals.store.find('container').then(function (containers) {
         let retContainer = null;
         containers.every(container => {
             retContainer = container;
@@ -38,18 +29,13 @@ function getBlobs() {
 }
 
 test('it calculates pretty size', function (assert) {
-    combinedStart(assert);
-    var self = this;
-    
+    combinedStart(assert, globals);
+
     Ember.run(() => {
-        getBlobs()
-        .then(blobs => {
+        getBlobs().then(blobs => {
             blobs.forEach(blob => {
                 blob.set('size', 12313435);
-
-                let controller = self.subject({
-                    model: blob
-                });
+                let controller = this.subject({model: blob});
                 
                 assert.ok(controller.get('prettySize') === '12.31 MB');
             });
@@ -57,25 +43,17 @@ test('it calculates pretty size', function (assert) {
     });
 });
 
+
 test('it calculates lock status correctly (locked)', function (assert) {
-    combinedStart(assert);
-    var self = this;
+    var ctrl = combinedStart(assert, globals, 16, this.subject());
     
     Ember.run(() => {
-        store.find('container')
-        .then(function (containers) {
-
+        globals.store.find('container').then(containers => {
             containers.forEach(container => {
-                container.get('blobs')
-                .then(blobs => {
-
+                container.get('blobs').then(blobs => {
                     blobs.every(blob => {
-                        blob.set('leaseStatus', 'locked');
-                        blob.set('leaseState', 'unavailable');
-
-                        let controller = self.subject({
-                            model: blob
-                        });
+                        blob.setProperties({leaseStatus: 'locked', leaseState: 'unavailable'});
+                        let controller = this.subject({model: blob});
 
                         assert.equal(controller.get('isLocked'), true);
                         return false;
@@ -84,27 +62,20 @@ test('it calculates lock status correctly (locked)', function (assert) {
             });
         });
     });
-    
 });
 
 test('it calculates lock status correctly (unlocked)', function (assert) {
-    combinedStart(assert);
-    var self = this;
+    combinedStart(assert, globals);
     
     Ember.run(() => {
-        getBlobs()
-        .then(blobs => {
+        getBlobs().then(blobs => {
             blobs.every(blob => {
-
                 blob.set('leaseStatus', 'unlocked');
                 blob.set('leaseState', 'available');
 
-                let controller = self.subject({
-                    model: blob
-                });
+                let controller = this.subject({model: blob});
 
                 assert.equal(controller.get('isLocked'), false);
-                
                 return false;
             });
         }); 
@@ -112,33 +83,26 @@ test('it calculates lock status correctly (unlocked)', function (assert) {
 });
 
 test('it updates blob properties', function (assert) {
-    combinedStart(assert);
-    var self = this;
-    assert.expect(11);
+    combinedStart(assert, globals, 11);
+
     Ember.run(() => {
-        getBlobs()
-        .then(blobs => {
+        getBlobs().then(blobs => {
             blobs.every(blob => {
                 blob.set('contentLanguage', 'English');
                 blob.set('contentDisposition', 'attachment');
                 blob.set('leaseState', 'available');
                 blob.set('leaseStatus', 'unlocked');
-                let controller = self.subject({
-                    model: blob
-                });
+                let controller = this.subject({model: blob});
 
                 controller.get('notifications').addPromiseNotification = function (promise) {
-                        
                     promise.then(() => {
                         assert.equal(controller.get('model.isDirty'), false);
                         assert.equal(controller.get('model.contentLanguage'), 'English');
                         assert.equal(controller.get('model.contentDisposition'), 'attachment');
                     });
-                        
                 };
                 
                 controller.send('setProperties');
-
                 return false;
             });
         }); 
@@ -146,20 +110,16 @@ test('it updates blob properties', function (assert) {
 });
 
 test('it does not update blob properties', function (assert) {
-    combinedStart(assert);
-    var self = this;
-    assert.expect(9);
+    combinedStart(assert, globals, 9);
+
     Ember.run(() => {
-        getBlobs()
-        .then(blobs => {
+        getBlobs().then(blobs => {
             blobs.every(blob => {
                 blob.set('contentLanguage', 'English');
                 blob.set('contentDisposition', 'attachment');
                 blob.set('leaseState', 'available');
                 blob.set('leaseStatus', 'unlocked');
-                let controller = self.subject({
-                    model: blob
-                });
+                let controller = this.subject({model: blob});
 
                 controller.get('notifications').addObserver('notifications', () => {
                     assert(false, 'did not expect to see any attributes change');
@@ -174,20 +134,16 @@ test('it does not update blob properties', function (assert) {
 });
 
 test('it does not update a locked blob', function (assert) {
-    combinedStart(assert);
-    var self = this;
-    assert.expect(9);
+    combinedStart(assert, globals, 9);
+
     Ember.run(() => {
-        getBlobs()
-        .then(blobs => {
+        getBlobs().then(blobs => {
             blobs.every(blob => {
                 blob.set('contentLanguage', 'English');
                 blob.set('contentDisposition', 'attachment');
                 blob.set('leaseState', 'unavailable');
                 blob.set('leaseStatus', 'locked');
-                let controller = self.subject({
-                    model: blob
-                });
+                let controller = this.subject({model: blob});
 
                 controller.get('notifications').addObserver('notifications', () => {
                     assert(false, 'did not expect to see any attributes change');
