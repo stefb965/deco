@@ -42,7 +42,7 @@ test('Notifications show up for batch download', function (assert) {
             Ember.$('#nwSaveDirectory').attr('type', 'text');
             Ember.$('#nwSaveInput').attr('type', 'text');
             // select all blobs
-            return click('.action-field');
+            return click('#selectAllCheckbox');
         })
         .then(function () {
             return click('.fa-download');
