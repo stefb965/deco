@@ -14,17 +14,16 @@ function startWriteToStream(model, stream) {
 
         return {
             promise: new Ember.RSVP.Promise(function (resolve, reject) {
-                        var SpeedSummary = model.get('azureStorage').BlobService.SpeedSummary;
-                        speedSummary.summary = new SpeedSummary();
-                        blobService.getBlobToStream(model.get('container_id'), model.get('name'), stream, {speedSummary:  speedSummary.summary},  function (err) {
-                            if (err) {
-                                Ember.Logger.error('Error getting blob to stream:');
-                                Ember.Logger.error(err);
-                                return reject(err);
-                            }
-                            return resolve();
-                        });
-                    }),
+                var SpeedSummary = model.get('azureStorage').BlobService.SpeedSummary;
+                speedSummary.summary = new SpeedSummary();
+                blobService.getBlobToStream(model.get('container_id'), model.get('name'), stream, {speedSummary:  speedSummary.summary},  function (err) {
+                    if (err) {
+                        Ember.Logger.error('Error getting blob to stream:', err);
+                        return reject(err);
+                    }
+                    return resolve();
+                });
+            }),
             speedSummary: speedSummary
         };
     });

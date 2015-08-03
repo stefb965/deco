@@ -9,6 +9,22 @@ export default Ember.Controller.extend({
     explorer: Ember.computed.alias('controllers.explorer'),
     nodeServices: Ember.inject.service(),
 
+    /**
+     * Ensures that a subdirectory structure exists (sync)
+     * @param  {string} file - /tmp/this/path/does/not/exist.jpg
+     */
+    ensureDir: function (file) {
+        var fse = window.requireNode('fs-extra');
+        var path = window.requireNode('path');
+
+        if (fse && file) {
+            let dir = path.dirname(file);
+            return fse.ensureDirSync(dir);
+        }
+
+        return false;
+    },
+
     actions: {
         /**
         * Upload one or multiple files to blobs
@@ -75,10 +91,11 @@ export default Ember.Controller.extend({
          */
         streamBlobsToDirectory: function (blobs, directory, saveAs) {
             blobs.forEach(blob => {
-                var fileName = blob.get('name').replace(/^.*[\\\/]/, ''),
-                    targetPath = (saveAs) ? directory : directory + '/' + fileName,
+                var targetPath = (saveAs) ? directory : directory + '/' + blob.get('name'),
                     downloadPromise = {isFulfilled : false},
                     downloadNotification, speedSummary, progressUpdateInterval;
+
+                this.ensureDir(targetPath);
 
                 blob.toFile(targetPath).then(result => {
                     speedSummary = result.speedSummary.summary;

@@ -12,8 +12,16 @@
   },
   "author": "Felix Rieseberg <feriese@microsoft.com>",
   "contributors": [
-    {"name": "Felix Rieseberg", "url": "http://felixrieseberg.com", "email": "feriese@microsoft.com"},
-    {"name": "Steven Edouard", "url": "http://stevenedouard.com/", "email": "sedouard@microsoft.com"}
+    {
+      "name": "Felix Rieseberg",
+      "url": "http://felixrieseberg.com",
+      "email": "feriese@microsoft.com"
+    },
+    {
+      "name": "Steven Edouard",
+      "url": "http://stevenedouard.com/",
+      "email": "sedouard@microsoft.com"
+    }
   ],
   "license": "GPL",
   "devDependencies": {
@@ -79,7 +87,8 @@
   },
   "dependencies": {
     "azure-storage": "^0.4.3",
-    "open": "0.0.5",
-    "nw": "0.12.2"
+    "fs-extra": "^0.22.1",
+    "nw": "0.12.2",
+    "open": "0.0.5"
   }
 }
