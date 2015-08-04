@@ -21,5 +21,16 @@ export default {
                 }
             });
         });
+    },
+    /**
+     * Get an authenticated instance of BlobService
+     * @param  {DS.Store} store
+     * @param  {obejct} azureStorageModule The azure-storage node.js module
+     * @return {Promise}
+     */
+    getBlobService: function (store, azureStorageModule) {
+        return this.getActiveAccount(store).then(function (account) {
+            return azureStorageModule.createBlobService(account.get('name'), account.get('key'));
+        });
     }
 };

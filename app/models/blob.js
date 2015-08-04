@@ -1,33 +1,24 @@
 import DS from 'ember-data';
 import accountUtil from '../utils/account';
-
+import Ember from 'ember';
 /**
  * Helper function: Write a blob to a Node file stream
  * @param  {DS.Model} model   - Model to query for data
  * @param  {FS Stream} stream - The stream to write to
  */
-function startWriteToStream(model, stream) {
-    return accountUtil.getActiveAccount(model.store).then(function (account) {
-        var blobService = model.get('azureStorage').createBlobService(account.get('name'),
-            account.get('key')),
-            speedSummary = {summary: null};
+function startWriteToStream(model, stream, blobService) {
+    var speedSummary = {summary: null},
+        SpeedSummary = model.get('azureStorage').BlobService.SpeedSummary,
+        getBlobToStream = Ember.RSVP.denodeify(blobService.getBlobToStream);
 
-        return {
-            promise: new Ember.RSVP.Promise(function (resolve, reject) {
-                        var SpeedSummary = model.get('azureStorage').BlobService.SpeedSummary;
-                        speedSummary.summary = new SpeedSummary();
-                        blobService.getBlobToStream(model.get('container_id'), model.get('name'), stream, {speedSummary:  speedSummary.summary},  function (err) {
-                            if (err) {
-                                Ember.Logger.error('Error getting blob to stream:');
-                                Ember.Logger.error(err);
-                                return reject(err);
-                            }
-                            return resolve();
-                        });
-                    }),
-            speedSummary: speedSummary
-        };
-    });
+    speedSummary.summary = new SpeedSummary();
+
+    var promise = getBlobToStream.call(blobService, model.get('container_id'),
+        model.get('name'), stream, {speedSummary:  speedSummary.summary});
+    return {
+        promise: promise,
+        speedSummary: speedSummary
+    };
 }
 
 /**
@@ -51,6 +42,7 @@ export default DS.Model.extend({
     contentMd5: DS.attr('string'),          // Content MD5
     type: DS.attr('string'),                // Filetype of the blob (example: image/png)
     selected: DS.attr('boolean'),           // Is this blob selected?
+    pageRanges: DS.attr(),                  // Array of {start: , end: } ranges
 
     /**
      * Get a public URL to the blob
@@ -58,30 +50,32 @@ export default DS.Model.extend({
      */
     getLink: function () {
         var self = this;
-        return new Ember.RSVP.Promise(function (resolve) {
-            accountUtil.getActiveAccount(self.store).then(function (account) {
-                var blobService = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
-                var startDate = new Date();
-                var expiryDate = new Date(startDate);
+        return accountUtil.getBlobService(self.store, self.get('azureStorage'))
+        .then(blobService => {
+            var startDate = new Date();
+            var expiryDate = new Date(startDate);
 
-                // set the link expiration to 200 minutes in the future.
-                expiryDate.setMinutes(startDate.getMinutes() + 200);
-                startDate.setMinutes(startDate.getMinutes() - 100);
+            // set the link expiration to 200 minutes in the future.
+            expiryDate.setMinutes(startDate.getMinutes() + 200);
+            startDate.setMinutes(startDate.getMinutes() - 100);
 
-                var sharedAccessPolicy = {
-                    AccessPolicy: {
-                        Permissions: self.get('azureStorage').BlobUtilities.SharedAccessPermissions.READ,
-                        Start: startDate,
-                        Expiry: expiryDate
-                    }
-                };
+            var sharedAccessPolicy = {
+                AccessPolicy: {
+                    Permissions: self.get('azureStorage').BlobUtilities.SharedAccessPermissions.READ,
+                    Start: startDate,
+                    Expiry: expiryDate
+                }
+            };
 
-                var token = blobService.generateSharedAccessSignature(self.get('container_id'), self.get('name'), sharedAccessPolicy);
-                // generate a url in which the user can have access to the blob
-                var sasUrl = blobService.getUrl(self.get('container_id'), self.get('name'), token);
+            var token = blobService.generateSharedAccessSignature(self.get('container_id'), self.get('name'), sharedAccessPolicy);
+            // generate a url in which the user can have access to the blob
+            var sasUrl = blobService.getUrl(self.get('container_id'), self.get('name'), token);
 
-                return Ember.run(null, resolve, sasUrl);
-            });
+            return sasUrl;
+        })
+        .catch (error => {
+            Ember.Logger.error(error);
+            appInsights.trackException(error);
         });
     },
 
@@ -90,9 +84,17 @@ export default DS.Model.extend({
      * @param  {string} path - Path to write to
      */
     toFile: function (path) {
-        var fileStream = this.get('fileSvc').createWriteStream(path);
+        var fileStream = this.get('fileSvc').createWriteStream(path),
+            self = this;
         // begin writing to stream
-        return startWriteToStream(this, fileStream);
+        return accountUtil.getBlobService(self.store, self.get('azureStorage'))
+        .then(blobService => {
+            return startWriteToStream(self, fileStream, blobService);
+        })
+        .catch (error => {
+           Ember.Logger.error(error);
+           appInsights.trackException(error);
+        });
     },
 
     azureStorage: Ember.computed.alias('nodeServices.azureStorage'),

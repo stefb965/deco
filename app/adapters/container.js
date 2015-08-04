@@ -1,3 +1,4 @@
+import Ember from 'ember';
 import DS from 'ember-data';
 import serializer from '../serializers/azure-storage';
 import accountUtils from '../utils/account';
@@ -20,23 +21,21 @@ export default DS.Adapter.extend({
             return;
         }
 
-        return new Ember.RSVP.Promise(function (resolve, reject) {
-            accountUtils.getActiveAccount(store).then(function (account) {
-                var blobService = self.get('azureStorage').createBlobService(account.get('name'),
-                    account.get('key'));
-
-                blobService.getContainerProperties(snapshot.attr('name'), function (error, data) {
-                    if (error) {
-                        appInsights.trackException(error);
-                        return Ember.run(null, reject, error);
-                    }
-                    return Ember.run(null, resolve, [{
-                        name: data.name,
-                        id: data.name,
-                        lastModified: new Date(Date.parse(data.lastModified))
-                    }]);
-                });
-            });
+        return accountUtils.getBlobService(self.store, self.get('azureStorage'))
+        .then(blobService => {
+            var getContainerProperties = Ember.RSVP.denodeify(blobService.getContainerProperties);
+            return getContainerProperties.call(blobService, snapshot.attr('name'));
+        })
+        .then(data => {
+            return [{
+                name: data.name,
+                id: data.name,
+                lastModified: new Date(Date.parse(data.lastModified))
+            }];
+        })
+        .catch (error => {
+           Ember.Logger.error(error);
+           appInsights.trackException(error);
         });
     },
 
@@ -49,18 +48,18 @@ export default DS.Adapter.extend({
      */
     createRecord: function (store, type, snapshot) {
         var self = this;
-        return new Ember.RSVP.Promise(function (resolve, reject) {
-            accountUtils.getActiveAccount(store).then(function (account) {
-                var blobService = self.get('azureStorage').createBlobService(account.get('name'),
-                    account.get('key'));
-                blobService.createContainerIfNotExists(snapshot.get('name'), function (error) {
-                    if (error) {
-                        appInsights.trackException(error);
-                        return Ember.run(null, reject, error);
-                    }
-                    return Ember.run(null, resolve, snapshot);
-                });
-            });
+
+        return accountUtils.getBlobService(self.store, self.get('azureStorage'))
+        .then(blobService => {
+            var createContainerIfNotExists = Ember.RSVP.denodeify(blobService.createContainerIfNotExists);
+            return createContainerIfNotExists.call(blobService, snapshot.get('name'));
+        })
+        .then(() => {
+            return snapshot;
+        })
+        .catch (error => {
+            Ember.Logger.error(error);
+            appInsights.trackException(error);
         });
     },
 
@@ -80,18 +79,15 @@ export default DS.Adapter.extend({
      */
     deleteRecord: function (store, type, snapshot) {
         var self = this;
-        return new Ember.RSVP.Promise(function (resolve, reject) {
-            accountUtils.getActiveAccount(store).then(function (account) {
-                var blobService = self.get('azureStorage').createBlobService(account.get('name'),
-                    account.get('key'));
-                blobService.deleteContainer(snapshot.get('name'), function (error) {
-                    if (error) {
-                        appInsights.trackException(error);
-                        return Ember.run(null, reject, error);
-                    }
-                    return Ember.run(null, resolve, null);
-                });
-            });
+
+        return accountUtils.getBlobService(self.store, self.get('azureStorage'))
+        .then(blobService => {
+            var deleteContainer = Ember.RSVP.denodeify(blobService.deleteContainer);
+            return deleteContainer.call(blobService, snapshot.get('name'));
+        })
+        .catch (error => {
+            Ember.Logger.error(error);
+            appInsights.trackException(error);
         });
     },
 
@@ -100,40 +96,30 @@ export default DS.Adapter.extend({
      * @param  {DS.Store} store             - The DS.Store, containing all data for records loaded
      * @return {Promise}
      */
-    findAll: function (store) {
+    findAll: function () {
         var self = this;
-        return new Ember.RSVP.Promise(function (resolve, reject) {
-            accountUtils.getActiveAccount(store).then(function (account) {
-                var blobService;
-
-                try {
-                    blobService = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
-                } catch (error) {
-                    appInsights.trackException(error);
-                    return reject(error);
-                }
-
-                if (blobService) {
-                    blobService.listContainersSegmented(null, function (error, data) {
-                        if (error) {
-                            appInsights.trackException(error);
-                            return Ember.run(null, reject, error);
-                        }
-
-                        var containerModels = [];
-                        for (var i in data.entries) {
-                            if (i % 1 === 0) {
-                                containerModels.push({
-                                    id: data.entries[i].name,
-                                    name: data.entries[i].name,
-                                    lastModified: new Date(Date.parse(data.entries[i].properties['last-modified']))
-                                });
-                            }
-                        }
-                        return Ember.run(null, resolve, containerModels);
+        return accountUtils.getBlobService(self.store, self.get('azureStorage'))
+        .then(blobService => {
+            var listContainersSegmented = Ember.RSVP.denodeify(blobService.listContainersSegmented);
+            return listContainersSegmented.call(blobService, null);
+        })
+        .then(data => {
+            var containerModels = [];
+            for (var i in data.entries) {
+                if (i % 1 === 0) {
+                    containerModels.push({
+                        id: data.entries[i].name,
+                        name: data.entries[i].name,
+                        lastModified: new Date(Date.parse(data.entries[i].properties['last-modified']))
                     });
                 }
-            });
+            }
+
+            return containerModels;
+        })
+        .catch (error => {
+            Ember.Logger.error(error);
+            appInsights.trackException(error);
         });
     },
 
@@ -146,40 +132,31 @@ export default DS.Adapter.extend({
      */
     findQuery: function (store, type, snapshot) {
         var self = this;
-        return new Ember.RSVP.Promise(function (resolve, reject) {
-            accountUtils.getActiveAccount(store).then(function (account) {
-                var blobService;
+        return accountUtils.getBlobService(self.store, self.get('azureStorage'))
+            .then(blobService => {
+                var listContainersSegmented = Ember.RSVP.denodeify(blobService.listContainersSegmented);
+                return listContainersSegmented.call(blobService, null);
+            })
+            .then(data => {
+                var results = [];
+                for (var i in data.entries) {
+                    if (i % 1 === 0 &&
+                        data.entries[i].name.indexOf(snapshot.name) > -1) {
 
-                try {
-                    blobService = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
-                } catch (error) {
-                    appInsights.trackException(error);
-                    return reject(error);
+                        results.push({
+                            name: data.entries[i].name,
+                            id: data.entries[i].name,
+                            lastModified: new Date(Date.parse(data.entries[i].lastModified))
+                        });
+                    }
                 }
-
-                if (blobService) {
-                    blobService.listContainersSegmented(null, function (error, data) {
-                        if (error) {
-                            appInsights.trackException(error);
-                            return Ember.run(null, reject, error);
-                        }
-                        var results = [];
-                        for (var i in data.entries) {
-                            if (i % 1 === 0 &&
-                                data.entries[i].name.indexOf(snapshot.name) > -1) {
-
-                                results.push({
-                                    name: data.entries[i].name,
-                                    id: data.entries[i].name,
-                                    lastModified: new Date(Date.parse(data.entries[i].lastModified))
-                                });
-                            }
-                        }
-                        return Ember.run(null, resolve, results);
-                    });
-                }
+                console.log('returning findquery ' + results);
+                return results;
+            })
+            .catch (error => {
+                Ember.Logger.error(error);
+                appInsights.trackException(error);
             });
-        });
     },
 
     /**
