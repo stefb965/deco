@@ -35,29 +35,27 @@ var Container = DS.Model.extend({
      * @param  {string} prefix - Which prefix to use
      */
     listDirectoriesWithPrefix: function (prefix) {
-        var self = this,
-            service;
+        var self = this;
 
-        return new Ember.RSVP.Promise((resolve, reject) => {
-            accountUtil.getActiveAccount(self.store).then(account => {
-                service = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
-                service.listBlobDirectoriesSegmentedWithPrefix(self.get('name'), prefix, null, (err, result) => {
-                    if (err) {
-                        return reject(err);
-                    }
-
-                    var entries = [];
-                    result.entries.forEach(dir => {
-                        // our own directory is not a subdirectory of itself
-                        // azure api will return it though - so filter it
-                        if (dir.name !== prefix) {
-                            entries.push(dir);
-                        }
-                    });
-
-                    return resolve(entries);
-                });
+        return accountUtil.getBlobService(self.store, self.get('azureStorage'))
+        .then(blobService => {
+            var listBlobDirectoriesSegmentedWithPrefix = Ember.RSVP.denodeify(blobService.listBlobDirectoriesSegmentedWithPrefix);
+            return listBlobDirectoriesSegmentedWithPrefix.call(blobService, self.get('name'), prefix, null);
+        })
+        .then(result => {
+            var entries = [];
+            result.entries.forEach(dir => {
+                // our own directory is not a subdirectory of itself
+                // azure api will return it though - so filter it
+                if (dir.name !== prefix) {
+                    entries.push(dir);
+                }
             });
+
+            return entries;
+        })
+        .catch (error => {
+            appInsights.trackException(error);
         });
     },
 
@@ -70,28 +68,31 @@ var Container = DS.Model.extend({
     uploadBlob: function (path, blobName) {
         var container = this.get('name'),
             self = this,
-            service,
             speedSummary = {summary: null};
 
-        return new Ember.RSVP.Promise(function (resolve) {
-            accountUtil.getActiveAccount(self.store).then(account => {
-                service = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
-                var SpeedSummary = self.get('azureStorage').BlobService.SpeedSummary;
-                speedSummary.summary = new SpeedSummary();
+        return accountUtil.getBlobService(self.store, self.get('azureStorage'))
+        .then(blobService => {
+            var SpeedSummary = self.get('azureStorage').BlobService.SpeedSummary,
+                createBlockBlobFromLocalFile = Ember.RSVP.denodeify(blobService.createBlockBlobFromLocalFile);
 
-                resolve({
-                    promise: new Ember.RSVP.Promise(function (resolve, reject) {
-                        service.createBlockBlobFromLocalFile(container, blobName, path, {speedSummary: speedSummary.summary}, (err, result, response) => {
-                            if (!err) {
-                                return resolve(response.entries);
-                            } else {
-                                return reject(err);
-                            }
-                        });
-                    }),
-                    speedSummary: speedSummary
+            speedSummary.summary = new SpeedSummary();
+
+            var promise = createBlockBlobFromLocalFile.call(blobService, container, blobName, path,
+                    {speedSummary: speedSummary.summary})
+                .then(response => {
+                    return response.entries;
+                })
+                .catch (error => {
+                    appInsights.trackException(error);
                 });
-            });
+
+            return {
+                promise: promise,
+                speedSummary: speedSummary
+            };
+        })
+        .catch (error => {
+            appInsights.trackException(error);
         });
     },
 
