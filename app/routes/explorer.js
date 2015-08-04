@@ -26,6 +26,7 @@ export default Ember.Route.extend({
             uploadBlob: () => { controller.send('uploadBlob'); },
             downloadBlobs: () => { controller.send('downloadBlobs'); },
             deleteBlobs: () => { controller.send('deleteBlobs'); },
+            copyBlobs: () => { controller.send('copyBlobs'); },
             refreshBlobs: () => { controller.send('refreshBlobs'); },
             addContainer: () => { controller.send('openModal', '#modal-addcontainer'); },
             removeContainer: () => { controller.send('openModal', '#modal-deletecontainer'); },
@@ -63,7 +64,8 @@ export default Ember.Route.extend({
                 newContainerName: '',
                 searchQuery: '',
                 blobsLoading: true,
-                selectedBlob: null
+                selectedBlob: null,
+                modalCopyDestinationPath: ''
             });
 
             this.store.unloadAll('container');

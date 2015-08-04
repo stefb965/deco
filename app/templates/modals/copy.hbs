@@ -1,0 +1,13 @@
+<div id="modal-copy" class="modal">
+    <div class="modal-content">
+        <h4>Copy files</h4>
+        <h6>Are you sure you want to copy {{modalCopyText}}? </h6>
+        
+        <h5>Destination</h5>
+        {{input value=modalCopyDestinationPath}}
+    </div>
+    <div class="modal-footer">
+        <a {{action this.modalConfirmAction modalCopyDestinationPath}} class=" modal-action modal-close waves-effect waves-green btn-flat">Copy</a>
+        <a class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+    </div>
+</div>
