@@ -2,24 +2,23 @@ import Ember from 'ember';
 import filesize from '../utils/filesize';
 import stringResources from '../utils/string-resources';
 import Notification from '../models/notification';
-/**
- * Controller for the list of blobs, used together with the {{each}} helper
- */
-export default Ember.Controller.extend({
-    needs: ['notifications'],
+
+export default Ember.Component.extend({
+    tagName: 'tr',
+    classNameBindings: ['selected'],
+    selected: Ember.computed.alias('blob.selected'),
+
     /**
      * Returns the filesize in a format that humans can read
      */
     prettySize: function () {
-        var size = this.get('model.size');
+        var size = this.get('blob.size');
         return filesize(size).human('si');
-    }.property('model.size'),
-
-    notifications: Ember.computed.alias('controllers.notifications'),
+    }.property('blob.size'),
 
     isLocked: function () {
-        return this.get('model.leaseState') !== 'available' || this.get('model.leaseStatus') === 'locked';
-    }.property('model.leaseState', 'model.leaseStatus'),
+        return this.get('blob.leaseState') !== 'available' || this.get('blob.leaseStatus') === 'locked';
+    }.property('blob.leaseState', 'blob.leaseStatus'),
 
     actions: {
         /**
@@ -30,10 +29,10 @@ export default Ember.Controller.extend({
                 return;
             }
 
-            this.get('notifications').addPromiseNotification(this.get('model').save(),
+            this.get('notifications').addPromiseNotification(this.get('blob').save(),
                 Notification.create({
                     type: 'UpdateBlobProperties',
-                    text: stringResources.updateBlobPropsMessage(this.get('model.name'))
+                    text: stringResources.updateBlobPropsMessage(this.get('blob.name'))
                 })
             );
         },
@@ -42,7 +41,15 @@ export default Ember.Controller.extend({
          * Clears unsaved attributes on the Blob model
          */
         discardUnsavedChanges: function () {
-            this.get('model').rollback();
+            this.get('blob').rollback();
+        },
+
+        selectBlob: function () {
+            this.sendAction('selectBlob', this.get('blob'));
+        },
+
+        contextMenu: function () {
+            this.sendAction('selectBlob', this.get('blob'));
         }
     }
 });
