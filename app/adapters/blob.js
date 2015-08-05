@@ -145,7 +145,7 @@ export default DS.Adapter.extend({
                     blobs.push(blobModel);
                 }
             }
-            console.log('returning findquery ' + blobs);
+
             return blobs;
         })
         .catch (error => {

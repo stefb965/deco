@@ -9,7 +9,7 @@ export default Ember.Route.extend({
      * Get all containers for the current account, set them as model
      */
     model: function () {
-        return this.store.find('container');
+        return this.store.findAll('container');
     },
 
     /**

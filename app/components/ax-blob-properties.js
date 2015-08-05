@@ -5,13 +5,12 @@ import stringResources from '../utils/string-resources';
 
 export default Ember.Component.extend({
     prettySize: function () {
-        var size = this.get('blob.size');
-        return filesize(size).human('si');
-    }.property('blob.size'),
+        return filesize(this.get('blob.size')).human('si');
+    }.property('blob', 'blob.size'),
 
     isLocked: function () {
         return this.get('blob.leaseState') !== 'available' || this.get('blob.leaseStatus') === 'locked';
-    }.property('blob.leaseState', 'blob.leaseStatus'),
+    }.property('blob', 'blob.leaseState', 'blob.leaseStatus'),
 
     actions: {
         /**
@@ -35,6 +34,6 @@ export default Ember.Component.extend({
          */
         discardUnsavedChanges: function () {
             this.get('blob').rollback();
-        },
+        }
     }
 });

@@ -26,7 +26,7 @@ export default Ember.Service.extend({
      */
     getActiveAccount: function (store) {
         return new Ember.RSVP.Promise(function (resolve, reject) {
-            var accounts = store.all('account'),
+            var accounts = store.peekAll('account'),
                 length = accounts.get('length'),
                 i = 0;
 

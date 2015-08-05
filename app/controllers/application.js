@@ -1,13 +1,14 @@
 import Ember from 'ember';
 import Settings from '../models/settings';
+import config from '../config/environment';
 
 /**
  * Ember's application controller.
  * @param {Account record} activeConnection - The currently active connection
  */
 export default Ember.Controller.extend({
-    fs: Ember.computed.alias('nodeServices.fs'),
     nodeServices: Ember.inject.service(),
+    fs: Ember.computed.alias('nodeServices.fs'),
     activeConnection: null,
     lastError: '',
     disableTracking: false,
@@ -21,6 +22,10 @@ export default Ember.Controller.extend({
 
         window.ondrop = e => { e.preventDefault(); return false; };
         window.ondragover = e => { e.preventDefault(); return false; };
+
+        if (config.environment === 'test') {
+            return;
+        }
 
         if (this.get('settings.firstUse')) {
             Ember.run.schedule('afterRender', () => {

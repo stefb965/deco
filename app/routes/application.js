@@ -99,16 +99,16 @@ export default Ember.Route.extend({
                     this.controller.set('lastError', 'The connection succeeded, but the Azure rejected the account key. Please check it and try again.');
                 } else if (error.message && error.message.indexOf('is not a valid base64 string') > -1) {
                     this.controller.set('lastError', 'The provided account key is invalid. Please check it and try again.');
+                } else {
+                    this.controller.set('lastError', error);
                 }
 
                 console.log(error);
 
                 transition.abort();
-                //this.transitionTo('welcome');
                 this.send('openErrorModal');
-                //welcomeController.send('selectize');
 
-                //appInsights.trackException(error);
+                appInsights.trackException(error);
             }
         }
     }

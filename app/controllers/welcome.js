@@ -72,7 +72,7 @@ export default Ember.Controller.extend({
             var editAccountName = this.get('editAccountName');
             var editAccountKey = this.get('editAccountKey');
 
-            this.store.find('account', editAccount).then(result => {
+            this.store.findRecord('account', editAccount).then(result => {
                 if (result) {
                     result.set('name', editAccountName);
                     result.set('key', editAccountKey);
@@ -88,9 +88,10 @@ export default Ember.Controller.extend({
         delete: function () {
             var editAccount = this.get('selectedEditAccount');
 
-            this.store.find('account', editAccount).then(result => {
+            this.store.findRecord('account', editAccount).then(result => {
                 if (result) {
-                    result.destroyRecord();
+                    result.deleteRecord();
+                    result.save();
                 }
 
                 Ember.run.schedule('destroy', () => {

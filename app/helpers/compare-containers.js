@@ -6,6 +6,8 @@ import Ember from 'ember';
  * @param  {string} arg2    - Name of a container
  * @return {boolean}
  */
-export default Ember.Helper.helper(function (params) {
+export function compareContainers(params) {
     return (params[0].get('name') === params[1]);
-});
+}
+
+export default Ember.Helper.helper(compareContainers);
