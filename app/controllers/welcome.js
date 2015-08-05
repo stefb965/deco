@@ -140,14 +140,14 @@ export default Ember.Controller.extend({
                 activeAccountId = this.get('selectedAccount');
             }
 
-            this.store.find('account').then(function (accounts) {
+            this.store.findAll('account').then(function (accounts) {
                 var i;
                 var account;
 
                 if (accounts && accounts.content && accounts.content.length > 0) {
                     for (i = 0; i < accounts.content.length; i = i + 1) {
-                        account = accounts.content[i];
-                        if (account.get('id') === activeAccountId) {
+                        account = accounts.content[i].record;
+                        if (account.id === activeAccountId) {
                             self.set('activeConnection', account.get('name'));
                             account.set('active', true);
                         } else {

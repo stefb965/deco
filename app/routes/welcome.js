@@ -8,7 +8,7 @@ export default Ember.Route.extend({
      * Get all accounts, set them as model
      */
     model: function () {
-        return this.store.find('account');
+        return this.store.findAll('account');
     },
 
     /**
@@ -16,6 +16,17 @@ export default Ember.Route.extend({
      */
     afterModel: function () {
         appInsights.trackPageView('Welcome');
+    },
+
+    setupController: function (controller, model) {
+        controller.set('model', model);
+
+        if (!model || !model.content || model.content.length < 1) {
+            return;
+        } else {
+            controller.set('selectedEditAccount', model.content[0].id);
+            controller.set('selectedAccount', model.content[0].id);
+        }
     },
 
     /**
