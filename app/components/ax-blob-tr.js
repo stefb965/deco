@@ -1,7 +1,5 @@
 import Ember from 'ember';
 import filesize from '../utils/filesize';
-import stringResources from '../utils/string-resources';
-import Notification from '../models/notification';
 
 export default Ember.Component.extend({
     tagName: 'tr',
@@ -21,29 +19,6 @@ export default Ember.Component.extend({
     }.property('blob.leaseState', 'blob.leaseStatus'),
 
     actions: {
-        /**
-         * Save properties for Blob model
-         */
-        setProperties: function () {
-            if (this.get('isLocked')) {
-                return;
-            }
-
-            this.get('notifications').addPromiseNotification(this.get('blob').save(),
-                Notification.create({
-                    type: 'UpdateBlobProperties',
-                    text: stringResources.updateBlobPropsMessage(this.get('blob.name'))
-                })
-            );
-        },
-
-        /**
-         * Clears unsaved attributes on the Blob model
-         */
-        discardUnsavedChanges: function () {
-            this.get('blob').rollback();
-        },
-
         selectBlob: function () {
             this.sendAction('selectBlob', this.get('blob'));
         },

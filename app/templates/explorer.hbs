@@ -4,7 +4,7 @@
 {{partial "modals/addcontainer"}}
 {{partial "modals/deletecontainer"}}
 {{partial "modals/copy"}}
-{{render "modals/blob-properties" selectedBlob controller='blob'}}
+{{ax-blob-properties blob=selectedBlob notifications=notifications}}
 
 <div class="explorer-container">
     <div class="folder">
@@ -68,7 +68,7 @@
                             </tr>
                         {{/each}}
                         {{#each blobsSorted as |blob|}}
-                            {{ax-blob-tr blob=blob notifications=notifications selectBlob="selectBlob"}}
+                            {{ax-blob-tr blob=blob selectBlob="selectBlob"}}
                         {{/each}}
                     </tbody>
                 </table>
