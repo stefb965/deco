@@ -5,8 +5,8 @@ import Ember from 'ember';
  * with accounts.
  */
 export default Ember.Controller.extend({
-    needs: 'application',
-    activeConnection: Ember.computed.alias('controllers.application.activeConnection'),
+    application: Ember.inject.controller(),
+    activeConnection: Ember.computed.alias('application.activeConnection'),
     loading: false,
 
     /**
