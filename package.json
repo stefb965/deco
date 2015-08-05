@@ -43,7 +43,7 @@
     "ember-cli-inline-content": "^0.4.0",
     "ember-cli-materialize": "^0.5.2",
     "ember-cli-moment-shim": "0.6.0",
-    "ember-cli-node-webkit": "0.3.3",
+    "ember-cli-nwjs": "0.3.6",
     "ember-cli-qunit": "0.3.20",
     "ember-cli-release": "0.2.3",
     "ember-cli-sass": "3.3.0",
@@ -93,7 +93,7 @@
   "dependencies": {
     "azure-storage": "^0.4.3",
     "fs-extra": "^0.22.1",
-    "nw": "0.12.2",
+    "nw": "0.12.3",
     "open": "0.0.5"
   }
 }
