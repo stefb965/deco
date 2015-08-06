@@ -10,10 +10,11 @@ import stringResources from '../utils/string-resources';
 export default Ember.Controller.extend({
     // Services & Aliases
     // ------------------------------------------------------------------------------
-    needs: ['application', 'notifications', 'uploaddownload'],
-    activeConnection: Ember.computed.alias('controllers.application.activeConnection'),
-    notifications: Ember.computed.alias('controllers.notifications'),
-    uploaddownload: Ember.computed.alias('controllers.uploaddownload'),
+    needs: ['notifications'],           // Todo: This looks like a bug - it's neccessary, but shouldn't be
+    application: Ember.inject.controller(),
+    notifications: Ember.inject.controller(),
+    uploaddownload: Ember.inject.controller(),
+    activeConnection: Ember.computed.alias('application.activeConnection'),
     azureStorage: Ember.computed.alias('nodeServices.azureStorage'),
     fileSvc: Ember.computed.alias('nodeServices.fs'),
     nodeServices: Ember.inject.service(),
@@ -63,7 +64,7 @@ export default Ember.Controller.extend({
             return this.get('model');
         } else {
             this.set('searchSpinnerDisplay', true);
-            var promise = this.store.find('container', {name: this.get('searchQuery')});
+            var promise = this.store.query('container', {name: this.get('searchQuery')});
             promise.then(() => this.set('searchSpinnerDisplay', false));
             return promise;
         }
@@ -344,7 +345,7 @@ export default Ember.Controller.extend({
 
             this.store.find('container', this.get('activeContainer')).then(container => {
                 selectedDirectories.forEach(directory => {
-                    getBlobPromises.push(this.store.find('blob', {
+                    getBlobPromises.push(this.store.query('blob', {
                         container: container,
                         container_id: container.get('id'),
                         prefix: directory.name
@@ -435,7 +436,7 @@ export default Ember.Controller.extend({
          */
         copyFolderBlobs: function (folder) {
             this.store.find('container', this.get('activeContainer')).then(container => {
-                this.store.find('blob', {
+                this.store.query('blob', {
                     container: container,
                     container_id: container.get('id'),
                     prefix: folder
@@ -494,7 +495,7 @@ export default Ember.Controller.extend({
          */
         deleteFolderBlobs: function (folder) {
             this.store.find('container', this.get('activeContainer')).then(container => {
-                this.store.find('blob', {
+                this.store.query('blob', {
                     container: container,
                     container_id: container.get('id'),
                     prefix: folder

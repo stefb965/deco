@@ -1,7 +1,4 @@
-import {
-  moduleForModel,
-  test
-} from 'ember-qunit';
+import { moduleForModel, test } from 'ember-qunit';
 import Notification from 'azureexplorer/models/notification';
 
 moduleForModel('notification', {

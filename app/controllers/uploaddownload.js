@@ -4,9 +4,8 @@ import config from '../config/environment';
 import stringResources from '../utils/string-resources';
 
 export default Ember.Controller.extend({
-    needs: ['notifications', 'explorer'],
-    notifications: Ember.computed.alias('controllers.notifications'),
-    explorer: Ember.computed.alias('controllers.explorer'),
+    notifications: Ember.inject.controller(),
+    explorer: Ember.inject.controller(),
     nodeServices: Ember.inject.service(),
     sourceUri: null,
 

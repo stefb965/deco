@@ -4,7 +4,7 @@
 {{partial "modals/addcontainer"}}
 {{partial "modals/deletecontainer"}}
 {{partial "modals/copy"}}
-{{render "modals/blob-properties" selectedBlob controller='blob'}}
+{{ax-blob-properties blob=selectedBlob notifications=notifications}}
 
 <div class="explorer-container">
     <div class="folder">
@@ -16,7 +16,7 @@
         </div>
         <div class="container">
             <ul>
-                {{#each container in containers}}
+                {{#each containers as |container|}}
                     {{#if (compare-containers container activeContainer)}}
                         <li class="selected-container" {{action "switchActiveContainer" container.id}}>
                             <i class="mdi-file-folder-open"></i> {{container.name}}
@@ -35,7 +35,7 @@
         <div class="container">
             {{#if activeContainer}}
                 <ul class="breadcrumb">
-                    {{#each path in pathSegments }}
+                    {{#each pathSegments as |path|}}
                         <li {{action "changeDirectory" path}}>{{path.name}}</li>
                     {{/each}}
                 </ul>
@@ -55,7 +55,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{#each dir in subDirectories}}
+                        {{#each subDirectories as |dir|}}
                             <tr>
                                 <td class="action-field">
                                     {{input type="checkbox" id=dir.name checked=dir.selected}}
@@ -67,31 +67,8 @@
                                 <td></td>
                             </tr>
                         {{/each}}
-                        {{#each blob in blobsSorted itemController="blob"}}
-                            <tr {{bind-attr class="blob.selected:selected"}} {{action "selectBlob" blob.model on="contextMenu"}}>
-                                <td>
-                                    {{input type="checkbox" id=blob.model.id checked=blob.model.selected}}
-                                    <label for={{blob.model.id}}></label>
-                                </td>
-                                {{#if blob.isLocked}}
-                                    <td {{action "selectBlob" blob.model}} data-context="blob">
-                                        <i class="mdi-action-lock-outline"></i> {{blob-display-path blob.model.id currentPath}}
-                                    </td>
-                                {{else}}
-                                    <td {{action "selectBlob" blob.model}} data-context="blob">
-                                        {{blob-display-path blob.model.id currentPath}}
-                                    </td>
-                                {{/if}}
-                                <td {{action "selectBlob" blob.model}} data-context="blob" title={{blob.model.lastModified}}>
-                                    {{ago blob.model.lastModified}}
-                                </td>
-                                <td {{action "selectBlob" blob.model}} data-context="blob">
-                                    {{blob.prettySize}}
-                                </td>
-                                <td {{action "selectBlob" blob.model}} data-context="blob" class="type" title={{blob.model.type}}>
-                                    <div>{{blob.model.type}}</div>
-                                </td>
-                            </tr>
+                        {{#each blobsSorted as |blob|}}
+                            {{ax-blob-tr blob=blob selectBlob="selectBlob"}}
                         {{/each}}
                     </tbody>
                 </table>

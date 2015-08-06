@@ -5,8 +5,8 @@ import Ember from 'ember';
  * with accounts.
  */
 export default Ember.Controller.extend({
-    needs: 'application',
-    activeConnection: Ember.computed.alias('controllers.application.activeConnection'),
+    application: Ember.inject.controller(),
+    activeConnection: Ember.computed.alias('application.activeConnection'),
     loading: false,
 
     /**
@@ -72,7 +72,7 @@ export default Ember.Controller.extend({
             var editAccountName = this.get('editAccountName');
             var editAccountKey = this.get('editAccountKey');
 
-            this.store.find('account', editAccount).then(result => {
+            this.store.findRecord('account', editAccount).then(result => {
                 if (result) {
                     result.set('name', editAccountName);
                     result.set('key', editAccountKey);
@@ -88,9 +88,10 @@ export default Ember.Controller.extend({
         delete: function () {
             var editAccount = this.get('selectedEditAccount');
 
-            this.store.find('account', editAccount).then(result => {
+            this.store.findRecord('account', editAccount).then(result => {
                 if (result) {
-                    result.destroyRecord();
+                    result.deleteRecord();
+                    result.save();
                 }
 
                 Ember.run.schedule('destroy', () => {
@@ -140,14 +141,14 @@ export default Ember.Controller.extend({
                 activeAccountId = this.get('selectedAccount');
             }
 
-            this.store.find('account').then(function (accounts) {
+            this.store.findAll('account').then(function (accounts) {
                 var i;
                 var account;
 
                 if (accounts && accounts.content && accounts.content.length > 0) {
                     for (i = 0; i < accounts.content.length; i = i + 1) {
-                        account = accounts.content[i];
-                        if (account.get('id') === activeAccountId) {
+                        account = accounts.content[i].record;
+                        if (account.id === activeAccountId) {
                             self.set('activeConnection', account.get('name'));
                             account.set('active', true);
                         } else {

@@ -1,0 +1,22 @@
+<td>
+    {{input type="checkbox" id=blob.id checked=blob.selected}}
+    <label for={{blob.id}}></label>
+</td>
+{{#if isLocked}}
+    <td {{action "selectBlob" blob}} data-context="blob">
+        <i class="mdi-action-lock-outline"></i> {{blob-display-path blob.id currentPath}}
+    </td>
+{{else}}
+    <td {{action "selectBlob" blob}} data-context="blob">
+        {{blob-display-path blob.id currentPath}}
+    </td>
+{{/if}}
+<td {{action "selectBlob" blob}} data-context="blob" title={{blob.lastModified}}>
+    {{moment-from-now blob.lastModified}}
+</td>
+<td id="size" {{action "selectBlob" blob}} data-context="blob">
+    {{prettySize}}
+</td>
+<td {{action "selectBlob" blob}} data-context="blob" class="type" title={{blob.type}}>
+    <div>{{blob.type}}</div>
+</td>

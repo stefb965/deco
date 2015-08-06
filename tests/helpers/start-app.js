@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import Application from '../../app';
-import Router from '../../router';
 import config from '../../config/environment';
 import containerAdapter from '../../adapters/container';
 
@@ -16,9 +15,11 @@ export default function startApp(attrs, assert, noNodeServices) {
         application.ContainerAdapter = containerAdapter;
     });
    
-    if(noNodeServices) {
-      return;
+    if (noNodeServices) {
+        console.log('Returning app');
+        return application;
     }
+
     var container = application.__container__;
     var nodeServices = container.lookup('service:node-services');
     var fakeData = {
@@ -172,7 +173,7 @@ export default function startApp(attrs, assert, noNodeServices) {
                     return callback(null);
                 },
 
-                 startCopyBlob: function(sourceUri, targetContainer, targetBlob, options, callback) {
+                startCopyBlob: function(sourceUri, targetContainer, targetBlob, options, callback) {
                     assert.ok(typeof sourceUri === 'string', 'expected sourceUri to be string');
                     assert.ok(typeof targetContainer === 'string', 'expected arg targetContainer to be string');
                     assert.ok(typeof targetBlob === 'string', 'expected arg targetBlob to be string');

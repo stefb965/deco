@@ -1,4 +1,4 @@
-import Ember from "ember";
+import Ember from 'ember';
 import { moduleFor, test } from 'ember-qunit';
 import combinedStart from 'azureexplorer/tests/helpers/combined-start';
 
@@ -9,7 +9,6 @@ var globals = {
 
 moduleFor('controller:application', {
     // Specify the other units that are required for this test.
-    needs: ['model:setting'],
     teardown: function () {
         Ember.run(globals.App, globals.App.destroy);
         window.localStorage.clear();
@@ -20,5 +19,5 @@ moduleFor('controller:application', {
 // Replace this with your real tests.
 test('it exists', function (assert) {
     var ctrl = combinedStart(assert, globals, 1, this.subject());
-    assert.ok(ctrl);
+    assert.ok(this.subject());
 });

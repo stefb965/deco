@@ -1,11 +1,8 @@
 import Ember from "ember";
-import {
-    test,
-    moduleForModel
-}
-from 'ember-qunit';
+import { test, moduleForModel } from 'ember-qunit';
 import startApp from 'azureexplorer/tests/helpers/start-app';
 var App, store;
+
 moduleForModel('container', {
     // Specify the other units that are required for this test.
     needs: ['model:blob'],

@@ -150,7 +150,7 @@ export default DS.Adapter.extend({
                         });
                     }
                 }
-                console.log('returning findquery ' + results);
+
                 return results;
             })
             .catch (error => {
