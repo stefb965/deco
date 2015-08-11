@@ -1,0 +1,10 @@
+<nav class="props">		
+    <div class="nav-wrapper">
+        <a class="brand-logo right">{{modalTitle}}</a>
+		<ul id="nav-mobile" class="left hide-on-med-and-down">
+			{{#each t in tabsArray}}
+	        	<li><a {{action t.action target=target}}>{{t.name}}</a></li>
+			{{/each}}
+      	</ul>
+    </div>
+</nav>

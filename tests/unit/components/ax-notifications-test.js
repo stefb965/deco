@@ -1,20 +1,24 @@
 import Ember from 'ember';
-import {moduleFor, test} from 'ember-qunit';
+import {moduleForComponent, test} from 'ember-qunit';
 import startApp from 'azureexplorer/tests/helpers/start-app';
 import Notification from 'azureexplorer/models/notification';
 
-moduleFor('controller:notifications');
+moduleForComponent('ax-notifications', {
+  // Specify the other units that are required for this test
+  needs: ['service:notifications'],
+  unit: true
+});
 
 test('it exists', function (assert) {
-    var ctrl = this.subject();
-    assert.ok(ctrl);
+    var comp = this.subject();
+    assert.ok(comp);
 });
 
 test('it adds a notification', function (assert) {
-    var ctrl = this.subject();
-    assert.ok(ctrl);
+    var comp = this.subject();
+    assert.ok(comp);
     Ember.run(function () {
-        ctrl.set('notifications', []);
+        comp.set('notifications.notifications', []);
     });
 
     var not = Notification.create({
@@ -22,7 +26,7 @@ test('it adds a notification', function (assert) {
         text: 'test notification',
         progress: -1});
 
-    ctrl.addNotification(not);
+    comp.get('notifications').addNotification(not);
     assert.ok(not);
     assert.ok(not.get('id'));
     assert.ok(not.get('timestamp'));
@@ -34,9 +38,9 @@ test('it adds a notification', function (assert) {
 });
 
 test('it correctly reports whether a notification represents a running process', function (assert) {
-    var ctrl = this.subject();
+    var comp = this.subject();
     Ember.run(function () {
-        ctrl.set('notifications', []);
+        comp.set('notifications', []);
     });
 
     var not = Notification.create({
@@ -56,9 +60,9 @@ test('it correctly reports whether a notification represents a running process',
 });
 
 test('it correctly creates background progress style', function (assert) {
-    var ctrl = this.subject();
+    var comp = this.subject();
     Ember.run(function () {
-        ctrl.set('notifications', []);
+        comp.set('notifications.notifications', []);
     });
 
     var not = Notification.create({
@@ -73,43 +77,43 @@ test('it correctly creates background progress style', function (assert) {
 });
 
 test('it adds a notification to the notifications array', function (assert) {
-    var ctrl = this.subject();
+    var comp = this.subject();
     Ember.run(function () {
-        ctrl.set('notifications', []);
+        comp.set('notifications.notifications', []);
     });
 
     var not = Notification.create({
         type: 'generic',
         text: 'test notification',
         progress: -1});
-    ctrl.addNotification(not);
-    assert.equal(ctrl.get('notifications').length, 1);
+    comp.get('notifications').addNotification(not);
+    assert.equal(comp.get('notifications.notifications').length, 1);
 });
 
 test('it removes a notification from the notifications array', function (assert) {
-    var ctrl = this.subject();
+    var comp = this.subject();
     Ember.run(function () {
-        ctrl.set('notifications', []);
+        comp.set('notifications.notifications', []);
     });
 
     var not = Notification.create({
         type: 'generic',
         text: 'test notification',
         progress: -1});
-    ctrl.addNotification(not);
+    comp.get('notifications').addNotification(not);
 
     Ember.run(function () {
-        ctrl.removeNotification(not);
+        comp.get('notifications').removeNotification(not);
     });
-    assert.equal(ctrl.get('notifications').length, 0);
+    assert.equal(comp.get('notifications.notifications').length, 0);
 });
 
 test('it removes a notification from the notifications array via action', function (assert) {
-    var ctrl = this.subject(),
+    var comp = this.subject(),
         not;
 
     Ember.run(function () {
-        ctrl.set('notifications', []);
+        comp.set('notifications.notifications', []);
     });
 
     Ember.run(function () {
@@ -117,19 +121,19 @@ test('it removes a notification from the notifications array via action', functi
         type: 'generic',
         text: 'test notification',
         progress: -1});
-        ctrl.addNotification(not);
+        comp.get('notifications').addNotification(not);
     });
     Ember.run(function () {
-        ctrl.send('removeNotification', not);
+        comp.send('removeNotification', not);
     });
 
-    assert.equal(ctrl.get('notifications').length, 0);
+    assert.equal(comp.get('notifications.notifications').length, 0);
 });
 
 test('it correctly reports whether any notification is active', function (assert) {
-    var ctrl = this.subject();
+    var comp = this.subject();
     Ember.run(function () {
-        ctrl.set('notifications', []);
+        comp.set('notifications.notifications', []);
     });
 
     assert.expect(2);
@@ -143,13 +147,13 @@ test('it correctly reports whether any notification is active', function (assert
         text: 'test notification',
         progress: 0});
 
-    ctrl.addNotification(not1);
-    ctrl.addNotification(not2);
-    assert.equal(ctrl.get('isActive'), true);
+    comp.get('notifications').addNotification(not1);
+    comp.get('notifications').addNotification(not2);
+    assert.equal(comp.get('notifications.isActive'), true);
 
     Ember.run(function () {
         not2.set('progress', 100);
     });
 
-    assert.equal(ctrl.get('isActive'), false);
+    assert.equal(comp.get('notifications.isActive'), false);
 });

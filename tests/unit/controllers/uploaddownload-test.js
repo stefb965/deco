@@ -9,7 +9,7 @@ var globals = {
 
 moduleFor('controller:uploaddownload', {
     // Specify the other units that are required for this test.
-    needs: ['controller:application', 'controller:notifications', 'controller:explorer', 'model:blob', 'model:container'],
+    needs: ['controller:application', 'service:notifications', 'controller:explorer', 'model:blob', 'model:container'],
     teardown: function () {
         Ember.run(globals.App, globals.App.destroy);
         window.localStorage.clear();

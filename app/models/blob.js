@@ -46,32 +46,32 @@ export default DS.Model.extend({
 
     /**
      * Get a public URL to the blob
+     * @param  {string} permissions READ|WRITE|DELETE|LIST
      * @return {Promise}
      */
-    getLink: function () {
+    getLink: function (expiry=200, permissions='READ') {
         var self = this;
         return accountUtil.getBlobService(self.store, self.get('azureStorage'))
         .then(blobService => {
             var startDate = new Date();
             var expiryDate = new Date(startDate);
+                // set the link expiration to 200 minutes in the future.
+                expiryDate.setMinutes(startDate.getMinutes() + expiry);
+                startDate.setMinutes(startDate.getMinutes() - 100);
 
-            // set the link expiration to 200 minutes in the future.
-            expiryDate.setMinutes(startDate.getMinutes() + 200);
-            startDate.setMinutes(startDate.getMinutes() - 100);
-
-            var sharedAccessPolicy = {
-                AccessPolicy: {
-                    Permissions: self.get('azureStorage').BlobUtilities.SharedAccessPermissions.READ,
-                    Start: startDate,
-                    Expiry: expiryDate
-                }
-            };
+                var sharedAccessPolicy = {
+                    AccessPolicy: {
+                        Permissions: self.get('azureStorage').BlobUtilities.SharedAccessPermissions[permissions],
+                        Start: startDate,
+                        Expiry: expiryDate
+                    }
+                };
 
             var token = blobService.generateSharedAccessSignature(self.get('container_id'), self.get('name'), sharedAccessPolicy);
             // generate a url in which the user can have access to the blob
             var sasUrl = blobService.getUrl(self.get('container_id'), self.get('name'), token);
 
-            return sasUrl;
+            return {sas: token, url: sasUrl};
         })
         .catch (error => {
             Ember.Logger.error(error);

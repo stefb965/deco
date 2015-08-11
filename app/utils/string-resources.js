@@ -4,8 +4,8 @@
  */
 
 function prettyProgressMessage(message, speed, progress) {
-    message += (speed) ? message += speed += ' ' : message;
-    message += (progress) ? progress + '%' : message;
+    message = (speed) ? message + speed + ' ' : message;
+    message = (progress) ? message + progress + '%' : message;
 
     return message;
 }

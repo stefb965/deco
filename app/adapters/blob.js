@@ -20,7 +20,7 @@ export default DS.Adapter.extend({
         return accountUtils.getBlobService(this.store, this.get('azureStorage'))
         .then(blobService => {
             var getBlobProperties = Ember.RSVP.denodeify(blobService.getBlobProperties);
-            return getBlobProperties.call(getBlobProperties, snapshot.get('container').name, snapshot.get('name'));
+            return getBlobProperties.call(getBlobProperties, snapshot.attr('container').name, snapshot.attr('name'));
         })
         .catch (error => {
             Ember.Logger.error(error);
@@ -49,12 +49,16 @@ export default DS.Adapter.extend({
                 var properties = {},
                     setBlobProperties = Ember.RSVP.denodeify(blobService.setBlobProperties);
 
-                properties.contentLanguage = snapshot.get('contentLanguage');
-                properties.contentMD5 = snapshot.get('contentMd5');
-                properties.contentDisposition = snapshot.get('contentDisposition');
+                properties.contentLanguage = snapshot.attr('contentLanguage');
+                properties.contentMD5 = snapshot.attr('contentMd5');
+                properties.contentDisposition = snapshot.attr('contentDisposition');
 
-                return setBlobProperties.call(blobService, snapshot.get('container_id'),
-                    snapshot.get('name'), properties);
+                return setBlobProperties.call(blobService, snapshot.attr('container_id'),
+                    snapshot.attr('name'), properties);
+        })
+        .then(blobResult => {
+            blobResult.id = blobResult.blob;
+            return blobResult;
         })
         .catch (error => {
             Ember.Logger.error(error);

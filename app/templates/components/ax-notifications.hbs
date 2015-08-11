@@ -4,7 +4,7 @@ Whereever this partial is used, you need to make sure that
 to the actual notifications controller.
  --}}
  <div {{bind-attr class="notifications.isPulloutVisible :notifications"}}>
-     <div {{action "togglePullout" target="controllers.notifications"}} class="handle">
+     <div {{action "togglePullout"}} class="handle">
          <span>…</span>
          {{#if notifications.isActive}}
              <div class="progress">
