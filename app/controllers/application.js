@@ -45,6 +45,6 @@ export default Ember.Controller.extend({
      */
     versionNumber: function () {
         var fs = this.get('fs');
-        return fs.existsSync('.version') ? fs.readFileSync('.version', {encoding:'utf8'}) : 'unknown';
+        return fs.existsSync('version') ? fs.readFileSync('version', {encoding:'utf8'}) : 'unknown';
     }.property()
 });
