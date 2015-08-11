@@ -4,7 +4,7 @@ import config from '../config/environment';
 import stringResources from '../utils/string-resources';
 
 export default Ember.Controller.extend({
-    notifications: Ember.inject.controller(),
+    notifications: Ember.inject.service('notifications'),
     explorer: Ember.inject.controller(),
     nodeServices: Ember.inject.service(),
     sourceUri: null,
@@ -137,7 +137,7 @@ export default Ember.Controller.extend({
 
             this.store.find('container', activeContainer).then(foundContainer => {
                 blob.getLink().then(result => {
-                    this.set('sourceUri', result);
+                    this.set('sourceUri', result.url);
 
                     var sourceUri = this.get('sourceUri');
                     var fileName = blob.get('name').replace(/^.*[\\\/]/, ''), copyNotification, speedSummary, copyPromise, progressCopyInterval;

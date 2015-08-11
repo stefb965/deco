@@ -10,9 +10,8 @@ import stringResources from '../utils/string-resources';
 export default Ember.Controller.extend({
     // Services & Aliases
     // ------------------------------------------------------------------------------
-    needs: ['notifications'],           // Todo: This looks like a bug - it's neccessary, but shouldn't be
     application: Ember.inject.controller(),
-    notifications: Ember.inject.controller(),
+    notifications: Ember.inject.service('notifications'),
     uploaddownload: Ember.inject.controller(),
     activeConnection: Ember.computed.alias('application.activeConnection'),
     azureStorage: Ember.computed.alias('nodeServices.azureStorage'),

@@ -49,7 +49,7 @@ export default Ember.Component.extend({
             this.set('type', type);
         }
 
-        selectedBlob.getLink().then(result => this.set('previewLink', result));
+        selectedBlob.getLink().then(result => this.set('previewLink', result.url));
         Ember.run.scheduleOnce('afterRender', this, function () {
             Ember.$('.materialboxed').materialbox();
         });

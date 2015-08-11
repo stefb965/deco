@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import Uuid from '../utils/uuid';
 
-export default Ember.Controller.extend({
+export default Ember.Service.extend({
     notifications: [],
     isPulloutVisible: false,
 
@@ -98,29 +98,6 @@ export default Ember.Controller.extend({
         }
 
         notifications.removeObject(notification);
-    },
-
-    // Actions
-    // ------------------------------------------------------------------------------
-    actions: {
-        /**
-         * Toggles the 'isPulloutVisible' property, pulling out the
-         * notifications list in the UI (if there is one);
-         */
-        togglePullout: function () {
-            // This hack is required since Chrome isn't smart enough
-            // to trigger our animations right away. We're just
-            // redrawing those elements.
-            Ember.$('div.pullout').hide().show(0);
-
-            this.toggleProperty('isPulloutVisible');
-        },
-
-        removeNotification: function (notification) {
-            if (!notification.get('isRunning')) {
-                this.removeNotification(notification);
-            }
-        }
     },
 
     // Helpers

@@ -3,9 +3,8 @@ import Ember from 'ember';
 /**
  * The reusable navbar modal
  */
-export default Ember.View.extend({
+export default Ember.Component.extend({
 	modalTitle: '',
-	templateName: '_modal_navbar',
 	tabsArray: function () {
 		var index = 1,
 			tabs = [];
@@ -19,5 +18,5 @@ export default Ember.View.extend({
 		}
 
 		return tabs;
-	}.property('tabs')
+	}.property()
 });

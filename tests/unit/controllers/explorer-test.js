@@ -9,7 +9,7 @@ var globals = {
 
 moduleFor('controller:explorer', {
     // Specify the other units that are required for this test.
-    needs: ['controller:application', 'controller:notifications', 'controller:uploaddownload','model:blob', 'model:container'],
+    needs: ['controller:application', 'service:notifications', 'controller:uploaddownload','model:blob', 'model:container'],
     teardown: function () {
         Ember.run(globals.App, globals.App.destroy);
         window.localStorage.clear();
@@ -335,7 +335,7 @@ test('it should copy a selected blob from one container to another', function (a
                     blob.set('selected', true);
                     count++;
                     blob.getLink().then(result => {
-                        uri = result;
+                        uri = result.url;
                         
                         ctrl.get('containers').then((containers) => {
                             containers.forEach((container) => {
