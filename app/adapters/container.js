@@ -8,6 +8,22 @@ export default DS.Adapter.extend({
     nodeServices: Ember.inject.service(),
 
     /**
+     * Parses out azure-storage-node sdk's container result into a Container Model
+     * @param  {ContainerResult} entry   - The ContainerResult object from the azure storage client
+     * @return {Container}
+     */
+    _entryToContainer: function (entry) {
+        return {
+            id: entry.name,
+            name: entry.name,
+            lastModified: new Date(Date.parse(entry.properties['last-modified'])),
+            etag: entry.properties.etag,
+            leaseState: entry.properties.leasestate,
+            leaseStatus: entry.properties.leasestatus
+        };
+    },
+
+    /**
      * Implementation of Ember Data's find method, returning a containers's meta data.
      * @param  {DS.Store} store             - The DS.Store, containing all data for records loaded
      * @param  {DS.Model} type              - The DS.Model class of the record
@@ -107,11 +123,7 @@ export default DS.Adapter.extend({
             var containerModels = [];
             for (var i in data.entries) {
                 if (i % 1 === 0) {
-                    containerModels.push({
-                        id: data.entries[i].name,
-                        name: data.entries[i].name,
-                        lastModified: new Date(Date.parse(data.entries[i].properties['last-modified']))
-                    });
+                    containerModels.push(this._entryToContainer(data.entries[i]));
                 }
             }
 
@@ -143,11 +155,7 @@ export default DS.Adapter.extend({
                     if (i % 1 === 0 &&
                         data.entries[i].name.indexOf(snapshot.name) > -1) {
 
-                        results.push({
-                            name: data.entries[i].name,
-                            id: data.entries[i].name,
-                            lastModified: new Date(Date.parse(data.entries[i].lastModified))
-                        });
+                        results.push(this._entryToContainer(data.entries[i]));
                     }
                 }
 

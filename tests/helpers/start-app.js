@@ -90,6 +90,11 @@ export default function startApp(attrs, assert, noNodeServices) {
         BlobUtilities: {
             SharedAccessPermissions: {
                 READ: 'READ'
+            },
+            BlobContainerPublicAccessType: {
+                OFF: 'off',
+                BLOB: 'blob',
+                CONTAINER: 'container'
             }
         },
 
@@ -140,12 +145,18 @@ export default function startApp(attrs, assert, noNodeServices) {
                         entries: [{
                             name: 'testcontainer',
                             properties: {
-                                'last-modified': new Date(Date.now())
+                                'last-modified': new Date(Date.now()),
+                                leasestate: 'available',
+                                leasestatus: 'unlocked',
+                                etag: '==12=///'
                             }
                         }, {
                             name: 'testcontainer2',
                             properties: {
-                                'last-modified': new Date(Date.now())
+                                'last-modified': new Date(Date.now()),
+                                leasestate: 'available',
+                                leasestatus: 'unlocked',
+                                etag: '==12=///'
                             }
                         }]
                     });
@@ -328,6 +339,29 @@ export default function startApp(attrs, assert, noNodeServices) {
                 
                 setBlobProperties: function (containerName, blobName, properties, callback) {
                     return callback();
+                },
+
+                getContainerAcl: function(containerName, callback) {
+                    assert.equal(typeof containerName, 'string', 'expected containerName to be a string');
+                    return callback(null, {
+                        name: 'testcontainer',
+                        properties: {
+                            'last-modified': new Date(Date.now()),
+                            leasestate: 'available',
+                            leasestatus: 'unlocked',
+                            etag: '==12=///'
+                        },
+                        publicAccessLevel: 'BLOB'
+                    });
+                },
+
+                setContainerAcl: function(containerName, shouldBeNull, publicAccessLevel, callback) {
+                    Ember.Logger.debug(publicAccessLevel);
+                    assert.equal(typeof containerName, 'string', 'expected containerName to be a string');
+                    assert.equal(shouldBeNull, null);
+                    assert.ok(publicAccessLevel === 'blob' || publicAccessLevel === 'container' || publicAccessLevel === 'off' ? true : false,
+                            'expected publicAccessLevel to be a valid BlobContainerPublicAccessType');
+                    return callback(null);
                 }
             }; 
         }
