@@ -60,16 +60,28 @@ var contextMenu = {
      */
     _setup_property_menu: function (e, menu) {
         var el = document.elementFromPoint(e.originalEvent.x, e.originalEvent.y),
-            blobContext = (el.getAttribute('data-context') && el.getAttribute('data-context') === 'blob');
+            blobContext = (el.getAttribute('data-context') && el.getAttribute('data-context') === 'blob'),
+            containerContext = (el.getAttribute('data-context') && el.getAttribute('data-context') === 'container');
 
         if (blobContext) {
-            var gui = window.requireNode('nw.gui');
+            let gui = window.requireNode('nw.gui');
             menu.append(new gui.MenuItem({
                 label: 'Properties',
                 click: function () {
                     var controller = window.Azureexplorer.__container__.lookup('controller:explorer');
                     if (controller) {
-                        controller.send('openModal', '#modal-properties', false);
+                        controller.send('openModal', '#modal-blob-properties', false);
+                    }
+                }
+            }));
+        } else if (containerContext) {
+            let gui = window.requireNode('nw.gui');
+            menu.append(new gui.MenuItem({
+                label: 'Properties',
+                click: function () {
+                    var controller = window.Azureexplorer.__container__.lookup('controller:explorer');
+                    if (controller) {
+                        controller.send('openModal', '#modal-container-properties', false);
                     }
                 }
             }));

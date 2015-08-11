@@ -13,7 +13,7 @@ test('it renders', function(assert) {
 
     this.render(hbs`{{ax-blob-properties}}`);
 
-    assert.equal(this.$('div#modal-properties').length, 1);
+    assert.equal(this.$('div#modal-blob-properties').length, 1);
 });
 
 test('it calculates pretty size', function (assert) {

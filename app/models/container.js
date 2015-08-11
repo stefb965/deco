@@ -12,7 +12,16 @@ var Container = DS.Model.extend({
     name: DS.attr('string', {                   // Name of the container
         defaultValue: ''
     }),
+    etag: DS.attr('string', {
+        defaultValue: ''
+    }),
     lastModified: DS.attr('date', {             // Timestamp: Last modified
+        defaultValue: ''
+    }),
+    leaseStatus: DS.attr('string', {
+        defaultValue: ''
+    }),
+    leaseState: DS.attr('string', {
         defaultValue: ''
     }),
     publicAccessLevel: ('string', {             // Public access level of the container
@@ -104,28 +113,55 @@ var Container = DS.Model.extend({
     * @return {object} - An object containing a promise and SpeedSummary tracking object
     */
     copyBlob: function (sourceUri, targetContainerName, targetBlobName) {
-        var self = this;
-        var service;
-        var speedSummary = {summary: null};
-        return new Ember.RSVP.Promise(function (resolve) {
-            accountUtil.getActiveAccount(self.store).then(account => {
-                service = self.get('azureStorage').createBlobService(account.get('name'), account.get('key'));
-                var SpeedSummary = self.get('azureStorage').BlobService.SpeedSummary;
-                speedSummary.summary = new SpeedSummary();
+        var self = this,
+            speedSummary = {summary: null};
+        return accountUtil.getBlobService(self.store, self.get('azureStorage'))
+        .then(blobService => {
+            var SpeedSummary = self.get('azureStorage').BlobService.SpeedSummary;
+            speedSummary.summary = new SpeedSummary();
 
-                resolve({
-                    promise: new Ember.RSVP.Promise(function (resolve, reject) {
-                        service.startCopyBlob(sourceUri, targetContainerName, targetBlobName, {speedSummary: speedSummary.summary}, (err, result, response) => {
-                            if (!err) {
-                                return resolve(response.entries);
-                            } else {
-                                return reject(err);
-                            }
-                        });
-                    }),
-                    speedSummary: speedSummary
-                });
-            });
+            return {
+                promise: new Ember.RSVP.Promise(function (resolve, reject) {
+                    blobService.startCopyBlob(sourceUri, targetContainerName, targetBlobName, {speedSummary: speedSummary.summary}, (err, result, response) => {
+                        if (!err) {
+                            return resolve(response.entries);
+                        } else {
+                            return reject(err);
+                        }
+                    });
+                }),
+                speedSummary: speedSummary
+            };
+        });
+    },
+
+    /**
+    * Sets this container's ACL
+    * @param {string}             permissionLevel BLOB|OFF|CONTAINER
+    */
+    setAccessControlLevel: function (permissionLevel) {
+        var self = this;
+
+        return accountUtil.getBlobService(self.store, self.get('azureStorage'))
+        .then(blobService => {
+            var setContainerAcl = Ember.RSVP.denodeify(blobService.setContainerAcl);
+            Ember.Logger.debug('setting container access level to: ');
+            Ember.Logger.debug(self.get('azureStorage').BlobUtilities.BlobContainerPublicAccessType[permissionLevel]);
+            return setContainerAcl.call(blobService, self.get('name'), null, self.get('azureStorage').BlobUtilities.BlobContainerPublicAccessType[permissionLevel]);
+        });
+    },
+
+    /**
+    * Get this container'ss ACL
+    * @return {ContainerResult} - An object containing the details of the container and permissions level
+    */
+    getAccessControlLevel: function () {
+        var self = this;
+
+        return accountUtil.getBlobService(self.store, self.get('azureStorage'))
+        .then(blobService => {
+            var getContainerAcl = Ember.RSVP.denodeify(blobService.getContainerAcl);
+            return getContainerAcl.call(blobService, self.get('name'));
         });
     },
 

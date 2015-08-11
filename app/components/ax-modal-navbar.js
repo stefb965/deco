@@ -12,7 +12,7 @@ export default Ember.Component.extend({
 		while (this.get('tab' + index)) {
 			tabs.push({
 				name: this.get('tab' + index),
-				action: 'action' + this.get('tab' + index)
+				action: 'action' + this.get('tab' + index).replace(/ /g,'')
 			});
 			index += 1;
 		}

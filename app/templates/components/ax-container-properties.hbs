@@ -1,0 +1,54 @@
+<div id="modal-container-properties" class="modal" >
+    {{ax-modal-navbar modalTitle="Container Details" tab1="Properties" tab2="Access Control Level" target=this}}
+    <div class="modal-content">
+        {{#if showProperties}}
+        <table class="striped properties">
+            <thead>
+                
+            </thead>
+            <tr>
+                <th>Name:</th>
+                <th>{{containerRecord.name}}</th>
+            </tr>
+            <tr>
+                <th>Last Modified:</th>
+                <th>{{moment-format containerRecord.lastModified}}</th>
+            </tr>
+            <tr>
+                <td >Lease Status:</td>
+                <td >{{containerRecord.leaseStatus}}</td>
+            </tr>
+            <tr>
+                <td >Lease State:</td>
+                <td>{{containerRecord.leaseState}}</td>
+            </tr>
+            {{#if containerRecord.leaseID}}
+                <tr>
+                    <td >Lease State:</td>
+                    <td>{{containerRecord.leaseState}}</td>
+                </tr>
+            {{/if}}
+            {{#if containerRecord.etag}}
+                <tr>
+                    <td >ETag:</td>
+                    <td>{{containerRecord.etag}}</td>
+                </tr>
+            {{/if}}
+        </table>
+        {{else}}
+            <div class="col s11">
+            	<p> Select the Access Control Level for this Container: </p>
+                {{view "select" value=selectedAccessType content=accessTypes}}
+            </div>
+        {{/if}}
+    </div>
+    <div class="modal-footer">
+        <a class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+        {{#if showUpdateButton}}
+            <a {{action "setAccessControlLevel"}} class=" modal-action modal-close waves-effect waves-green btn-flat">Update</a>
+        {{/if}}
+    </div>
+    <!--<div class="modal-footer">
+        <a {{action 'uploadcontainerData' modalFileUploadPath modalDefaultUploadPath}} class=" modal-action modal-close waves-effect waves-green btn-flat">Upload</a>
+    </div>-->
+</div>

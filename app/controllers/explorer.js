@@ -96,6 +96,7 @@ export default Ember.Controller.extend({
 
         if (!this.get('activeContainer')) {
             this.set('activeContainer', this.get('containers').get('firstObject').get('id'));
+            this.set('activeContainerRecord', this.get('containers').get('firstObject'));
         }
 
         var activeContainer = this.get('activeContainer'),
@@ -206,6 +207,11 @@ export default Ember.Controller.extend({
             }
             this.set('pathSegments', [{ name: '/' }]);
             this.set('allBlobSelected', false);
+
+            this.store.find('container', selectedContainer)
+            .then(container => {
+                this.set('activeContainerRecord', container);
+            });
             this.set('activeContainer', selectedContainer);
 
             appInsights.trackEvent('switchActiveContainer');

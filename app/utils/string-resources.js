@@ -31,5 +31,8 @@ export default {
     },
     updateBlobPropsMessage: function (blobName) {
         return 'Updating Blob Properties for ' + blobName;
+    },
+    updateContainerACLMessage: function (containerName) {
+        return 'Updating Access Control Level for ' + containerName;
     }
 };

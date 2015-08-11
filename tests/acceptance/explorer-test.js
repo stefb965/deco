@@ -22,10 +22,11 @@ test('Click on logo returns to home screen', function (assert) {
         });
         newAccount.save();
     });
-
+    Ember.Logger.debug('visiting login page...');
     visit('/');
 
     andThen(function () {
+        Ember.Logger.debug('now going to explorer page');
         visit('/explorer').then(function () {
             return click('span[title="Switch Storage Account"]');
         }).then(function () {
