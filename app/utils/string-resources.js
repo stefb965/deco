@@ -34,5 +34,8 @@ export default {
     },
     updateContainerACLMessage: function (containerName) {
         return 'Updating Access Control Level for ' + containerName;
+    },
+    updateServiceSettings: function () {
+        return 'Updating Service Settings';
     }
 };

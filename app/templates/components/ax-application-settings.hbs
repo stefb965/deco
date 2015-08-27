@@ -1,0 +1,98 @@
+<div id="modal-app-settings" class="modal" >
+    {{ax-modal-navbar modalTitle="Settings" tab1="Metrics" tab2="Logging" tab3="About" target=this}}
+    <div class="modal-content properties-dialog settings-dialog">
+        {{#if showMetrics}}
+          <p>Use the Settings below to enable <a {{action "open" "https://msdn.microsoft.com/en-us/library/azure/hh343270.aspx" target=applicationController}} href="">Storage Analytics</a> on your storage account</p>
+          <table class="striped properties">
+              <thead>
+                <th>Hour Metrics</th>
+                <th>Minute Metrics</th>
+              </thead>
+              <tr>
+                  <td>
+                    <label class="active" for="hour-metrics-enabled">Enabled</label>
+                    {{ax-select name="hour-metrics-enabled" content=onOffContent value=settings.HourMetrics.Enabled}}
+                  </td>
+                  <td>
+                    <label class="active" for="minute-metrics-enabled">Enabled</label>
+                    {{ax-select nanme="minute-metrics-enabled" content=onOffContent value=settings.MinuteMetrics.Enabled}}
+                  </td>
+              </tr>
+              <tr>
+                <td>
+                    <label class="active" for="hour-metrics-include-apis">Include APIs</label>
+                    {{ax-select name="hour-metrics-include-apis" content=onOffContent value=settings.HourMetrics.IncludeAPIs disabled=hourMetricsDisabled}}
+                  </td>
+                  <td>
+                    <label class="active" for="minute-metrics-include-apis">Include APIs</label>
+                    {{ax-select name="minute-metrics-include-apis" content=onOffContent value=settings.MinuteMetrics.IncludeAPIs disabled=minuteMetricsDisabled}}
+                  </td>
+              </tr>
+              <tr>
+                  <td>
+                    <label class="active" for="hour-metrics-retention-policy">Retention Policy</label>
+                    {{ax-select name="hour-metrics-retention-policy" content=onOffContent value=settings.HourMetrics.RetentionPolicy.Enabled disabled=hourMetricsDisabled}}
+                  </td>
+                  <td>
+                    <label class="active" for="hour-metrics-retention-policy">Retention Policy</label>
+                    {{ax-select name="minute-metrics-retention-policy" content=onOffContent value=settings.MinuteMetrics.RetentionPolicy.Enabled disabled=minuteMetricsDisabled}}
+                  </td>
+              </tr>
+              <tr>
+                  <td>
+                    <label class="active" for="hour-metrics-retention-policy-days">Retention Policy Days</label>
+                    {{input name="hour-metrics-retention-policy-days" value=settings.HourMetrics.RetentionPolicy.Days disabled=hourMetricsRetentionDisabled}}
+                  </td>
+                  <td>
+                    <label class="active" for="minute-metrics-retention-policy-days">Retention Policy Days</label>
+                    {{input name="minute-metrics-retention-policy-days" value=settings.MinuteMetrics.RetentionPolicy.Days disabled=minuteMetricsRetentionDisabled}}
+                  </td>
+              </tr>
+          </table>
+        {{else if showLogging}}
+          <p>Use the Settings below to enable <a {{action "open" "https://azure.microsoft.com/en-us/documentation/articles/storage-monitor-storage-account/" target=applicationController}} href="">logging</a> on your storage account for different request types.</p>
+            <table class="striped properties">
+            <thead>
+            </thead>
+              <tr>
+                  <th>Delete Requests</th>
+                  <td>{{ax-select content=onOffContent value=settings.Logging.Delete}}</td>
+              </tr>
+              <tr>
+                  <th>Read Requests</th>
+                  <td>{{ax-select content=onOffContent value=settings.Logging.Read}}</td>
+              </tr>
+              <tr>
+                  <th>Write Requests</th>
+                  <td>{{ax-select content=onOffContent value=settings.Logging.Write}}</td>
+              </tr>
+              <tr>
+                  <th>Retention Policy</th>
+                  <td>{{ax-select content=onOffContent value=settings.Logging.RetentionPolicy.Enabled}}</td>
+              </tr>
+              <tr>
+                  <th>Retention Policy Days</th>
+                  <td>{{input value=settings.Logging.RetentionPolicy.Days disabled=loggingRetentionDisabled}}</td>
+              </tr>
+          </table>
+        {{else if showCORS}}
+{{!--           {{ax-collection value=settings.Cors.Cors}} --}}
+        {{else if showAbout}}
+          <p><strong>Azure Storage Explorer</strong></p>
+          <p><strong>version: {{versionNumber}}</strong></p>
+          <p>If you find any issues or bugs, <a {{action "open" "https://github.com/azure-storage/xplat/issues/" target=applicationController}} href="">please let us know</a>!</p>
+          <p>(C) Copyright 2015 Microsoft Coporation.</p>
+          <p>The source code for this app is released under the GPLv3 License. For more information, please visit <a {{action "open" "http://storageexplorer.com"}}>storageexplorer.com</a>.</p>
+          <p>Mantained by Felix Rieseberg, Steven Edouard, and Rita Zhang.</p>
+        {{/if}}
+    </div>
+    <div class="modal-footer">
+        <a {{action "discardUnsavedChanges"}} class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+        {{#if showUpdateButton}}
+            <a {{action "handleUpdate"}} class=" modal-action modal-close waves-effect waves-green btn-flat">Update</a>
+        {{/if}}
+    </div>
+    <!--<div class="modal-footer">
+        <a {{action 'uploadBlobData' modalFileUploadPath modalDefaultUploadPath}} class=" modal-action modal-close waves-effect waves-green btn-flat">Upload</a>
+    </div>-->
+</div>

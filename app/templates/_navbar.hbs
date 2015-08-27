@@ -5,7 +5,7 @@
                 {{unbound fa-icon "windows"}}
             </span>
             <ul class="left connectionName">
-                <li>{{activeConnection}}</li>
+                <li>{{application.activeConnection.name}}</li>
             </ul>
             <ul class="right actions">
                 <li title="Add Container" {{action "openModal" "#modal-addcontainer"}}>{{unbound fa-icon "plus-square"}}</li>
@@ -15,7 +15,7 @@
                 <li title="Upload Blobs or Folders" {{action "uploadBlob"}}>{{unbound fa-icon "upload"}}</li>
                 <li title="Download Selected Blobs" {{action "downloadBlobs"}}>{{unbound fa-icon "download"}}</li>
                 <li title="Copy Selected Blobs" {{action "copyBlobs"}}>{{unbound fa-icon "copy"}}</li>
-                <li title="About Azure Storage Explorer" {{action "openAboutModal"}}>{{unbound fa-icon "info-circle"}}</li>
+                <li title="About Azure Storage Explorer" {{action "openModal" "#modal-app-settings"}}>{{unbound fa-icon "fa-cog"}}</li>
             </ul>
         </div>
     </nav>

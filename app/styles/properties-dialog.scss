@@ -1,4 +1,4 @@
-#modal-properties {
+.properties-dialog {
     nav.props {
         background-color: $secondary-color;
         
@@ -15,10 +15,10 @@
         }
     }
 
-    select {
-        display: visible
+    select-wrapper {
+        height: 100px;
     }
 
-    height: 500px
+    height: 400px
 }
 

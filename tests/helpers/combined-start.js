@@ -22,6 +22,7 @@ function combinedStart(assert, globals, expect, ctrl) {
             key: '5555-5555-5555-5555',
             active: true
         });
+        globals.account = newAccount;
     });
 
     if (ctrl) {

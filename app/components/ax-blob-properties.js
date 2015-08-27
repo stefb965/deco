@@ -5,7 +5,7 @@ import stringResources from '../utils/string-resources';
 
 export default Ember.Component.extend({
 
-	notifications: Ember.inject.service('notifications'),
+  notifications: Ember.inject.service('notifications'),
 
     prettySize: function () {
         return filesize(this.get('blob.size')).human('si');

@@ -10,7 +10,7 @@ import stringResources from '../utils/string-resources';
 export default Ember.Controller.extend({
     // Services & Aliases
     // ------------------------------------------------------------------------------
-    application: Ember.inject.controller(),
+    application: Ember.inject.service(),
     notifications: Ember.inject.service('notifications'),
     uploaddownload: Ember.inject.controller(),
     activeConnection: Ember.computed.alias('application.activeConnection'),

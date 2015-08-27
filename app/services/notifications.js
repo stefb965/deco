@@ -59,8 +59,7 @@ export default Ember.Service.extend({
     /**
      * Takes a promise and automatically turns it into a self-resolving notification.
      * @param {promise} promise      - Promise to use
-     * @param {string} type          - Type of batch notification
-     * @param {string} text          - Text of batch notification
+     * @param {Notification} type          - Notification record to use
      */
     addPromiseNotification: function (promise, notification) {
         var notifications = this.get('notifications');
