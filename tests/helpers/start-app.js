@@ -14,7 +14,7 @@ export default function startApp(attrs, assert, noNodeServices) {
         application.injectTestHelpers();
         application.ContainerAdapter = containerAdapter;
     });
-   
+
     if (noNodeServices) {
         console.log('Returning app');
         return application;
@@ -79,7 +79,33 @@ export default function startApp(attrs, assert, noNodeServices) {
             }
         ]
     };
-
+    var fakeSettings = {
+        HourMetrics: {
+            Enabled: false,
+            IncludeAPIs: false,
+            Days: 0,
+            RetentionPolicy: {
+              Enabled: false
+            }
+        },
+        MinuteMetrics: {
+            Enabled: false,
+            IncludeAPIs: false,
+            Days: 0,
+            RetentionPolicy: {
+              Enabled: false
+            }
+        },
+        Logging: {
+            Enabled: false,
+            Delete: false,
+            Read: false,
+            Write: false,
+            RetentionPolicy: {
+              Enabled: false
+            }
+        }
+    };
     nodeServices.set('azureStorage', {
         BlobService: {
             SpeedSummary: function () {
@@ -100,6 +126,19 @@ export default function startApp(attrs, assert, noNodeServices) {
 
         createBlobService: function () {
             return {
+
+                getServiceProperties: function (callback) {
+                    return callback(null, fakeSettings);
+                },
+
+                setServiceProperties: function (settings, callback) {
+                    assert.ok(settings);
+                    assert.ok(settings.MinuteMetrics);
+                    assert.ok(settings.HourMetrics);
+                    fakeSettings = settings;
+                    return callback();
+                },
+
                 createBlockBlobFromLocalFile: function (containerName, blobName, path, options, callback) {
                     assert.ok(typeof containerName === 'string');
                     assert.ok(typeof blobName === 'string');
@@ -107,7 +146,7 @@ export default function startApp(attrs, assert, noNodeServices) {
                     assert.ok(typeof callback === 'function');
                     assert.ok(typeof options === 'object');
                     var segments = blobName.split('/');
-                    
+
                     if (segments.length > 1) {
                         var segment = segments[0] + '/',
                             exists = false;
@@ -120,7 +159,7 @@ export default function startApp(attrs, assert, noNodeServices) {
                         if (!exists) {
                             fakeData.subDirectories.push({
                                 name: segments[0] + '/'
-                            }); 
+                            });
                         }
                     }
 
@@ -247,9 +286,9 @@ export default function startApp(attrs, assert, noNodeServices) {
                             }
                         });
                     }
-                    
+
                     return callback(null, {
-                        entries: matches     
+                        entries: matches
                     });
                 },
 
@@ -260,7 +299,7 @@ export default function startApp(attrs, assert, noNodeServices) {
                     assert.ok(typeof prefix === 'string');
                     assert.ok(typeof options === 'object');
                     assert.ok(options.delimiter);
-                    
+
 
                     var matches = [];
                     if(prefix === '') {
@@ -316,13 +355,13 @@ export default function startApp(attrs, assert, noNodeServices) {
                         }]
                     });
                 },
-                
+
                 generateSharedAccessSignature: function () {
                     assert.ok(true);
                     // litterally just mashed my keyboard here :-)
                     return '32523fdsgjsdkh5r43r89hvsghsdhafkjwerhs';
                 },
-                
+
                 getUrl: function () {
                     assert.ok(true);
                     return 'https://testaccount.storage.windows.net/somecontainer/test-blob?expiry=2000';
@@ -336,7 +375,7 @@ export default function startApp(attrs, assert, noNodeServices) {
                     assert.ok(typeof options === 'object');
                     return callback(null);
                 },
-                
+
                 setBlobProperties: function (containerName, blobName, properties, callback) {
                     return callback();
                 },
@@ -363,7 +402,7 @@ export default function startApp(attrs, assert, noNodeServices) {
                             'expected publicAccessLevel to be a valid BlobContainerPublicAccessType');
                     return callback(null);
                 }
-            }; 
+            };
         }
     });
 
@@ -371,17 +410,17 @@ export default function startApp(attrs, assert, noNodeServices) {
         existsSync: function (path) {
             return false;
         },
-        
+
         mkdirSync: function (path) {
             assert.ok(path);
             return null;
         },
-        
+
         createWriteStream: function (path) {
             assert.ok(path);
             return {};
         }
     });
-    
+
     return application;
 }

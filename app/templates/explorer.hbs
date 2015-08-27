@@ -6,6 +6,7 @@
 {{partial "modals/copy"}}
 {{ax-blob-properties blob=selectedBlob}}
 {{ax-container-properties containerRecord=activeContainerRecord}}
+{{ax-application-settings applicationController=application}}
 <div class="explorer-container">
     <div class="folder">
         <div class="search">
@@ -17,7 +18,7 @@
         <div class="container">
             <ul>
                 {{#each containers as |container|}}
-                    {{#if (compare-containers container activeContainer)}}
+                    {{#if (is-equal container.name activeContainer)}}
                         <li class="selected-container" data-context="container" {{action "switchActiveContainer" container.id}}>
                             <i class="mdi-file-folder-open"></i> {{container.name}}
                         </li>

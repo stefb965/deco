@@ -53,18 +53,18 @@ module.exports = function (environment) {
         process.env.EMBER_CLI_NW = true;
     }
 
-    /*
+    
       if (environment === 'production') {
 
       }
 
-      if (environment === 'development') {
-        ENV.APP.LOG_RESOLVER = true;
-        ENV.APP.LOG_ACTIVE_GENERATION = true;
-        ENV.APP.LOG_TRANSITIONS = true;
-        ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
-        ENV.APP.LOG_VIEW_LOOKUPS = true;
-      }
-    */
+      // if (environment === 'development') {
+      //   ENV.APP.LOG_RESOLVER = true;
+      //   ENV.APP.LOG_ACTIVE_GENERATION = true;
+      //   ENV.APP.LOG_TRANSITIONS = true;
+      //   ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
+      //   ENV.APP.LOG_VIEW_LOOKUPS = true;
+      // }
+    
     return ENV;
 };

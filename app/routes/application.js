@@ -25,13 +25,6 @@ export default Ember.Route.extend({
 
     actions: {
         /**
-         * Open the modal containing "about us" info
-         */
-        openAboutModal: function () {
-            Ember.$('#modal-about').openModal();
-        },
-
-        /**
          * Open the modal containing "first use" info
          */
         openFirstUseModal: function () {

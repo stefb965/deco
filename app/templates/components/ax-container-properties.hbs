@@ -1,6 +1,6 @@
 <div id="modal-container-properties" class="modal" >
     {{ax-modal-navbar modalTitle="Container Details" tab1="Properties" tab2="Access Control Level" target=this}}
-    <div class="modal-content">
+    <div class="modal-content properties-dialog">
         {{#if showProperties}}
         <table class="striped properties">
             <thead>
@@ -37,7 +37,7 @@
         </table>
         {{else}}
             <div class="col s11">
-            	<p> Select the Access Control Level for this Container: </p>
+              <p> Select the Access Control Level for this Container: </p>
                 {{view "select" value=selectedAccessType content=accessTypes}}
             </div>
         {{/if}}

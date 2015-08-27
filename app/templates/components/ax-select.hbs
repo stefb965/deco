@@ -1,0 +1,11 @@
+{{! app/templates/components/my-select.hbs}}
+<select class="browser-default" disabled={{disabled}} {{action 'change' on='change'}}>
+  {{#each content key="@index" as |item|}}
+    <option value="{{item}}" selected={{is-equal item selectedValue}}>
+      {{item}}
+    </option>
+  {{/each}}
+  {{#if label}}
+    <label>{{label}}</label>
+  {{/if}}
+</select>

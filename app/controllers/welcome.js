@@ -5,7 +5,7 @@ import Ember from 'ember';
  * with accounts.
  */
 export default Ember.Controller.extend({
-    application: Ember.inject.controller(),
+    application: Ember.inject.service(),
     activeConnection: Ember.computed.alias('application.activeConnection'),
     loading: false,
 
@@ -149,7 +149,7 @@ export default Ember.Controller.extend({
                     for (i = 0; i < accounts.content.length; i = i + 1) {
                         account = accounts.content[i].record;
                         if (account.id === activeAccountId) {
-                            self.set('activeConnection', account.get('name'));
+                            self.set('activeConnection', account);
                             account.set('active', true);
                         } else {
                             account.set('active', false);
@@ -157,7 +157,11 @@ export default Ember.Controller.extend({
                     }
                 }
 
-                self.transitionToRoute('explorer');
+                self.store.find('serviceSettings', 'settings')
+                .then(settings => {
+                    self.set('application.serviceSettings', settings);
+                    self.transitionToRoute('explorer');
+                });
             });
 
             appInsights.trackEvent('Connect');

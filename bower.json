@@ -15,7 +15,8 @@
     "materialize": "~0.97.0",
     "ember-cli-moment-shim": "~0.2.0",
     "moment": ">= 2.8.0",
-    "moment-timezone": ">= 0.1.0"
+    "moment-timezone": ">= 0.1.0",
+    "ember-data.model-fragments": "^0.4.0"
   },
   "resolutions": {
     "jquery": "~2.1.1"

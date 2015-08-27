@@ -1,5 +1,4 @@
 import Ember from 'ember';
-import Settings from '../models/settings';
 import config from '../config/environment';
 
 /**
@@ -8,11 +7,7 @@ import config from '../config/environment';
  */
 export default Ember.Controller.extend({
     nodeServices: Ember.inject.service(),
-    fs: Ember.computed.alias('nodeServices.fs'),
-    activeConnection: null,
-    lastError: '',
-    disableTracking: false,
-    settings: Settings.create(),
+    application: Ember.inject.service(),
 
     /**
      * Init function, run on application launch: overrides the default drag & drop behavior
@@ -27,24 +22,16 @@ export default Ember.Controller.extend({
             return;
         }
 
-        if (this.get('settings.firstUse')) {
+        if (this.get('application.settings.firstUse')) {
             Ember.run.schedule('afterRender', () => {
                 this.send('openFirstUseModal');
             });
-            this.set('settings.firstUse', false);
+            this.set('application.settings.firstUse', false);
         }
 
-        if (this.get('settings.allowUsageStatistics') !== true) {
+        if (this.get('application.settings.allowUsageStatistics') !== true) {
             console.log('Disabling anonymized usage tracking');
             this.send('disableAppInsights');
         }
-    },
-
-    /**
-     * Returns the current version number.
-     */
-    versionNumber: function () {
-        var fs = this.get('fs');
-        return fs.existsSync('version') ? fs.readFileSync('version', {encoding:'utf8'}) : 'unknown';
-    }.property()
+    }
 });
