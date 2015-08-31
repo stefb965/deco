@@ -31,6 +31,7 @@ export default Ember.Controller.extend({
             if (result) {
                 this.set('editAccountName', result.get('name'));
                 this.set('editAccountKey', result.get('key'));
+                this.set('editAccountDnsSuffix', result.get('dnsSuffix'));
             }
         });
     }.observes('selectedEditAccount'),
@@ -71,11 +72,12 @@ export default Ember.Controller.extend({
             var editAccount = this.get('selectedEditAccount');
             var editAccountName = this.get('editAccountName');
             var editAccountKey = this.get('editAccountKey');
-
+            var editAccountDnsSuffix = this.get('editAccountDnsSuffix');
             this.store.findRecord('account', editAccount).then(result => {
                 if (result) {
                     result.set('name', editAccountName);
                     result.set('key', editAccountKey);
+                    result.set('dnsSuffix', editAccountDnsSuffix);
                     result.save();
                 }
 
@@ -115,9 +117,11 @@ export default Ember.Controller.extend({
         addNew: function () {
             var name = this.get('account_name');
             var key = this.get('account_key');
+            var dnsSuffix = this.get('account_dnsSuffix');
             var newAccount = this.store.createRecord('account', {
                 name: name,
-                key: key
+                key: key,
+                dnsSuffix: dnsSuffix
             });
 
             newAccount.save();
@@ -125,6 +129,7 @@ export default Ember.Controller.extend({
             this.send('connect', newAccount.get('id'));
             this.set('account_name', '');
             this.set('account_key', '');
+            this.set('dnsSuffix', '');
             appInsights.trackEvent('AddNewAccount');
         },
 
@@ -161,6 +166,12 @@ export default Ember.Controller.extend({
                 .then(settings => {
                     self.set('application.serviceSettings', settings);
                     self.transitionToRoute('explorer');
+                })
+                .catch ((error) => {
+                    self.send('error', error);
+                })
+                .finally(() => {
+                    self.set('loading', false);
                 });
             });
 

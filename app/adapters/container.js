@@ -132,6 +132,8 @@ export default DS.Adapter.extend({
         .catch (error => {
             Ember.Logger.error(error);
             appInsights.trackException(error);
+            // catch the error when the url does not resolve -- more likely to happen when we allow user to specify dns suffix
+            throw (error);
         });
     },
 

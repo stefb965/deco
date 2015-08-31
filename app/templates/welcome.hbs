@@ -25,6 +25,11 @@
                         {{input value=account_key id="account_key" type="text" class="validate"}}
                         <label for="account_key">Storage Account Key</label>
                     </div>
+                    <div class="input-field col s12">
+                        <i class="fa fa-dnsSuffix prefix"></i>
+                        {{input value=account_dnsSuffix id="account_dnsSuffix" type="text" class="validate"}}
+                        <label for="account_dnsSuffix">DNS Suffix</label>
+                    </div>
                     <div class="col s12">
                         <br />
                         <a {{action "toggleAddNew"}} class="waves-effect waves-light btn"><i class="mdi-navigation-cancel left"></i>Cancel</a>
@@ -46,6 +51,11 @@
                         <i class="fa fa-key prefix"></i>
                         {{input value=editAccountKey id="edit_account_key" type="text" class="validate"}}
                         <label for="account_key" class="active">Storage Account Key</label>
+                    </div>
+                    <div class="input-field col s12">
+                        <i class="fa fa-dnsSuffix prefix"></i>
+                        {{input value=editAccountDnsSuffix id="edit_account_dnsSuffix" type="text" class="validate"}}
+                        <label for="account_dnsSuffix" class="active">DNS Suffix</label>
                     </div>
                     <div class="col s12">
                         <a {{action "toggleEdit"}} class="waves-effect waves-light btn"><i class="mdi-navigation-cancel left"></i>Cancel</a>

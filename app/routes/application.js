@@ -87,7 +87,8 @@ export default Ember.Route.extend({
                 welcomeController.set('editUi', false);
 
                 if (error.code && error.code === 'ENOTFOUND') {
-                    this.controller.set('lastError', 'Connection to ' + error.host + ' failed. Please check your connection and the account name before trying again.');
+                    // Please check the DNS suffix is correct (leaving it blank will default to core.windows.net)')
+                    this.controller.set('lastError', 'Connection to ' + error.host + ' failed. Please check your internet connection, the account name, and/or DNS suffix is correct before trying again. ');
                 } else if (error.code && error.code === 'AuthenticationFailed') {
                     this.controller.set('lastError', 'The connection succeeded, but the Azure rejected the account key. Please check it and try again.');
                 } else if (error.message && error.message.indexOf('is not a valid base64 string') > -1) {
@@ -98,7 +99,10 @@ export default Ember.Route.extend({
 
                 console.log(error);
 
-                transition.abort();
+                if (transition) {
+                    transition.abort();
+                }
+
                 this.send('openErrorModal');
 
                 appInsights.trackException(error);
