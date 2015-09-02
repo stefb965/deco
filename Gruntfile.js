@@ -63,26 +63,29 @@ module.exports = function (grunt) {
         // Execute individual builds with the commands below
         // Warning: If trying to compile Windows with Icon 
         // on OS X / Linux, you'll need Wine.
-        nodewebkit: {
+        nwjs: {
             osx: {
                 options: {
                     platforms: ['osx64'],
                     buildDir: './webkitbuilds',
                     macIcns: './public/icon/ase.icns',
+                    version: 'v0.12.3'
                 },
                 src: ['./nwbuildcache/**/*']
             },
             linux: {
                 options: {
                     platforms: ['linux64'],
-                    buildDir: './webkitbuilds'
+                    buildDir: './webkitbuilds',
+                    version: 'v0.12.3'
                 },
                 src: ['./nwbuildcache/**/*']
             },
             windows: {
                 options: {
                     platforms: ['win32'],
-                    buildDir: './webkitbuilds'
+                    buildDir: './webkitbuilds',
+                    version: 'v0.12.3'
                 },
                 src: ['./nwbuildcache/**/*']
             },
@@ -90,7 +93,8 @@ module.exports = function (grunt) {
                 options: {
                     platforms: ['win32'],
                     buildDir: './webkitbuilds',
-                    winIco: './public/icon/ase.ico'
+                    winIco: './public/icon/ase.ico',
+                    version: 'v0.12.3'
                 },
                 src: ['./nwbuildcache/**/*']
             }
@@ -263,15 +267,15 @@ module.exports = function (grunt) {
     grunt.registerTask('beautify', ['js_beautify']);
     grunt.registerTask('copyForBuild', ['copy:nwbuildcache', 'copy:azure_storage', 'copy:memorystream', 'copy:open', 'copy:pack', 'copy:version_file']);
     grunt.registerTask('prebuild', ['clean', 'exec:build', 'file-creator:version_file', 'copyForBuild']);
-    grunt.registerTask('compileOSX', ['nodewebkit:osx', 'copy:bin_osx', 'appdmg', 'exec:dmgLicense']);
-    grunt.registerTask('compileLinux', ['nodewebkit:linux', 'copy:bin_linux', 'copy:license_linux']);
-    grunt.registerTask('compileWindows', ['nodewebkit:windows', 'copy:bin_windows', 'copy:license_windows']);
-    grunt.registerTask('compileWindowsWithIcon', ['nodewebkit:windowsWithIcon', 'copy:bin_windows']);
+    grunt.registerTask('compileOSX', ['nwjs:osx', 'copy:bin_osx', 'appdmg', 'exec:dmgLicense']);
+    grunt.registerTask('compileLinux', ['nwjs:linux', 'copy:bin_linux', 'copy:license_linux']);
+    grunt.registerTask('compileWindows', ['nwjs:windows', 'copy:bin_windows', 'copy:license_windows']);
+    grunt.registerTask('compileWindowsWithIcon', ['nwjs:windowsWithIcon', 'copy:bin_windows']);
     grunt.registerTask('compile', ['prebuild', 'compileOSX', 'compileWindows', 'compileLinux']);
 
     // Development Builds
     // To deploy a build with an official build number, set env var RELEASE_VERSION to release number
     // otherwise application is tagged with git hash
-    grunt.registerTask('compileDevBuild', ['prebuild', 'nodewebkit:osx', 'copy:bin_osx', 'nodewebkit:windows', 'copy:bin_windows', 'nodewebkit:linux', 'copy:bin_linux', 'copy:license_windows', 'copy:license_osx', 'copy:license_linux']);
+    grunt.registerTask('compileDevBuild', ['prebuild', 'nwjs:osx', 'copy:bin_osx', 'nwjs:windows', 'copy:bin_windows', 'nwjs:linux', 'copy:bin_linux', 'copy:license_windows', 'copy:license_osx', 'copy:license_linux']);
     grunt.registerTask('createDevBuild', ['compileDevBuild', 'zip', 'if:trusted-deploy-to-azure-cdn']);
 };
