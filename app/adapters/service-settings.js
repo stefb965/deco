@@ -70,6 +70,10 @@ export default DS.Adapter.extend({
           Ember.Logger.debug('found settings:');
           Ember.Logger.debug(settings);
           return settings;
+        })
+        .catch (error => {
+          Ember.Logger.debug(error);
+          throw (error);
         });
     },
 
