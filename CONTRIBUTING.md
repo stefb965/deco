@@ -52,7 +52,7 @@ You'll need recent versions of Node, Grunt, Bower, Git, and Ember Cli. To instal
 
 Once setup, you can run a live-reloading version of the app with `ember nw`. Once you change a source file, Ember Cli will automatically recompile and reload your app. Since we're running Node and UI JavaScript on the same thread, running `ember serve` alone won't suffice.
 
-To get access to the Chromium Developer Tools, simply make a right click and select 'DevTools' - we're also pulling down the Ember Inspector, which can also be launched with a right click.
+To get access to the Chromium Developer Tools, simply make a right click and select 'DevTools' - we're also pulling down the Ember Inspector, which can also be launched with a right click. They can also be found in the 'Help' window menu.
 
 ##### Windows
 On Windows, getting all the dependencies to work can sometimes be a bit tricky. If things fail, try to run these commands before running `npm install`:
