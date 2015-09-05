@@ -20,6 +20,7 @@ function combinedStart(assert, globals, expect, ctrl) {
         var newAccount = globals.store.createRecord('account', {
             name: 'Testaccount',
             key: '5555-5555-5555-5555',
+            dnsSuffix: 'blob.test.account.net',
             active: true
         });
         globals.account = newAccount;

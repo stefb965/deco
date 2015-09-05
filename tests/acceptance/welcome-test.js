@@ -40,12 +40,13 @@ test('renders account selection div', function (assert) {
 });
 
 test('offers creation of a new account if none exists', function (assert) {
-    assert.expect(2);
+    assert.expect(3);
     visit('/welcome');
 
     andThen(function () {
         assert.equal(find('input#account_name').length, 1, 'Page contains account name input');
         assert.equal(find('input#account_key').length, 1, 'Page contains account key input');
+        assert.equal(find('div#account_dnsSuffix').length, 1, 'Page contains account DNS suffix');
     });
 });
 
@@ -55,7 +56,8 @@ test('displays available accounts if they exist', function (assert) {
     Ember.run(() => {
         let newAccount = this.store.createRecord('account', {
             name: 'Testaccount',
-            key: 'n+ufPpP3UwY+REvC3/zqBmHt2hCDdI06tQI5HFN7XnpUR5VEKMI+8kk/ez7QLQ3Cmojt/c1Ktaug3nK8FC8AeA=='
+            key: 'n+ufPpP3UwY+REvC3/zqBmHt2hCDdI06tQI5HFN7XnpUR5VEKMI+8kk/ez7QLQ3Cmojt/c1Ktaug3nK8FC8AeA==',
+            dnssuffix: ''
         });
         newAccount.save();
     });
@@ -68,7 +70,7 @@ test('displays available accounts if they exist', function (assert) {
 });
 
 test('displays edit account inputs', function (assert) {
-    assert.expect(2);
+    assert.expect(3);
 
     andThen(function () {
         visit('/welcome').then(function () {
@@ -76,9 +78,29 @@ test('displays edit account inputs', function (assert) {
         }).then(function () {
             assert.equal(find('#editAccountName').length, 1, 'Page contains edit account name input');
             assert.equal(find('#editAccountKey').length, 1, 'Page contains edit account key input');
+            assert.equal(find('#editAccountDnsSuffix').length, 1, 'Page contains account DNS suffix');
         });
     });
 });
+
+test('check to see if modal error dialog is displayed', function(assert) {
+    assert.expect(3);
+
+    andThen(function () {
+        visit('/welcome').then(function () {
+            // this causes the 'save and open' button to be pushed.  since we don't have any accounts in the list then the modal error should display
+            assert.equal(find('#modal-error').css('display'), 'none', 'Modal error dialog should not be visible');
+            return click('.mdi-action-launch');
+        }).then(function () {
+            assert.equal(find('#modal-error').css('display'), 'block', 'Modal error dialog is now visible');
+        }).then(function () {
+            return click('.modal-close');
+        }).then(function () {
+            assert.equal(find('#modal-error').css('display'), 'none', 'Modal error dialog should now be dismissed');       
+        });
+    });
+});
+
 
 test('edited values are saved', function (assert) {
     assert.expect(1);

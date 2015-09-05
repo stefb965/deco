@@ -25,10 +25,10 @@
                         {{input value=account_key id="account_key" type="text" class="validate"}}
                         <label for="account_key">Storage Account Key</label>
                     </div>
-                    <div class="input-field col s12">
-                        <i class="fa fa-dnsSuffix prefix"></i>
-                        {{input value=account_dnsSuffix id="account_dnsSuffix" type="text" class="validate"}}
-                        <label for="account_dnsSuffix">DNS Suffix</label>
+                    <div class="input-field selection col s12">
+                        <i class="fa fa-cloud prefix"></i>
+                        {{ax-select name="account_dnsSuffix" id="account_dnsSuffix" content=dnsSuffixContent value=account_dnsSuffix class="selection"}}
+                        <label for="account_dnsSuffix" class="active">DNS Suffix</label>
                     </div>
                     <div class="col s12">
                         <br />
@@ -52,9 +52,9 @@
                         {{input value=editAccountKey id="edit_account_key" type="text" class="validate"}}
                         <label for="account_key" class="active">Storage Account Key</label>
                     </div>
-                    <div class="input-field col s12">
-                        <i class="fa fa-dnsSuffix prefix"></i>
-                        {{input value=editAccountDnsSuffix id="edit_account_dnsSuffix" type="text" class="validate"}}
+                    <div id="editAccountDnsSuffix" class="input-field col s12">
+                        <i class="fa fa-cloud prefix"></i>
+                        {{ax-select name="edit_account_dnsSuffix" id="edit_account_dnsSuffix" content=dnsSuffixContent value=editAccountDnsSuffix class="selection"}}
                         <label for="account_dnsSuffix" class="active">DNS Suffix</label>
                     </div>
                     <div class="col s12">

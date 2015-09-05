@@ -37,5 +37,14 @@ export default {
     },
     updateServiceSettings: function () {
         return 'Updating Service Settings';
+    },
+    storageHostConnectionErrorMessage: function (storageDnsSuffix) {
+        return 'Connection to ' + storageDnsSuffix + ' failed. Please check your internet connection, the account name, and/or DNS suffix is correct before trying again. ';
+    },
+    storageInvalidAccountKey: function () {
+        return 'The provided account key is invalid. Please check it and try again.';
+    },
+    storageRejectedAccountKey: function () {
+        return 'The connection succeeded, but the Azure rejected the account key. Please check it and try again.';
     }
 };
