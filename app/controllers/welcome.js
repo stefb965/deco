@@ -8,6 +8,7 @@ export default Ember.Controller.extend({
     application: Ember.inject.service(),
     activeConnection: Ember.computed.alias('application.activeConnection'),
     loading: false,
+    dnsSuffixContent: ['blob.core.windows.net', 'blob.core.chinacloudapi.cn'],
 
     /**
      * If the model is changed, we check if there's reason to go straight to

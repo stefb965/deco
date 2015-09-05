@@ -2,6 +2,7 @@ import Ember from 'ember';
 import contextMenu from '../utils/context-menu';
 import windowMenu from '../utils/window-menu';
 import Settings from '../models/settings';
+import stringResources from '../utils/string-resources';
 
 /**
  * Ember Application Route
@@ -36,6 +37,15 @@ export default Ember.Route.extend({
          */
         openErrorModal: function () {
             Ember.$('#modal-error').openModal();
+        },
+
+         /**
+         * Close the modal containing error information
+         */
+        closeErrorModal: function () {
+            Ember.$('#modal-error').closeModal({ out_duration: 250 });
+            // added this explicit wait for testing purposes only
+            Ember.run.later(null, function () {}, 300);
         },
 
         /**
@@ -86,13 +96,20 @@ export default Ember.Route.extend({
                 welcomeController.set('addNewUi', false);
                 welcomeController.set('editUi', false);
 
-                if (error.code && error.code === 'ENOTFOUND') {
+                var storageDnsSuffix = '';
+                if (error.host) {
+                    storageDnsSuffix = error.host;
+                } else {
+                    storageDnsSuffix = process.env.AZURE_STORAGE_DNS_SUFFIX || 'blob.core.windows.net';
+                }
+
+                if (error.code && (error.code === 'ENOTFOUND' || error.code === 'OutOfRangeInput')) {
                     // Please check the DNS suffix is correct (leaving it blank will default to core.windows.net)')
-                    this.controller.set('lastError', 'Connection to ' + error.host + ' failed. Please check your internet connection, the account name, and/or DNS suffix is correct before trying again. ');
+                    this.controller.set('lastError', stringResources.storageHostConnectionErrorMessage(storageDnsSuffix));
                 } else if (error.code && error.code === 'AuthenticationFailed') {
-                    this.controller.set('lastError', 'The connection succeeded, but the Azure rejected the account key. Please check it and try again.');
+                    this.controller.set('lastError', stringResources.storageRejectedAccountKey());
                 } else if (error.message && error.message.indexOf('is not a valid base64 string') > -1) {
-                    this.controller.set('lastError', 'The provided account key is invalid. Please check it and try again.');
+                    this.controller.set('lastError', stringResources.storageInvalidAccountKey());
                 } else {
                     this.controller.set('lastError', error);
                 }

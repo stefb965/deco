@@ -18,6 +18,7 @@ test('Click on logo returns to home screen', function (assert) {
         let newAccount = this.store.createRecord('account', {
             name: 'Testaccount',
             key: 'n+ufPpP3UwY+REvC3/zqBmHt2hCDdI06tQI5HFN7XnpUR5VEKMI+8kk/ez7QLQ3Cmojt/c1Ktaug3nK8FC8AeA==',
+            dnsSuffix: '',
             active: true
         });
         newAccount.save();
