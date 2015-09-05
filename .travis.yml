@@ -23,4 +23,10 @@ install:
 script:
   - xvfb-run ember nw:test
   - grunt test
-  - grunt createDevBuild
+
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: postcompile/deploy.sh
+  on:
+    branch: master
