@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import Notification from '../models/notification';
-import config from '../config/environment';
 import stringResources from '../utils/string-resources';
 
 /**
@@ -36,18 +35,6 @@ export default Ember.Controller.extend({
     blobsSortProperty: ['name'],        // Property indicating the sorting of blobs
     allBlobsCheckboxSelected: false,     // Bound to the 'select all blobs' checkbox
     modalCopyDestinationPath: '',       // Path used for destination to copy blobs
-
-    // Init & Setup
-    // ------------------------------------------------------------------------------
-    init: function () {
-        if (config.environment !== 'test') {
-            Ember.run.scheduleOnce('afterRender', this, () => {
-                Ember.$('.files')[0].ondrop = e => {
-                    this.send('handleFileDragDrop', e);
-                };
-            });
-        }
-    },
 
     // Computed Properties
     // ------------------------------------------------------------------------------

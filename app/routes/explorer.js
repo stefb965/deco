@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import windowMenu from '../utils/window-menu';
+import config from '../config/environment';
 
 /**
  * Ember Explorer Route
@@ -34,6 +35,15 @@ export default Ember.Route.extend({
         };
 
         windowMenu.setup(handlers);
+
+        // Setup Drag & Drop
+        if (config.environment !== 'test') {
+            Ember.run.scheduleOnce('afterRender', this, () => {
+                Ember.$('.files')[0].ondrop = e => {
+                    controller.send('handleFileDragDrop', e);
+                };
+            });
+        }
     },
 
     /**
