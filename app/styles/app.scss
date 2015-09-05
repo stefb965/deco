@@ -74,6 +74,14 @@ a:not(.btn-flat, .btn) {
         }
     }
 }
+
+.select-dropdown {
+    overflow-x: scroll;
+    white-space: nowrap;
+    width: 100%;
+    height: 250px;
+}
+
 // Fix Materialize Select Cut-off issue
 div.card-content, div.card, 
 div.card .liquid-container:not(.liquid-animating),
