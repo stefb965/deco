@@ -9,21 +9,7 @@
 @import 'notifications';
 @import 'properties-dialog';
 @import 'application-settings';
-
-@font-face {
-    font-family: WeblySleek;
-    src: url("../font/ws/weblysleekuisl.ttf") format("truetype");
-}
-@font-face {
-    font-family: "WeblySleek";
-    src: url("../font/ws/weblysleekuisb.ttf") format("truetype");
-    font-weight: bold;
-}
-@font-face {
-    font-family: "WeblySleek";
-    src: url("../font/ws/weblysleekuil.ttf") format("truetype");
-    font-style: italic, oblique;
-}
+@import 'fonts';
 
 body, html {
     background-color: rgb(0, 120, 215);

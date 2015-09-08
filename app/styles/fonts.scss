@@ -1,0 +1,23 @@
+// WeblySleek
+@font-face {
+    font-family: WeblySleek;
+    src: url("../fonts/weblysleekuisl.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "WeblySleek";
+    src: url("../fonts/weblysleekuisb.ttf") format("truetype");
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: "WeblySleek";
+    src: url("../fonts/weblysleekuil.ttf") format("truetype");
+    font-style: italic, oblique;
+}
+
+// Material Design Icons
+@font-face {
+    font-family: Material-Design-Icons;
+    src: url("../fonts/Material-Design-Icons.woff") format("woff");
+}
