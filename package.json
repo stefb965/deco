@@ -41,7 +41,6 @@
     "ember-cli-ic-ajax": "0.2.1",
     "ember-cli-inject-live-reload": "^1.3.0",
     "ember-cli-inline-content": "^0.4.0",
-    "ember-cli-materialize": "^0.5.2",
     "ember-cli-moment-shim": "0.6.0",
     "ember-cli-nwjs": "0.3.6",
     "ember-cli-qunit": "0.3.20",
