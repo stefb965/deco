@@ -59,6 +59,7 @@ export default Ember.Controller.extend({
          */
         toggleEdit: function () {
             this.toggleProperty('editUi');
+            this.set('selectedEditAccount', this.get('selectedAccount'));
             this.send('selectize');
 
             if (this.get('editUi')) {
@@ -84,6 +85,9 @@ export default Ember.Controller.extend({
 
                 this.send('toggleEdit');
             });
+
+            // set selection to the current account
+            this.set('selectedAccount', this.get('selectedEditAccount'));
 
             appInsights.trackEvent('EditAccount');
         },
@@ -131,6 +135,10 @@ export default Ember.Controller.extend({
             this.set('account_name', '');
             this.set('account_key', '');
             this.set('dnsSuffix', '');
+
+            // set the selected account to what was just added
+            this.set('selectedAccount', this.get('account_name'));
+
             appInsights.trackEvent('AddNewAccount');
         },
 
