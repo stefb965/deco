@@ -19,6 +19,10 @@ app.on('ready', function onReady() {
 
     delete mainWindow.module;
 
+    if (process.platform !== 'darwin' && process.platform.indexOf('win') === -1) {
+        mainWindow.icon = __dirname + '/icon/ase.png';
+    }
+
     if (process.env.ELECTRON_ENV === 'development') {
         mainWindow.openDevTools();
         //mainWindow.loadUrl('http://localhost:5000');

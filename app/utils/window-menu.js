@@ -127,10 +127,6 @@ export default {
                 label: 'Minimize',
                 accelerator: 'CmdOrCtrl+M',
                 role: 'minimize'
-            }, {
-                label: 'Close',
-                accelerator: 'CmdOrCtrl+W',
-                role: 'close'
             }]
         }, {
             label: 'Help',
@@ -189,6 +185,7 @@ export default {
                     label: 'Quit',
                     accelerator: 'Command+Q',
                     click: function () {
+                        let app = requireNode('remote').require('app');
                         app.quit();
                     }
                 }]
