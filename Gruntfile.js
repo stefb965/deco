@@ -43,7 +43,7 @@ module.exports = function (grunt) {
         copy: {
             app: {
                 expand: true,
-                src: ['electron.js', 'package.json', 'dist/**', 'node_modules/azure-storage/**', 'node_modules/fs-extra/**', 'node_modules/memorystream/**'],
+                src: ['electron.js', 'package.json', 'dist/**', 'node_modules/azure-storage/**', 'node_modules/fs-extra/**'],
                 dest: 'electronbuildcache/'
             },
             version_file: {
@@ -53,11 +53,20 @@ module.exports = function (grunt) {
         },
         'create-windows-installer': {
             ia32: {
-                appDirectory: './builds/Azure Storage Explorer-win32-ia32',
-                outputDirectory: './builds/installer32',
-                exe: 'Azure Storage Explorer.exe',
-                iconUrl: './public/icon/ase.ico',
-                setupIcon: './public/icon/ase.ico'
+                appDirectory: 'builds/storageexplorer-win32-ia32',
+                outputDirectory: 'builds/installer32',
+                exe: 'storageexplorer.exe',
+                iconUrl: 'http://raw.githubusercontent.com/azure-storage/xplat/master/public/icon/ase.ico',
+                //setupIcon: 'http://raw.githubusercontent.com/azure-storage/xplat/master/public/icon/ase.ico',
+                authors: 'Felix Rieseberg, Steven Edouard, Rita Zhang'
+            },
+            x64: {
+                appDirectory: 'builds/storageexplorer-win32-x64',
+                outputDirectory: 'builds/installer64',
+                exe: 'storageexplorer.exe',
+                iconUrl: 'http://raw.githubusercontent.com/azure-storage/xplat/master/public/icon/ase.ico',
+                //setupIcon: 'http://raw.githubusercontent.com/azure-storage/xplat/master/public/icon/ase.ico',
+                authors: 'Felix Rieseberg, Steven Edouard, Rita Zhang'
             }
         },
         jshint: {
@@ -78,7 +87,7 @@ module.exports = function (grunt) {
         electron: {
             osx: {
                 options: {
-                    name: 'Azure Storage Explorer',
+                    name: 'storageexplorer',
                     platform: 'darwin',
                     arch: 'x64',
                     dir: 'electronbuildcache',
@@ -92,7 +101,7 @@ module.exports = function (grunt) {
             },
             windows: {
                 options: {
-                    name: 'Azure Storage Explorer',
+                    name: 'storageexplorer',
                     platform: 'win32',
                     arch: 'all',
                     dir: 'electronbuildcache',
@@ -103,19 +112,26 @@ module.exports = function (grunt) {
             },
             windowsWithIcon: {
                 options: {
-                    name: 'Azure Storage Explorer',
+                    name: 'storageexplorer',
                     platform: 'win32',
-                    arch: 'ia32',
+                    arch: 'all',
                     dir: 'electronbuildcache',
                     out: 'builds',
                     version: '0.32.1',
                     overwrite: true,
-                    icon: 'public/icon/ase.ico'
+                    icon: 'public/icon/ase.ico',
+                    asar: true,
+                    'version-string': {
+                        ProductName: 'Azure Storage Explorer',
+                        ProductVersion: getVersion(),
+                        FileDescription: 'Azure Storage Explorer',
+                        ProductVersion: 'Azure Storage Explorer.exe'
+                    }
                 }
             },
             linux: {
                 options: {
-                    name: 'Azure Storage Explorer',
+                    name: 'storageexplorer',
                     platform: 'linux',
                     arch: 'ia32',
                     dir: 'electronbuildcache',
@@ -128,23 +144,27 @@ module.exports = function (grunt) {
         exec: {
             build: {
                 command: 'ember build --environment=production'
+            },
+            flatten: {
+              command: 'node ./node_modules/flatten-packages/bin/flatten .',
+              cwd: './electronbuildcache'
             }
         },
         zip: {
             linux: {
-                cwd: './builds/azureexplorer/linux64',
-                src: ['./builds/azureexplorer/linux64/**/*'],
-                dest: './builds/azureexplorer/linux64/build.zip'
+                cwd: './builds/storageexplorer-linux-ia32',
+                src: ['./builds//storageexplorer-linux-ia32/**/*'],
+                dest: './builds//storageexplorer-linux-ia32/build.zip'
             },
             osx: {
-                cwd: './builds/Azure Storage Explorer-darwin-x64/',
-                src: ['./builds/Azure Storage Explorer-darwin-x64/**/*'],
-                dest: './builds/Azure Storage Explorer-darwin-x64/build.zip'
+                cwd: './builds/storageexplorer-darwin-x64/',
+                src: ['./builds/storageexplorer-darwin-x64/**/*'],
+                dest: './buildsstorageexplorer-darwin-x64/build.zip'
             },
             windows: {
-                cwd: './builds/azureexplorer/win32',
-                src: ['./builds/azureexplorer/win32/**/*'],
-                dest: './builds/azureexplorer/win32/build.zip'
+                cwd: './builds/storageexplorer-win32-x64',
+                src: ['./builds/storageexplorer-win32-x64/**/*'],
+                dest: './builds/storageexplorer-win32-x64/build.zip'
             }
         },
         'if': {
@@ -178,7 +198,7 @@ module.exports = function (grunt) {
                 src: [
                     './build.zip'
                 ],
-                cwd: './builds/Azure Storage Explorer-linux-ia32/'
+                cwd: './builds/storageexplorer-linux-ia32/'
             },
             osx: {
                 options: {
@@ -196,7 +216,7 @@ module.exports = function (grunt) {
                 src: [
                     './build.zip'
                 ],
-                cwd: './builds/Azure Storage Explorer-darwin-x64/'
+                cwd: './builds/storageexplorer-darwin-x64/'
             },
             windows: {
                 options: {
@@ -214,7 +234,7 @@ module.exports = function (grunt) {
                 src: [
                     './build.zip'
                 ],
-                cwd: './builds/Azure Storage Explorer-win32-ia32/'
+                cwd: './builds/storageexplorer-win32-ia32/'
             }
         },
         'file-creator': {
@@ -230,20 +250,17 @@ module.exports = function (grunt) {
         clean: ['./electronbuildcache', './dist', './builds'],
     });
 
-    grunt.registerTask('codestyle', ['jshint', 'jscs']);
-    grunt.registerTask('test', ['codestyle']);
-    grunt.registerTask('default', ['test']);
+    grunt.registerTask('test', ['jshint', 'jscs']);
     grunt.registerTask('copyForBuild', ['copy:app', 'copy:version_file']);
     grunt.registerTask('prebuild', ['clean', 'exec:build', 'file-creator:version_file', 'copyForBuild']);
-    grunt.registerTask('compileOSX', ['electron:osx', 'appdmg']);
-    grunt.registerTask('compileLinux', ['electron:linux']);
-    grunt.registerTask('compileWindows', ['electron:windows']);
-    grunt.registerTask('compileWindowsWithIcon', ['electron:windowsWithIcon']);
-    grunt.registerTask('compile', ['prebuild', 'compileOSX', 'compileWindows', 'compileLinux']);
+    grunt.registerTask('osx', ['clean', 'prebuild', 'electron:osx', 'appdmg']);
+    grunt.registerTask('linux', ['prebuild', 'electron:linux']);
+    grunt.registerTask('windows', ['prebuild', 'exec:flatten', 'electron:windowsWithIcon', 'create-windows-installer']);
+    grunt.registerTask('compile', ['prebuild', 'electron:osx', 'appdmg', 'electron:linux', 'electron:windows', 'create-windows-installer']);
 
     // Development Builds
     // To deploy a build with an official build number, set env var RELEASE_VERSION to release number
     // otherwise application is tagged with git hash
-    grunt.registerTask('compileDevBuild', ['prebuild', 'electron:osx', 'electron:windows', 'electron:linux']);
+    grunt.registerTask('compileDevBuild', ['prebuild', 'exec:flatten', 'electron:osx', 'electron:windows', 'electron:linux']);
     grunt.registerTask('createDevBuild', ['compileDevBuild', 'zip', 'if:trusted-deploy-to-azure-cdn']);
 };

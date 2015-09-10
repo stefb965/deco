@@ -21,7 +21,7 @@ install:
   - bower install
 
 script:
-  - xvfb-run ember nw:test
+  - xvfb-run ember electron:test
   - grunt test
 
 deploy:
