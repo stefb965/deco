@@ -33,11 +33,11 @@ module.exports = function (grunt) {
                     x: 120,
                     y: 430,
                     type: 'file',
-                    path: './builds/Azure Storage Explorer-darwin-x64/Azure Storage Explorer.app'
+                    path: './builds/storageexplorer-darwin-x64/storageexplorer.app'
                 }]
             },
             target: {
-                dest: './builds/Azure Storage Explorer-darwin-x64/azureexplorer.dmg'
+                dest: './builds/storageexplorer-darwin-x64/storageexplorer.dmg'
             }
         },
         copy: {
@@ -57,16 +57,18 @@ module.exports = function (grunt) {
                 outputDirectory: 'builds/installer32',
                 exe: 'storageexplorer.exe',
                 iconUrl: 'http://raw.githubusercontent.com/azure-storage/xplat/master/public/icon/ase.ico',
-                //setupIcon: 'http://raw.githubusercontent.com/azure-storage/xplat/master/public/icon/ase.ico',
-                authors: 'Felix Rieseberg, Steven Edouard, Rita Zhang'
+                setupIcon: 'public/icon/ase.ico',
+                authors: 'Felix Rieseberg, Steven Edouard, Rita Zhang',
+                loadingGif: 'postcompile/windows/installer.gif'
             },
             x64: {
                 appDirectory: 'builds/storageexplorer-win32-x64',
                 outputDirectory: 'builds/installer64',
                 exe: 'storageexplorer.exe',
                 iconUrl: 'http://raw.githubusercontent.com/azure-storage/xplat/master/public/icon/ase.ico',
-                //setupIcon: 'http://raw.githubusercontent.com/azure-storage/xplat/master/public/icon/ase.ico',
-                authors: 'Felix Rieseberg, Steven Edouard, Rita Zhang'
+                setupIcon: 'public/icon/ase.ico',
+                authors: 'Felix Rieseberg, Steven Edouard, Rita Zhang',
+                loadingGif: 'postcompile/windows/installer.gif'
             }
         },
         jshint: {
@@ -146,7 +148,7 @@ module.exports = function (grunt) {
                 command: 'ember build --environment=production'
             },
             flatten: {
-              command: 'node ./node_modules/flatten-packages/bin/flatten .',
+              command: 'node ../node_modules/flatten-packages/bin/flatten .',
               cwd: './electronbuildcache'
             }
         },
