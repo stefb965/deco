@@ -23,6 +23,7 @@ install:
 script:
   - xvfb-run ember electron:test
   - grunt test
+  - grunt createDevBuild
 
 deploy:
   skip_cleanup: true
