@@ -146,7 +146,7 @@ module.exports = function (grunt) {
                 command: 'ember build --environment=production'
             },
             flatten: {
-              command: 'node ./node_modules/flatten-packages/bin/flatten .',
+              command: 'node ../node_modules/flatten-packages/bin/flatten .',
               cwd: './electronbuildcache'
             }
         },
@@ -262,5 +262,6 @@ module.exports = function (grunt) {
     // To deploy a build with an official build number, set env var RELEASE_VERSION to release number
     // otherwise application is tagged with git hash
     grunt.registerTask('compileDevBuild', ['prebuild', 'exec:flatten', 'electron:osx', 'electron:windows', 'electron:linux']);
-    grunt.registerTask('createDevBuild', ['compileDevBuild', 'zip', 'if:trusted-deploy-to-azure-cdn']);
+    grunt.registerTask('createDevBuild', ['compileDevBuild', 'zip']);
+    grunt.registerTask('deployDevBuild', ['if:trusted-deploy-to-azure-cdn']);
 };
