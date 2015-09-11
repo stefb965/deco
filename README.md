@@ -9,4 +9,4 @@ Project Deco: A file explorer for your [Azure Blob Storage](http://azure.microso
 Contributions are awesome! If you want to help out, fix a bug, or get a feature fixed - check out the [contributing guide](https://github.com/azure-storage/xplat/blob/master/CONTRIBUTING.md).
 
 ## License
-The Azure Cross-Platform Explorer is licensed as GPLv3, since we're using GPL-licensed components to display and play media formats. We would have loved to license this code with a more permissive license, but could not - please make sure to consult `LICENSE` and [the GPL information website](http://www.gnu.org/licenses/quick-guide-gplv3.en.html) for details about the license.
+This project is MIT Licensed - please consult `LICENSE` for details. It is built upon GitHub's Electron, which incorporates Chromium. For more information, visit [GitHub's Electron Website](https://github.com/atom/electron).

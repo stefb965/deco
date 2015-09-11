@@ -23,7 +23,7 @@
       "email": "sedouard@microsoft.com"
     }
   ],
-  "license": "GPL-3.0+",
+  "license": "MIT",
   "devDependencies": {
     "broccoli-asset-rev": "2.0.2",
     "broccoli-funnel": "^0.2.3",
