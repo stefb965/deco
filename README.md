@@ -1,4 +1,5 @@
 # Azure Cross-Platform Storage Explorer
+[![Build status](https://ci.appveyor.com/api/projects/status/w68c92bbeyirixh4?svg=true)](https://ci.appveyor.com/project/felixrieseberg/deco)
 [![Build Status](https://travis-ci.org/azure-storage/xplat.svg)](https://travis-ci.org/azure-storage/xplat) [![Code Climate](https://codeclimate.com/github/azure-storage/xplat/badges/gpa.svg)](https://codeclimate.com/github/azure-storage/xplat)
 
 A file explorer for your [Azure Blob Storage](http://azure.microsoft.com/en-us/documentation/articles/storage-introduction/) accounts, enabling you to easily work with your assets and containers from Mac OS X, Windows, and Linux. Create and delete containers, upload, download, and delete whole folders and files, preview media assets - with the free Azure Storage Explorer, you're in full control of your assets. Check out [storageexplorer.com](http://storageexplorer.com) for more infos and downloads.
