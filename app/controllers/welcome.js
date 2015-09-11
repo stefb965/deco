@@ -156,8 +156,8 @@ export default Ember.Controller.extend({
             }
 
             this.store.findAll('account').then(function (accounts) {
-                var i;
-                var account;
+                var i,
+                account;
 
                 if (accounts && accounts.content && accounts.content.length > 0) {
                     for (i = 0; i < accounts.content.length; i = i + 1) {
@@ -171,8 +171,9 @@ export default Ember.Controller.extend({
                     }
                 }
 
-                self.store.find('serviceSettings', 'settings')
+                self.store.find('serviceSettings', activeAccountId)
                 .then(settings => {
+                    console.log('break here');
                     self.set('application.serviceSettings', settings);
                     self.transitionToRoute('explorer');
                 })
