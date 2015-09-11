@@ -414,7 +414,10 @@ export default function startApp(attrs, assert, noNodeServices) {
                 },
 
                 setBlobProperties: function (containerName, blobName, properties, callback) {
-                    return callback();
+                    return callback(null, {
+                      container: containerName,
+                      blob: blobName
+                    });
                 },
 
                 getContainerAcl: function(containerName, callback) {

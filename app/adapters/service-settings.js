@@ -182,6 +182,9 @@ export default DS.Adapter.extend({
             this._unpackCorsRule(rule);
           });
           return transformed;
+        })
+        .catch (error => {
+          throw error;
         });
     },
 
