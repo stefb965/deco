@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import config from '../config/environment';
 
 /**
  * The controller for the welcome view - controlling the creation/addition/connection of and
@@ -8,7 +9,6 @@ export default Ember.Controller.extend({
     application: Ember.inject.service(),
     activeConnection: Ember.computed.alias('application.activeConnection'),
     loading: false,
-    dnsSuffixContent: ['blob.core.windows.net', 'blob.core.chinacloudapi.cn'],
 
     /**
      * If the model is changed, we check if there's reason to go straight to
@@ -75,6 +75,9 @@ export default Ember.Controller.extend({
             var editAccountName = this.get('editAccountName');
             var editAccountKey = this.get('editAccountKey');
             var editAccountDnsSuffix = this.get('editAccountDnsSuffix');
+            if (!editAccountDnsSuffix || editAccountDnsSuffix.length === 0) {
+                editAccountDnsSuffix = config.dnsSuffixContent[0];
+            }
             this.store.findRecord('account', editAccount).then(result => {
                 if (result) {
                     result.set('name', editAccountName);
@@ -123,6 +126,10 @@ export default Ember.Controller.extend({
             var name = this.get('account_name');
             var key = this.get('account_key');
             var dnsSuffix = this.get('account_dnsSuffix');
+            if (!dnsSuffix || dnsSuffix.length === 0) {
+                dnsSuffix = config.dnsSuffixContent[0];
+            }
+
             var newAccount = this.store.createRecord('account', {
                 name: name,
                 key: key,
