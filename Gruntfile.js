@@ -155,18 +155,18 @@ module.exports = function (grunt) {
         zip: {
             linux: {
                 cwd: './builds/storageexplorer-linux-ia32',
-                src: ['./builds//storageexplorer-linux-ia32/**/*'],
-                dest: './builds//storageexplorer-linux-ia32/build.zip'
+                src: ['./builds/storageexplorer-linux-ia32/**/*'],
+                dest: './builds/storageexplorer-linux-ia32/build.zip'
             },
             osx: {
-                cwd: './builds/storageexplorer-darwin-x64/',
+                cwd: './builds/storageexplorer-darwin-x64',
                 src: ['./builds/storageexplorer-darwin-x64/**/*'],
-                dest: './buildsstorageexplorer-darwin-x64/build.zip'
+                dest: './builds/storageexplorer-darwin-x64/build.zip'
             },
             windows: {
-                cwd: './builds/storageexplorer-win32-x64',
-                src: ['./builds/storageexplorer-win32-x64/**/*'],
-                dest: './builds/storageexplorer-win32-x64/build.zip'
+                cwd: './builds/storageexplorer-win32-ia32',
+                src: ['./builds/storageexplorer-win32-ia32/**/*'],
+                dest: './builds/storageexplorer-win32-ia32/build.zip'
             }
         },
         'if': {
