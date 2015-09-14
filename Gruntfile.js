@@ -145,7 +145,7 @@ module.exports = function (grunt) {
         },
         exec: {
             build: {
-                command: 'ember build --environment=production'
+                command: 'node ./node_modules/ember-cli/bin/ember build --environment=production'
             },
             flatten: {
               command: 'node ../node_modules/flatten-packages/bin/flatten .',
@@ -236,7 +236,7 @@ module.exports = function (grunt) {
                 src: [
                     './build.zip'
                 ],
-                cwd: './builds/installer32/'
+                cwd: './builds/storageexplorer-win32-ia32/'
             }
         },
         'file-creator': {
