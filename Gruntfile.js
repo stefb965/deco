@@ -48,7 +48,7 @@ module.exports = function (grunt) {
             },
             version_file: {
                 src: ['./.version'],
-                dest: 'electronbuildcache/version'
+                dest: 'electronbuildcache/dist/version'
             }
         },
         'create-windows-installer': {

@@ -308,3 +308,14 @@ test('it modifies an existing rule', function (assert) {
 
     });
 });
+
+test('it shows app version', function (assert) {
+    combinedStart(assert, globals);
+    assert.expect(1);
+    Ember.run(() => {
+        let cmpt = this.subject();
+
+        assert.ok(cmpt.get('application.versionNumber'));
+
+    });
+});
