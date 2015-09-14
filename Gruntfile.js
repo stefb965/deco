@@ -187,7 +187,7 @@ module.exports = function (grunt) {
             linux: {
                 options: {
                     containerName: 'builds', // container name in blob
-                    folder: cdnPath, // path within container
+                    folder: cdnPath + '/linux32', // path within container
                     zip: false, // gzip files if they become smaller after zipping, content-encoding header will change if file is zipped
                     deleteExistingBlobs: false, // true means recursively deleting anything under folder
                     concurrentUploadThreads: 10, // number of concurrent uploads, choose best for your network condition
@@ -205,7 +205,7 @@ module.exports = function (grunt) {
             osx: {
                 options: {
                     containerName: 'builds', // container name in blob
-                    folder: cdnPath, // path within container
+                    folder: cdnPath + '/darwin64', // path within container
                     zip: false, // gzip files if they become smaller after zipping, content-encoding header will change if file is zipped
                     deleteExistingBlobs: false, // true means recursively deleting anything under folder
                     concurrentUploadThreads: 10, // number of concurrent uploads, choose best for your network condition
@@ -223,7 +223,7 @@ module.exports = function (grunt) {
             windows: {
                 options: {
                     containerName: 'builds', // container name in blob
-                    folder: cdnPath, // path within container
+                    folder: cdnPath + '/win32', // path within container
                     zip: false, // gzip files if they become smaller after zipping, content-encoding header will change if file is zipped
                     deleteExistingBlobs: false, // true means recursively deleting anything under folder
                     concurrentUploadThreads: 10, // number of concurrent uploads, choose best for your network condition
