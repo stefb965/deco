@@ -32,6 +32,9 @@ install:
   - npm install --no-optional --no-bin-links
   - bower install
 
+# Testing is currently disabled, because AppVeyor isn't fast enough
+test: off
+
 # Build scripts.
 build_script:
   # Output useful info for debugging.
