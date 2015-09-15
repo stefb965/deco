@@ -282,7 +282,7 @@ export default function startApp(attrs, assert, noNodeServices) {
                     });
                 },
 
-                createContainerIfNotExists: function (containerName, callback) {
+                createContainer: function (containerName, callback) {
                     assert.ok(containerName !== null, 'expected arg containerName to be non-null');
                     assert.ok(containerName !== '', 'expected arg containerName to be non-empty');
                     assert.ok(callback !== null, 'expected arg callback to be non-null');
