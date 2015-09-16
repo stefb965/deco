@@ -18,15 +18,15 @@ export default DS.Adapter.extend({
      */
     find: function (store, type, snapshot) {
         return accountUtils.getBlobService(this.store, this.get('azureStorage'))
-        .then(blobService => {
-            var getBlobProperties = Ember.RSVP.denodeify(blobService.getBlobProperties);
-            return getBlobProperties.call(getBlobProperties, snapshot.attr('container').name, snapshot.attr('name'));
-        })
-        .catch (error => {
-            Ember.Logger.error(error);
-            appInsights.trackException(error);
-            throw error;
-        });
+            .then(blobService => {
+                var getBlobProperties = Ember.RSVP.denodeify(blobService.getBlobProperties);
+                return getBlobProperties.call(getBlobProperties, snapshot.attr('container').name, snapshot.attr('name'));
+            })
+            .catch(error => {
+                Ember.Logger.error(error);
+                appInsights.trackException(error);
+                throw error;
+            });
     },
 
     /**
@@ -56,16 +56,16 @@ export default DS.Adapter.extend({
 
                 return setBlobProperties.call(blobService, snapshot.attr('container_id'),
                     snapshot.attr('name'), properties);
-        })
-        .then(blobResult => {
-            blobResult.id = blobResult.blob;
-            return blobResult;
-        })
-        .catch (error => {
-            Ember.Logger.error(error);
-            appInsights.trackException(error);
-            throw error;
-        });
+            })
+            .then(blobResult => {
+                blobResult.id = blobResult.blob;
+                return blobResult;
+            })
+            .catch(error => {
+                Ember.Logger.error(error);
+                appInsights.trackException(error);
+                throw error;
+            });
     },
 
     /**
@@ -88,7 +88,7 @@ export default DS.Adapter.extend({
 
                 return deleteBlob.call(blobService, container.get('name'), snapshot.attr('name'));
             })
-            .catch (error => {
+            .catch(error => {
                 Ember.Logger.error(error);
                 appInsights.trackException(error);
                 throw error;
@@ -118,48 +118,50 @@ export default DS.Adapter.extend({
             listBlobsSegmentedWithPrefix;
 
         return accountUtils.getBlobService(self.store, self.get('azureStorage'))
-        .then(blobSvc => {
-            blobService = blobSvc;
-            listBlobsSegmentedWithPrefix = Ember.RSVP.denodeify(
-                blobService.listBlobsSegmentedWithPrefix);
+            .then(blobSvc => {
+                blobService = blobSvc;
+                listBlobsSegmentedWithPrefix = Ember.RSVP.denodeify(
+                    blobService.listBlobsSegmentedWithPrefix);
 
-            return listBlobsSegmentedWithPrefix.call(blobService,
-                snapshot.container.get('name'), prefix, null, { delimiter: '/' });
-        })
-        .then(result => {
-            var blobs = [];
+                return listBlobsSegmentedWithPrefix.call(blobService,
+                    snapshot.container.get('name'), prefix, null, {
+                        delimiter: '/'
+                    });
+            })
+            .then(result => {
+                var blobs = [];
 
-            // Fill out the blob models
-            for (var i in result.entries) {
-                if (i % 1 === 0) {
-                    let blobModel = {
-                        id: result.entries[i].name,
-                        name: result.entries[i].name,
-                        size: parseInt(result.entries[i].properties['content-length']),
-                        type: result.entries[i].properties['content-type'],
-                        lastModified: new Date(Date.parse(result.entries[i].properties['last-modified'])),
-                        container: snapshot.container,
-                        leaseState: result.entries[i].properties.leasestate,
-                        leaseStatus: result.entries[i].properties.leasestatus,
-                        container_id: snapshot.container_id,
-                        blobType: result.entries[i].properties.blobtype,
-                        contentLanguage: result.entries[i].properties['content-language'],
-                        contentMd5: result.entries[i].properties['content-md5'],
-                        contentDisposition: result.entries[i].properties['content-disposition'],
-                        leaseID: result.entries[i].properties.leaseid,
-                        etag: result.entries[i].properties.etag
-                    };
-                    blobs.push(blobModel);
+                // Fill out the blob models
+                for (var i in result.entries) {
+                    if (i % 1 === 0) {
+                        let blobModel = {
+                            id: result.entries[i].name,
+                            name: result.entries[i].name,
+                            size: parseInt(result.entries[i].properties['content-length']),
+                            type: result.entries[i].properties['content-type'],
+                            lastModified: new Date(Date.parse(result.entries[i].properties['last-modified'])),
+                            container: snapshot.container,
+                            leaseState: result.entries[i].properties.leasestate,
+                            leaseStatus: result.entries[i].properties.leasestatus,
+                            container_id: snapshot.container_id,
+                            blobType: result.entries[i].properties.blobtype,
+                            contentLanguage: result.entries[i].properties['content-language'],
+                            contentMd5: result.entries[i].properties['content-md5'],
+                            contentDisposition: result.entries[i].properties['content-disposition'],
+                            leaseID: result.entries[i].properties.leaseid,
+                            etag: result.entries[i].properties.etag
+                        };
+                        blobs.push(blobModel);
+                    }
                 }
-            }
 
-            return blobs;
-        })
-        .catch (error => {
-            Ember.Logger.error(error);
-            appInsights.trackException(error);
-            throw error;
-        });
+                return blobs;
+            })
+            .catch(error => {
+                Ember.Logger.error(error);
+                appInsights.trackException(error);
+                throw error;
+            });
     },
 
     /**

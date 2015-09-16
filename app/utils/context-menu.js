@@ -9,9 +9,18 @@ function ContextMenu() {
         MenuItem = remote.require('menu-item');
 
     let newMenu = new Menu();
-    let cut = new MenuItem({label: 'Cut', click: () => document.execCommand('cut')});
-    let copy = new MenuItem({label: 'Copy', click: () => document.execCommand('copy')});
-    let paste = new MenuItem({label: 'Paste', click: () => document.execCommand('paste')});
+    let cut = new MenuItem({
+        label: 'Cut',
+        click: () => document.execCommand('cut')
+    });
+    let copy = new MenuItem({
+        label: 'Copy',
+        click: () => document.execCommand('copy')
+    });
+    let paste = new MenuItem({
+        label: 'Paste',
+        click: () => document.execCommand('paste')
+    });
 
     newMenu.append(cut);
     newMenu.append(copy);

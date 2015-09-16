@@ -164,7 +164,7 @@ export default Ember.Controller.extend({
 
             this.store.findAll('account').then(function (accounts) {
                 var i,
-                account;
+                    account;
 
                 if (accounts && accounts.content && accounts.content.length > 0) {
                     for (i = 0; i < accounts.content.length; i = i + 1) {
@@ -179,17 +179,17 @@ export default Ember.Controller.extend({
                 }
 
                 self.store.find('serviceSettings', activeAccountId)
-                .then(settings => {
-                    console.log('break here');
-                    self.set('application.serviceSettings', settings);
-                    self.transitionToRoute('explorer');
-                })
-                .catch ((error) => {
-                    self.send('error', error);
-                })
-                .finally(() => {
-                    self.set('loading', false);
-                });
+                    .then(settings => {
+                        console.log('break here');
+                        self.set('application.serviceSettings', settings);
+                        self.transitionToRoute('explorer');
+                    })
+                    .catch((error) => {
+                        self.send('error', error);
+                    })
+                    .finally(() => {
+                        self.set('loading', false);
+                    });
             });
 
             appInsights.trackEvent('Connect');

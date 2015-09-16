@@ -39,11 +39,13 @@ export default Ember.Route.extend({
             Ember.$('#modal-error').openModal();
         },
 
-         /**
+        /**
          * Close the modal containing error information
          */
         closeErrorModal: function () {
-            Ember.$('#modal-error').closeModal({ out_duration: 250 });
+            Ember.$('#modal-error').closeModal({
+                out_duration: 250
+            });
             // added this explicit wait for testing purposes only
             Ember.run.later(null, function () {}, 300);
         },
@@ -66,11 +68,21 @@ export default Ember.Route.extend({
         disableAppInsights: function () {
             if (window.appInsights) {
                 window.appInsights = {
-                    trackEvent: function () { return; },
-                    trackException: function () { return; },
-                    trackPageView: function () { return; },
-                    trackTrace: function () { return; },
-                    trackMetric: function () { return; }
+                    trackEvent: function () {
+                        return;
+                    },
+                    trackException: function () {
+                        return;
+                    },
+                    trackPageView: function () {
+                        return;
+                    },
+                    trackTrace: function () {
+                        return;
+                    },
+                    trackMetric: function () {
+                        return;
+                    }
                 };
             }
         },

@@ -30,17 +30,17 @@ export default {
      */
     getBlobService: function (store, azureStorageModule) {
         return this.getActiveAccount(store).then(function (account) {
-            var suffix = account.get('dnsSuffix');
-            if (suffix) {
-                var host = account.get('name') + '.' + suffix;
-                return azureStorageModule.createBlobService(account.get('name'), account.get('key'), host);
-            } else {
-                return azureStorageModule.createBlobService(account.get('name'), account.get('key'));
-            }
-        })
-        .catch (error => {
-          Ember.Logger.debug(error);
-          throw (error);
-        });
+                var suffix = account.get('dnsSuffix');
+                if (suffix) {
+                    var host = account.get('name') + '.' + suffix;
+                    return azureStorageModule.createBlobService(account.get('name'), account.get('key'), host);
+                } else {
+                    return azureStorageModule.createBlobService(account.get('name'), account.get('key'));
+                }
+            })
+            .catch(error => {
+                Ember.Logger.debug(error);
+                throw (error);
+            });
     }
 };

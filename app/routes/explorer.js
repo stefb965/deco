@@ -25,14 +25,30 @@ export default Ember.Route.extend({
         this._super(controller, model);
 
         var handlers = {
-            uploadBlob: () => { controller.send('uploadBlob'); },
-            downloadBlobs: () => { controller.send('downloadBlobs'); },
-            deleteBlobs: () => { controller.send('deleteBlobs'); },
-            copyBlobs: () => { controller.send('copyBlobs'); },
-            refreshBlobs: () => { controller.send('refreshBlobs'); },
-            addContainer: () => { controller.send('openModal', '#modal-addcontainer'); },
-            removeContainer: () => { controller.send('openModal', '#modal-deletecontainer'); },
-            switchAccount: () => { controller.send('goHome'); }
+            uploadBlob: () => {
+                controller.send('uploadBlob');
+            },
+            downloadBlobs: () => {
+                controller.send('downloadBlobs');
+            },
+            deleteBlobs: () => {
+                controller.send('deleteBlobs');
+            },
+            copyBlobs: () => {
+                controller.send('copyBlobs');
+            },
+            refreshBlobs: () => {
+                controller.send('refreshBlobs');
+            },
+            addContainer: () => {
+                controller.send('openModal', '#modal-addcontainer');
+            },
+            removeContainer: () => {
+                controller.send('openModal', '#modal-deletecontainer');
+            },
+            switchAccount: () => {
+                controller.send('goHome');
+            }
         };
 
         windowMenu.setup(handlers);
@@ -67,7 +83,9 @@ export default Ember.Route.extend({
                 model: null,
                 blobs: [],
                 subDirectories: [],
-                pathSegments: [{name: '/'}],
+                pathSegments: [{
+                    name: '/'
+                }],
                 allBlobSelected: false,
                 newContainerEntryDisplay: false,
                 modalFileUploadPath: '',
@@ -100,7 +118,7 @@ export default Ember.Route.extend({
          * Opens a specified modal
          * @param  {string} modal jQuery identifier
          */
-        openModal: function (modal, dismissible=true) {
+        openModal: function (modal, dismissible = true) {
             Ember.$(modal).openModal({
                 dismissible: dismissible
             });

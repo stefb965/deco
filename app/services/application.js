@@ -19,6 +19,8 @@ export default Ember.Service.extend({
         var fs = this.get('fs'),
             path = this.get('path'),
             versionFile = path.join(path.join(__dirname, 'version'));
-        return fs.existsSync(versionFile) ? fs.readFileSync(versionFile, {encoding:'utf8'}) : 'unknown';
+        return fs.existsSync(versionFile) ? fs.readFileSync(versionFile, {
+            encoding: 'utf8'
+        }) : 'unknown';
     }.property()
 });

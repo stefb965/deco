@@ -1,9 +1,9 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-  notifications: Ember.inject.service('notifications'),
+    notifications: Ember.inject.service('notifications'),
 
-  // Actions
+    // Actions
     // ------------------------------------------------------------------------------
     actions: {
         /**

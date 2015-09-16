@@ -27,13 +27,14 @@ export default Ember.Controller.extend({
 
     actions: {
         /**
-        * Upload one or multiple files to blobs
-        * @param  {Array} filePaths  - Local file paths of the files to upload
-        * @param  {string} azurePath - Remote Azure Storage path
-        */
+         * Upload one or multiple files to blobs
+         * @param  {Array} filePaths  - Local file paths of the files to upload
+         * @param  {string} azurePath - Remote Azure Storage path
+         */
         uploadBlobData: function (filePaths, azurePath, activeContainer) {
             var containerPath = azurePath.replace(/.*\:\//, ''),
-                paths = filePaths.split(';'), promises = [];
+                paths = filePaths.split(';'),
+                promises = [];
 
             this.store.find('container', activeContainer).then(foundContainer => {
                 paths.forEach(path => {
@@ -92,7 +93,9 @@ export default Ember.Controller.extend({
         streamBlobsToDirectory: function (blobs, directory, saveAs) {
             blobs.forEach(blob => {
                 var targetPath = (saveAs) ? directory : directory + '/' + blob.get('name'),
-                    downloadPromise = {isFulfilled : false},
+                    downloadPromise = {
+                        isFulfilled: false
+                    },
                     downloadNotification, speedSummary, progressUpdateInterval;
 
                 this.ensureDir(targetPath);
@@ -128,19 +131,21 @@ export default Ember.Controller.extend({
         },
 
         /**
-        * Copy a blob to azure storage
-        * @param  {array} blobs        - Blobs to copy
-        * @param  {string} azurePath - Remote Azure Storage path
-        */
+         * Copy a blob to azure storage
+         * @param  {array} blobs        - Blobs to copy
+         * @param  {string} azurePath - Remote Azure Storage path
+         */
         copyBlobData: function (blob, azureDestPath, activeContainer) {
-            var targetContainerName = azureDestPath, promises = [];
+            var targetContainerName = azureDestPath,
+                promises = [];
 
             this.store.find('container', activeContainer).then(foundContainer => {
                 blob.getLink().then(result => {
                     this.set('sourceUri', result.url);
 
                     var sourceUri = this.get('sourceUri');
-                    var fileName = blob.get('name').replace(/^.*[\\\/]/, ''), copyNotification, speedSummary, copyPromise, progressCopyInterval;
+                    var fileName = blob.get('name').replace(/^.*[\\\/]/, ''),
+                        copyNotification, speedSummary, copyPromise, progressCopyInterval;
                     var promise = foundContainer.copyBlob(sourceUri, targetContainerName, fileName).then(result => {
                         speedSummary = result.speedSummary.summary;
                         copyPromise = result.promise;

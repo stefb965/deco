@@ -86,6 +86,16 @@ module.exports = function (grunt) {
                 esnext: true
             }
         },
+        jsbeautifier: {
+            files: {
+                src: files
+            },
+
+            options: {
+                mode: 'VERIFY_ONLY',
+                config: '.beautifyrc'
+            }
+        },
         electron: {
             osx: {
                 options: {
@@ -252,7 +262,7 @@ module.exports = function (grunt) {
         clean: ['./electronbuildcache', './dist', './builds'],
     });
 
-    grunt.registerTask('test', ['jshint', 'jscs']);
+    grunt.registerTask('test', ['jshint', 'jscs', 'jsbeautifier']);
     grunt.registerTask('copyForBuild', ['copy:app', 'copy:version_file']);
     grunt.registerTask('prebuild', ['clean', 'exec:build', 'file-creator:version_file', 'copyForBuild']);
     grunt.registerTask('osx', ['clean', 'prebuild', 'electron:osx', 'appdmg']);

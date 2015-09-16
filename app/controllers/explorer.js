@@ -19,22 +19,24 @@ export default Ember.Controller.extend({
 
     // Properties
     // ------------------------------------------------------------------------------
-    activeContainer: null,              // DS.Record of the currently selected container
-    blobs: [],                          // Ember.MutableArray containing the blobs for the current container
-    subDirectories: [],                 // Ember.MutableArray containing the directories for the current container
-    pathSegments: [{name: '/'}],        // Individal directory names of current path
-    allBlobSelected: false,             // Are all blobs selected?
+    activeContainer: null, // DS.Record of the currently selected container
+    blobs: [], // Ember.MutableArray containing the blobs for the current container
+    subDirectories: [], // Ember.MutableArray containing the directories for the current container
+    pathSegments: [{
+        name: '/'
+    }], // Individal directory names of current path
+    allBlobSelected: false, // Are all blobs selected?
     newContainerEntryDisplay: false,
-    modalFileUploadPath: '',            // Path used for the local file path for upload
-    modalDefaultUploadPath: '',         // Path used for the upload path to azure in the upload modal
-    searchSpinnerDisplay: false,        // Should the 'searching for a container' spinner be displayed
-    newContainerName: '',               // Placeholder property for the 'create a container' action
-    searchQuery: '',                    // Search query for containers
-    blobsLoading: true,                 // Are we loading blobs
-    selectedBlob: null,                 // DS.Record of the currently selected blob
-    blobsSortProperty: ['name'],        // Property indicating the sorting of blobs
-    allBlobsCheckboxSelected: false,     // Bound to the 'select all blobs' checkbox
-    modalCopyDestinationPath: '',       // Path used for destination to copy blobs
+    modalFileUploadPath: '', // Path used for the local file path for upload
+    modalDefaultUploadPath: '', // Path used for the upload path to azure in the upload modal
+    searchSpinnerDisplay: false, // Should the 'searching for a container' spinner be displayed
+    newContainerName: '', // Placeholder property for the 'create a container' action
+    searchQuery: '', // Search query for containers
+    blobsLoading: true, // Are we loading blobs
+    selectedBlob: null, // DS.Record of the currently selected blob
+    blobsSortProperty: ['name'], // Property indicating the sorting of blobs
+    allBlobsCheckboxSelected: false, // Bound to the 'select all blobs' checkbox
+    modalCopyDestinationPath: '', // Path used for destination to copy blobs
 
     // Computed Properties
     // ------------------------------------------------------------------------------
@@ -50,7 +52,9 @@ export default Ember.Controller.extend({
             return this.get('model');
         } else {
             this.set('searchSpinnerDisplay', true);
-            var promise = this.store.query('container', {name: this.get('searchQuery')});
+            var promise = this.store.query('container', {
+                name: this.get('searchQuery')
+            });
             promise.then(() => this.set('searchSpinnerDisplay', false));
             return promise;
         }
@@ -87,7 +91,8 @@ export default Ember.Controller.extend({
         }
 
         var activeContainer = this.get('activeContainer'),
-            blobs = [], subDirs = [];
+            blobs = [],
+            subDirs = [];
 
         // clear out subdirs'
         this.set('blobsLoading', true);
@@ -100,7 +105,10 @@ export default Ember.Controller.extend({
 
                 result.listDirectoriesWithPrefix(this.get('currentPath')).then(result => {
                     result.forEach(dir => {
-                        subDirs.push({name: dir.name, selected: false});
+                        subDirs.push({
+                            name: dir.name,
+                            selected: false
+                        });
                     });
                     this.set('subDirectories', subDirs);
                 });
@@ -113,7 +121,7 @@ export default Ember.Controller.extend({
         });
     }.observes('containers', 'activeContainer', 'model'),
 
-    pathSegmentObserver : function () {
+    pathSegmentObserver: function () {
         this.set('subDirectories', []);
     }.observes('pathSegments'),
 
@@ -126,7 +134,7 @@ export default Ember.Controller.extend({
 
     // Actions and Method
     // ------------------------------------------------------------------------------
-     /**
+    /**
      * Copy a single blob
      * @param  {DS.Record} blob
      */
@@ -154,12 +162,12 @@ export default Ember.Controller.extend({
         );
     },
 
-	/**
-	 * Validates a name which sould be DNS ok
-	 * @param {string} name
-	 * @return {boolean}
-	 */
-	containerNameIsValid: function (name) {
+    /**
+     * Validates a name which sould be DNS ok
+     * @param {string} name
+     * @return {boolean}
+     */
+    containerNameIsValid: function (name) {
         let re = /^(([a-z\d]((-(?=[a-z\d]))|([a-z\d])){2,62}))|(\$root)|(\$logs)$/;
         return (name === '$root' || name === '$logs') ? true : re.test(name);
     },
@@ -202,13 +210,15 @@ export default Ember.Controller.extend({
             if (selectedContainer === this.get('activeContainer')) {
                 return;
             }
-            this.set('pathSegments', [{ name: '/' }]);
+            this.set('pathSegments', [{
+                name: '/'
+            }]);
             this.set('allBlobSelected', false);
 
             this.store.find('container', selectedContainer)
-            .then(container => {
-                this.set('activeContainerRecord', container);
-            });
+                .then(container => {
+                    this.set('activeContainerRecord', container);
+                });
             this.set('activeContainer', selectedContainer);
 
             appInsights.trackEvent('switchActiveContainer');
@@ -237,7 +247,9 @@ export default Ember.Controller.extend({
          * @param  {string} directory
          */
         changeSubDirectory: function (directory) {
-            var pathSegs = [{name: '/'}];
+            var pathSegs = [{
+                name: '/'
+            }];
 
             // we have recieved a literal path
             directory.name.split('/').forEach(segment => {
@@ -245,7 +257,9 @@ export default Ember.Controller.extend({
                     return;
                 }
 
-                pathSegs.push({name: segment + '/'});
+                pathSegs.push({
+                    name: segment + '/'
+                });
             });
 
             this.set('pathSegments', pathSegs);
@@ -312,7 +326,9 @@ export default Ember.Controller.extend({
                 subDirectories = this.get('subDirectories'),
                 selectedBlobs = blobs.filterBy('selected', true),
                 selectedDirectories = subDirectories.filter(directory => directory.selected),
-                getBlobPromises = [], self = this, nwInput;
+                getBlobPromises = [],
+                self = this,
+                nwInput;
 
             appInsights.trackEvent('downloadBlobs');
 
@@ -372,7 +388,7 @@ export default Ember.Controller.extend({
             this.set('selectedBlob', blob);
         },
 
-                /**
+        /**
          * Open the 'copy blobs' modal.
          */
         copyBlobs: function () {
@@ -530,7 +546,8 @@ export default Ember.Controller.extend({
          * Refresh the current blobs. Useful if the blobs have changed.
          */
         refreshBlobs: function () {
-            var blobs = [], subDirs = [];
+            var blobs = [],
+                subDirs = [];
 
             this.store.find('container', this.get('activeContainer')).then(result => {
                 if (result) {
@@ -544,7 +561,9 @@ export default Ember.Controller.extend({
             }).then(container => {
                 return container.listDirectoriesWithPrefix(this.get('currentPath'));
             }).then(result => {
-                result.forEach(dir => subDirs.push({name: dir.name}));
+                result.forEach(dir => subDirs.push({
+                    name: dir.name
+                }));
                 this.set('subDirectories', subDirs);
             });
 
@@ -555,29 +574,30 @@ export default Ember.Controller.extend({
          * Create a new container
          */
         addContainerData: function () {
-          let name = this.get('newContainerName') ? this.get('newContainerName').toLowerCase() : '';
+            let name = this.get('newContainerName') ? this.get('newContainerName').toLowerCase() : '';
 
-          if (!name) {
-            return;
-          }
+            if (!name) {
+                return;
+            }
 
-          if (!this.containerNameIsValid(name)) {
-            this.set('application.lastError', stringResources.containerNameInvalidMessage(name));
-            this.send('openErrorModal');
-            return;
-          }
+            if (!this.containerNameIsValid(name)) {
+                this.set('application.lastError', stringResources.containerNameInvalidMessage(name));
+                this.send('openErrorModal');
+                return;
+            }
 
-          var newContainer = this.store.createRecord('container', { name: name, id: name });
+            var newContainer = this.store.createRecord('container', {
+                name: name,
+                id: name
+            });
 
-          // Todo - Ember data will assert and not return a promise if the
-          // container name already exists (since we are using it as an id)
-          this.get('notifications').addPromiseNotification(newContainer.save(), Notification.create(
-            {
-              type: 'AddContainer',
-              text: stringResources.addContainerMessage(name)
-            })
-            );
-          this.set('newContainerName', '');
+            // Todo - Ember data will assert and not return a promise if the
+            // container name already exists (since we are using it as an id)
+            this.get('notifications').addPromiseNotification(newContainer.save(), Notification.create({
+                type: 'AddContainer',
+                text: stringResources.addContainerMessage(name)
+            }));
+            this.set('newContainerName', '');
         },
 
         /**
@@ -593,12 +613,10 @@ export default Ember.Controller.extend({
             this.store.find('container', name).then(container => {
                 if (container) {
                     container.deleteRecord();
-                    this.get('notifications').addPromiseNotification(container.save(), Notification.create(
-                        {
-                            type: 'DeleteContainer',
-                            text: stringResources.deleteContainerMessage(name)
-                        })
-                    );
+                    this.get('notifications').addPromiseNotification(container.save(), Notification.create({
+                        type: 'DeleteContainer',
+                        text: stringResources.deleteContainerMessage(name)
+                    }));
 
                     let firstContainer = this.get('containers').get('firstObject').get('id');
                     this.send('switchActiveContainer', firstContainer);
