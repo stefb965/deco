@@ -1,22 +1,22 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-  content: null,
+    content: null,
 
-  didInitAttrs() {
-    this._super(...arguments);
-    var content = this.get('content');
+    didInitAttrs() {
+        this._super(...arguments);
+        var content = this.get('content');
 
-    if (!content) {
-      this.set('content', []);
+        if (!content) {
+            this.set('content', []);
+        }
+    },
+
+    actions: {
+        select: function (item) {
+            console.log(item);
+            this.set('selectedValue', item);
+            this.sendAction();
+        }
     }
-  },
-
-  actions: {
-    select: function (item) {
-      console.log(item);
-      this.set('selectedValue', item);
-      this.sendAction();
-    }
-  }
 });

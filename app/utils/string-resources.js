@@ -45,9 +45,9 @@ export default {
         return 'The provided account key is invalid. Please check it and try again.';
     },
     storageRejectedAccountKey: function () {
-      return 'The connection succeeded, but the Azure rejected the account key. Please check it and try again.';
+        return 'The connection succeeded, but the Azure rejected the account key. Please check it and try again.';
     },
     containerNameInvalidMessage: function () {
-      return 'Invalid name - must conform to valid DNS names, lower case, 3 <= n <= 63, dashes';
+        return 'Invalid name - must conform to valid DNS names, lower case, 3 <= n <= 63, dashes';
     }
 };

@@ -15,8 +15,14 @@ export default Ember.Controller.extend({
     init: function () {
         this._super();
 
-        window.ondrop = e => { e.preventDefault(); return false; };
-        window.ondragover = e => { e.preventDefault(); return false; };
+        window.ondrop = e => {
+            e.preventDefault();
+            return false;
+        };
+        window.ondragover = e => {
+            e.preventDefault();
+            return false;
+        };
 
         if (config.environment === 'test') {
             return;

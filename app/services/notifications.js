@@ -74,10 +74,10 @@ export default Ember.Service.extend({
         // Todo, it would be nice to display elapsed time to resolution
         promise.then(() => {
             notification.set('progress', 100);
-        }).catch (err => {
+        }).catch(err => {
             notification.set('text', err);
             notification.set('progress', -1);
-        }).finally (() => {
+        }).finally(() => {
             if (notification.cleanup) {
                 notification.cleanup();
             }
@@ -103,7 +103,7 @@ export default Ember.Service.extend({
     // ------------------------------------------------------------------------------
     _fillInNotification: function (notification) {
         notification.set('id', notification.get('id') ? notification.get('id') : Uuid.makeUUID());
-        notification.set('timestamp', notification.get('timestamp') ? notification.get('timestamp') :  Date.now());
+        notification.set('timestamp', notification.get('timestamp') ? notification.get('timestamp') : Date.now());
         notification.set('progress', (notification.get('progress') !== undefined || notification.get('progress') !== null) ? notification.get('progress') : 0);
         notification.get('notificationsCtrlRef', notification.notificationsCtrlRef ? notification.notificationsCtrlRef : this);
     }

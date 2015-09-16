@@ -3,210 +3,212 @@ import Notification from '../models/notification';
 import stringResources from '../utils/string-resources';
 
 export default Ember.Component.extend({
-  application: Ember.inject.service(),
-  store: Ember.inject.service(),
-  notifications: Ember.inject.service('notifications'),
-  onOffContent: [false, true],
-  settings: Ember.computed.alias('application.serviceSettings'),
-  showLogging: false,
-  showMetrics: true,
-  showAbout: false,
-  showCORS: false,
-  showNewRule: false,
-  showEditRule: false,
-  currentRule: Ember.computed.alias('settings.Cors.CorsRule.firstObject'),
-  minuteMetricsDisabled: Ember.computed.not('settings.MinuteMetrics.Enabled'),
-  hourMetricsDisabled: Ember.computed.not('settings.HourMetrics.Enabled'),
+    application: Ember.inject.service(),
+    store: Ember.inject.service(),
+    notifications: Ember.inject.service('notifications'),
+    onOffContent: [false, true],
+    settings: Ember.computed.alias('application.serviceSettings'),
+    showLogging: false,
+    showMetrics: true,
+    showAbout: false,
+    showCORS: false,
+    showNewRule: false,
+    showEditRule: false,
+    currentRule: Ember.computed.alias('settings.Cors.CorsRule.firstObject'),
+    minuteMetricsDisabled: Ember.computed.not('settings.MinuteMetrics.Enabled'),
+    hourMetricsDisabled: Ember.computed.not('settings.HourMetrics.Enabled'),
 
-  _corsString: function (property) {
+    _corsString: function (property) {
 
-    var displayString = '';
+        var displayString = '';
 
-    if (!this.get(property)) {
-      return;
-    }
-    this.get(property).forEach(origin => {
-        console.log(origin);
-        displayString += origin.get('Value') + ';';
-    });
-    return displayString;
-  },
+        if (!this.get(property)) {
+            return;
+        }
+        this.get(property).forEach(origin => {
+            console.log(origin);
+            displayString += origin.get('Value') + ';';
+        });
+        return displayString;
+    },
 
-  _assembleCorsArray: function (value) {
+    _assembleCorsArray: function (value) {
 
-    var parts = value.split(';'),
-        fragArray = [];
+        var parts = value.split(';'),
+            fragArray = [];
 
-    parts.forEach(origin => {
-      if (origin.length <= 0) {
-        return;
-      }
-      fragArray.push(this.get('store').createFragment('stringValue', { Value: origin }));
-    });
-
-    return fragArray;
-  },
-
-  _updateCorsRules: function () {
-
-    var allowedOrigins = this._assembleCorsArray(this.get('selectedCorsOriginString')),
-        allowedHeaders = this._assembleCorsArray(this.get('selectedCorsHeaderString')),
-        allowedMethods = this._assembleCorsArray(this.get('selectedCorsMethodString'));
-
-    if (!this.get('settings.Cors.CorsRule')) {
-      this.set('settings.Cors.CorsRule', []);
-    }
-
-    if (this.get('selectedCorsOriginString.length') > 0 ||
-      this.get('selectedCorsHeaderString.length') > 0 ||
-      this.get('selectedCorsMethodString.length') > 0) {
-
-      if (this.get('showNewRule')) {
-        var fragment = this.get('store').createFragment('corsRule', {
-          AllowedOrigins: allowedOrigins,
-          AllowedHeaders: allowedHeaders,
-          AllowedMethods: allowedMethods,
-          MaxAgeInSeconds: parseInt(this.get('selectedMaxAgeSeconds'))
+        parts.forEach(origin => {
+            if (origin.length <= 0) {
+                return;
+            }
+            fragArray.push(this.get('store').createFragment('stringValue', {
+                Value: origin
+            }));
         });
 
-        this.get('settings.Cors.CorsRule').addFragment(fragment);
-      } else if (this.get('showEditRule') && this.get('currentRule')) {
-        this.set('currentRule.AllowedOrigins', allowedOrigins);
-        this.set('currentRule.AllowedMethods', allowedMethods);
-        this.set('currentRule.AllowedHeaders', allowedHeaders);
-        this.set('currentRule.MaxAgeInSeconds', parseInt(this.get('selectedMaxAgeSeconds')));
-      }
-    }
-  },
+        return fragArray;
+    },
 
-  selectedCorsOriginString: '',
+    _updateCorsRules: function () {
 
-  selectedCorsHeaderString: '',
+        var allowedOrigins = this._assembleCorsArray(this.get('selectedCorsOriginString')),
+            allowedHeaders = this._assembleCorsArray(this.get('selectedCorsHeaderString')),
+            allowedMethods = this._assembleCorsArray(this.get('selectedCorsMethodString'));
 
-  selectedCorsMethodString: '',
+        if (!this.get('settings.Cors.CorsRule')) {
+            this.set('settings.Cors.CorsRule', []);
+        }
 
-  selectedMaxAgeSeconds: '500',
+        if (this.get('selectedCorsOriginString.length') > 0 ||
+            this.get('selectedCorsHeaderString.length') > 0 ||
+            this.get('selectedCorsMethodString.length') > 0) {
 
-  hourMetricsRetentionDisabled: function () {
-    return !this.get('settings.HourMetrics.RetentionPolicy.Enabled') || !this.get('settings.HourMetrics.Enabled');
-  }.property('settings.HourMetrics.RetentionPolicy.Enabled', 'settings.HourMetrics.Enabled'),
+            if (this.get('showNewRule')) {
+                var fragment = this.get('store').createFragment('corsRule', {
+                    AllowedOrigins: allowedOrigins,
+                    AllowedHeaders: allowedHeaders,
+                    AllowedMethods: allowedMethods,
+                    MaxAgeInSeconds: parseInt(this.get('selectedMaxAgeSeconds'))
+                });
 
-  minuteMetricsRetentionDisabled: function () {
-    return !this.get('settings.MinuteMetrics.RetentionPolicy.Enabled') || !this.get('settings.MinuteMetrics.Enabled');
-  }.property('settings.MinuteMetrics.RetentionPolicy.Enabled', 'settings.MinuteMetrics.Enabled'),
+                this.get('settings.Cors.CorsRule').addFragment(fragment);
+            } else if (this.get('showEditRule') && this.get('currentRule')) {
+                this.set('currentRule.AllowedOrigins', allowedOrigins);
+                this.set('currentRule.AllowedMethods', allowedMethods);
+                this.set('currentRule.AllowedHeaders', allowedHeaders);
+                this.set('currentRule.MaxAgeInSeconds', parseInt(this.get('selectedMaxAgeSeconds')));
+            }
+        }
+    },
 
-  loggingRetentionDisabled: Ember.computed.not('settings.Logging.RetentionPolicy.Enabled'),
+    selectedCorsOriginString: '',
 
-  showUpdateButton: function () {
-    return this.get('application.serviceSettings.hasDirtyAttributes') &&
-      (!this.get('showAbout')) || (this.get('selectedCorsOriginString').length > 0 ||
-      this.get('selectedCorsHeaderString').length > 0 ||
-      this.get('selectedCorsMethodString').length > 0 ||
-      this.get('selectedMaxAgeSeconds').length > 0);
-  }.property('application.serviceSettings.hasDirtyAttributes', 'showAbout', 'selectedCorsOriginString',
-    'selectedCorsHeaderString', 'selectedCorsMethodString', 'selectedMaxAgeSeconds'),
+    selectedCorsHeaderString: '',
 
-  init: function () {
-    this._renderSelect();
-    return this._super();
-  },
+    selectedCorsMethodString: '',
 
-  _renderSelect: function () {
-    // required to materialize css select
-    Ember.run.scheduleOnce('afterRender', this, () => {
+    selectedMaxAgeSeconds: '500',
+
+    hourMetricsRetentionDisabled: function () {
+        return !this.get('settings.HourMetrics.RetentionPolicy.Enabled') || !this.get('settings.HourMetrics.Enabled');
+    }.property('settings.HourMetrics.RetentionPolicy.Enabled', 'settings.HourMetrics.Enabled'),
+
+    minuteMetricsRetentionDisabled: function () {
+        return !this.get('settings.MinuteMetrics.RetentionPolicy.Enabled') || !this.get('settings.MinuteMetrics.Enabled');
+    }.property('settings.MinuteMetrics.RetentionPolicy.Enabled', 'settings.MinuteMetrics.Enabled'),
+
+    loggingRetentionDisabled: Ember.computed.not('settings.Logging.RetentionPolicy.Enabled'),
+
+    showUpdateButton: function () {
+        return this.get('application.serviceSettings.hasDirtyAttributes') &&
+            (!this.get('showAbout')) || (this.get('selectedCorsOriginString').length > 0 ||
+                this.get('selectedCorsHeaderString').length > 0 ||
+                this.get('selectedCorsMethodString').length > 0 ||
+                this.get('selectedMaxAgeSeconds').length > 0);
+    }.property('application.serviceSettings.hasDirtyAttributes', 'showAbout', 'selectedCorsOriginString',
+        'selectedCorsHeaderString', 'selectedCorsMethodString', 'selectedMaxAgeSeconds'),
+
+    init: function () {
+        this._renderSelect();
+        return this._super();
+    },
+
+    _renderSelect: function () {
+        // required to materialize css select
+        Ember.run.scheduleOnce('afterRender', this, () => {
             Ember.$('select').material_select();
         });
-  },
-
-  _enableTab: function (tabFlagName) {
-    this.set('showLogging', false);
-    this.set('showTelemetry', false);
-    this.set('showMetrics', false);
-    this.set('showAbout', false);
-    this.set('showCORS', false);
-
-    this.set(tabFlagName, true);
-    this._renderSelect();
-  },
-
-  actions: {
-
-    deleteCorsRule: function () {
-      this.get('settings.Cors.CorsRule').removeFragment(this.get('currentRule'));
     },
 
-    newCorsRule: function () {
-      this.set('showNewRule', true);
-      this.set('showEditRule', false);
-      this.set('selectedCorsOriginString', '');
-      this.set('selectedCorsHeaderString', '');
-      this.set('selectedCorsMethodString', '');
-      this.set('selectedMaxAgeSeconds', '');
+    _enableTab: function (tabFlagName) {
+        this.set('showLogging', false);
+        this.set('showTelemetry', false);
+        this.set('showMetrics', false);
+        this.set('showAbout', false);
+        this.set('showCORS', false);
+
+        this.set(tabFlagName, true);
+        this._renderSelect();
     },
 
-    selectRule: function () {
-      this.set('selectedCorsOriginString', this._corsString('currentRule.AllowedOrigins'));
-      this.set('selectedCorsHeaderString', this._corsString('currentRule.AllowedHeaders'));
-      this.set('selectedCorsMethodString', this._corsString('currentRule.AllowedMethods'));
-      this.set('selectedMaxAgeSeconds', this.get('currentRule.MaxAgeInSeconds'));
-      this.set('showEditRule', true);
-      this.set('showNewRule', false);
-    },
+    actions: {
 
-    actionMetrics: function () {
-      this._enableTab('showMetrics');
-    },
+        deleteCorsRule: function () {
+            this.get('settings.Cors.CorsRule').removeFragment(this.get('currentRule'));
+        },
 
-    actionLogging: function () {
-      this._enableTab('showLogging');
-    },
+        newCorsRule: function () {
+            this.set('showNewRule', true);
+            this.set('showEditRule', false);
+            this.set('selectedCorsOriginString', '');
+            this.set('selectedCorsHeaderString', '');
+            this.set('selectedCorsMethodString', '');
+            this.set('selectedMaxAgeSeconds', '');
+        },
 
-    actionCORS: function () {
-      this._enableTab('showCORS');
-    },
+        selectRule: function () {
+            this.set('selectedCorsOriginString', this._corsString('currentRule.AllowedOrigins'));
+            this.set('selectedCorsHeaderString', this._corsString('currentRule.AllowedHeaders'));
+            this.set('selectedCorsMethodString', this._corsString('currentRule.AllowedMethods'));
+            this.set('selectedMaxAgeSeconds', this.get('currentRule.MaxAgeInSeconds'));
+            this.set('showEditRule', true);
+            this.set('showNewRule', false);
+        },
 
-    actionAbout: function () {
-      this.set('showUpdateButton', false);
-      this._enableTab('showAbout');
-    },
+        actionMetrics: function () {
+            this._enableTab('showMetrics');
+        },
 
-    actionUsageTelemetry: function () {
-      this._enableTab('showTelemetry');
-    },
+        actionLogging: function () {
+            this._enableTab('showLogging');
+        },
 
-    handleUpdate: function () {
-      this.send('updateServiceSettings');
-    },
+        actionCORS: function () {
+            this._enableTab('showCORS');
+        },
 
-    updateServiceSettings: function () {
-      var notifications = this.get('notifications');
+        actionAbout: function () {
+            this.set('showUpdateButton', false);
+            this._enableTab('showAbout');
+        },
 
-      if (!this.get('settings.MinuteMetrics.Enabled')) {
-        this.set('settings.MinuteMetrics.IncludeAPIs', null);
-        this.set('settings.MinuteMetrics.RetentionPolicy', null);
-      }
+        actionUsageTelemetry: function () {
+            this._enableTab('showTelemetry');
+        },
 
-      if (!this.get('settings.HourMetrics.Enabled')) {
-        this.set('settings.HourMetrics.IncludeAPIs', null);
-        this.set('settings.HourMetrics.RetentionPolicy', null);
-      }
+        handleUpdate: function () {
+            this.send('updateServiceSettings');
+        },
 
-      if (!this.get('settings.Logging.RetentionPolicy')) {
-        this.set('settings.Logging.RetentionPolicy', null);
-      }
+        updateServiceSettings: function () {
+            var notifications = this.get('notifications');
 
-      this._updateCorsRules();
-      notifications.addPromiseNotification(this.get('application.serviceSettings').save(),
-        Notification.create({
-          type: 'UpdateServiceSettings',
-          text: stringResources.updateServiceSettings()
-        })
-      );
-    },
+            if (!this.get('settings.MinuteMetrics.Enabled')) {
+                this.set('settings.MinuteMetrics.IncludeAPIs', null);
+                this.set('settings.MinuteMetrics.RetentionPolicy', null);
+            }
 
-    discardUnsavedChanges: function () {
-      this.get('application.serviceSettings').rollbackAttributes();
-      this._enableTab('showMetrics');
+            if (!this.get('settings.HourMetrics.Enabled')) {
+                this.set('settings.HourMetrics.IncludeAPIs', null);
+                this.set('settings.HourMetrics.RetentionPolicy', null);
+            }
+
+            if (!this.get('settings.Logging.RetentionPolicy')) {
+                this.set('settings.Logging.RetentionPolicy', null);
+            }
+
+            this._updateCorsRules();
+            notifications.addPromiseNotification(this.get('application.serviceSettings').save(),
+                Notification.create({
+                    type: 'UpdateServiceSettings',
+                    text: stringResources.updateServiceSettings()
+                })
+            );
+        },
+
+        discardUnsavedChanges: function () {
+            this.get('application.serviceSettings').rollbackAttributes();
+            this._enableTab('showMetrics');
+        }
     }
-  }
 });

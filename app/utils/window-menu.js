@@ -45,38 +45,31 @@ export default {
                 label: 'Upload Blobs',
                 enabled: toolsEnabled,
                 click: handlers.uploadBlob
-            },
-            {
+            }, {
                 label: 'Download Blobs',
                 enabled: toolsEnabled,
                 click: handlers.downloadBlobs
-            },
-            {
+            }, {
                 label: 'Delete Selected Blobs',
                 enabled: toolsEnabled,
                 click: handlers.deleteBlobs
-            },
-            {
+            }, {
                 label: 'Copy Selected Blobs',
                 enabled: toolsEnabled,
                 click: handlers.copyBlobs
-            },
-            {
+            }, {
                 label: 'Refresh Blobs',
                 enabled: toolsEnabled,
                 click: handlers.refreshBlobs
-            },
-            {
+            }, {
                 label: 'Create Container',
                 enabled: toolsEnabled,
                 click: handlers.addContainer
-            },
-            {
+            }, {
                 label: 'Delete Current Container',
                 enabled: toolsEnabled,
                 click: handlers.removeContainer
-            },
-            {
+            }, {
                 label: 'Switch Account',
                 enabled: toolsEnabled,
                 click: handlers.switchAccount

@@ -5,7 +5,7 @@ import stringResources from '../utils/string-resources';
 
 export default Ember.Component.extend({
 
-  notifications: Ember.inject.service('notifications'),
+    notifications: Ember.inject.service('notifications'),
 
     prettySize: function () {
         return filesize(this.get('blob.size')).human('si');
@@ -68,8 +68,8 @@ export default Ember.Component.extend({
 
         generateSAS: function () {
             this.get('blob').getLink(this.get('sasExpiration'),
-                this.get('selectedSASOption'))
-            .then(SAS => this.set('SAS', SAS));
+                    this.get('selectedSASOption'))
+                .then(SAS => this.set('SAS', SAS));
         }
     }
 });

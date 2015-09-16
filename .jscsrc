@@ -55,7 +55,6 @@
         "case",
         "return",
         "try",
-        "catch",
         "function",
         "typeof"
     ],
