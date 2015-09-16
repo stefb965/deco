@@ -174,9 +174,9 @@ module.exports = function (grunt) {
                 dest: './builds/storageexplorer-darwin-x64/build.zip'
             },
             windows: {
-                cwd: './builds/installer32',
-                src: ['./builds/installer32/*'],
-                dest: './builds/installer32/build.zip'
+                cwd: './builds/storageexplorer-win32-ia32',
+                src: ['./builds/storageexplorer-win32-ia32/*'],
+                dest: './builds/storageexplorer-win32-ia32/build.zip'
             }
         },
         'if': {
