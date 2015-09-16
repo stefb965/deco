@@ -154,6 +154,16 @@ export default Ember.Controller.extend({
         );
     },
 
+	/**
+	 * Validates a name which sould be DNS ok
+	 * @param {string} name
+	 * @return {boolean}
+	 */
+	containerNameIsValid: function (name) {
+        let re = /^(([a-z\d]((-(?=[a-z\d]))|([a-z\d])){2,62}))|(\$root)|(\$logs)$/;
+        return (name === '$root' || name === '$logs') ? true : re.test(name);
+    },
+
     actions: {
         /**
          * Handle a file dragged into the window (by uploading it)
@@ -545,23 +555,29 @@ export default Ember.Controller.extend({
          * Create a new container
          */
         addContainerData: function () {
-            let name = this.get('newContainerName');
-            if (!name){
-                return;
-            }
-            name = name.toLowerCase();
+          let name = this.get('newContainerName') ? this.get('newContainerName').toLowerCase() : '';
 
-            var newContainer = this.store.createRecord('container', {name: name, id: name});
+          if (!name) {
+            return;
+          }
 
-            // Todo - Ember data will assert and not return a promise if the
-            // container name already exists (since we are using it as an id)
-            this.get('notifications').addPromiseNotification(newContainer.save(), Notification.create(
-                {
-                    type: 'AddContainer',
-                    text: stringResources.addContainerMessage(name)
-                })
+          if (!this.containerNameIsValid(name)) {
+            this.set('application.lastError', stringResources.containerNameInvalidMessage(name));
+            this.send('openErrorModal');
+            return;
+          }
+
+          var newContainer = this.store.createRecord('container', { name: name, id: name });
+
+          // Todo - Ember data will assert and not return a promise if the
+          // container name already exists (since we are using it as an id)
+          this.get('notifications').addPromiseNotification(newContainer.save(), Notification.create(
+            {
+              type: 'AddContainer',
+              text: stringResources.addContainerMessage(name)
+            })
             );
-            this.set('newContainerName', '');
+          this.set('newContainerName', '');
         },
 
         /**
