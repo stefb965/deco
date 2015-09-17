@@ -180,7 +180,7 @@ module.exports = function (grunt) {
             }
         },
         'if': {
-            'trusted-deploy-to-azure-cdn': {
+            'trusted-deploy-to-azure-cdn-windows': {
                 options: {
                     test: function () {
                         // these variables will only be valid and set during trusted builds
@@ -188,7 +188,18 @@ module.exports = function (grunt) {
                         return trustedBuild;
                     }
                 },
-                ifTrue: ['azure-cdn-deploy'],
+                ifTrue: ['azure-cdn-deploy:windows'],
+                ifFalse: []
+            },
+            'trusted-deploy-to-azure-cdn-unix': {
+                options: {
+                    test: function () {
+                        // these variables will only be valid and set during trusted builds
+                        var trustedBuild = (typeof process.env.AZURE_STORAGE_ACCOUNT === 'string' && typeof process.env.AZURE_STORAGE_ACCESS_KEY === 'string');
+                        return trustedBuild;
+                    }
+                },
+                ifTrue: ['azure-cdn-deploy:osx', 'azure-cdn-deploy:linux'],
                 ifFalse: []
             }
         },
@@ -274,7 +285,7 @@ module.exports = function (grunt) {
     // To deploy a build with an official build number, set env var RELEASE_VERSION to release number
     // otherwise application is tagged with git hash
     grunt.registerTask('createUnixDevBuild', ['prebuild', 'exec:flatten', 'electron:osx', 'electron:linux', 'zip:osx', 'zip:linux']);
-    grunt.registerTask('deployUnixDevBuild', ['if:trusted-deploy-to-azure-cdn:linux', 'if:trusted-deploy-to-azure-cdn:osx']);
+    grunt.registerTask('deployUnixDevBuild', ['if:trusted-deploy-to-azure-cdn-unix']);
     grunt.registerTask('createWinDevBuild', ['prebuild', 'exec:flatten', 'electron:windowsWithIcon', 'zip:windows']);
-    grunt.registerTask('deployWinDevBuild', ['if:trusted-deploy-to-azure-cdn:windows']);
+    grunt.registerTask('deployWinDevBuild', ['if:trusted-deploy-to-azure-cdn-windows']);
 };
