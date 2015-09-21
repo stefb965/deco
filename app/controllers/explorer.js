@@ -574,7 +574,7 @@ export default Ember.Controller.extend({
          * Create a new container
          */
         addContainerData: function () {
-            let name = this.get('newContainerName') ? this.get('newContainerName').toLowerCase() : '';
+            let name = this.get('newContainerName') ? this.get('newContainerName').toLowerCase().replace(/ /g, '-') : '';
 
             if (!name) {
                 return;
@@ -583,6 +583,7 @@ export default Ember.Controller.extend({
             if (!this.containerNameIsValid(name)) {
                 this.set('application.lastError', stringResources.containerNameInvalidMessage(name));
                 this.send('openErrorModal');
+                console.log('name invalid');
                 return;
             }
 
