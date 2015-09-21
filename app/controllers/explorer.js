@@ -177,19 +177,13 @@ export default Ember.Controller.extend({
          * Handle a file dragged into the window (by uploading it)
          */
         handleFileDragDrop: function (e) {
-            var sourcePaths = '',
-                activeContainer = this.get('activeContainer'),
-                file;
+            var sourcePaths = [],
+                activeContainer = this.get('activeContainer');
 
             // dataTransfer.files doesn't have forEach
             for (var i in e.dataTransfer.files) {
-                if (i % 1 === 0) {
-                    file = e.dataTransfer.files[i];
-                    if (i < e.dataTransfer.files.length - 1) {
-                        sourcePaths += file.path + ';';
-                    } else {
-                        sourcePaths += file.path;
-                    }
+                if (e.dataTransfer.files[i].path) {
+                    sourcePaths.push(e.dataTransfer.files[i].path);
                 }
             }
 
@@ -280,23 +274,20 @@ export default Ember.Controller.extend({
          * Open the upload file modal
          */
         uploadBlob: function () {
-            var nwInput = Ember.$('#nwUploadFile'),
-                activeContainer = this.get('activeContainer'),
-                self = this;
+            var dialog = requireNode('remote').require('dialog');
 
-            nwInput.change(function () {
-                nwInput.off('change');
-
-                self.set('modalFileUploadPath', this.value);
-                self.store.find('container', activeContainer).then(result => {
-                    self.set('modalDefaultUploadPath', result.get('name') + ':/' + self.get('currentPath'));
-                });
-                self.send('openModal', '#modal-upload');
-
-                this.value = ''; // Ensure event fires
+            dialog.showOpenDialog({
+                title: 'Upload File as Blob',
+                properties: ['openFile', 'multiSelections']
+            }, path => {
+                if (path) {
+                    this.set('modalFileUploadPath', path);
+                    this.store.find('container', this.get('activeContainer')).then(result => {
+                        this.set('modalDefaultUploadPath', result.get('name') + ':/' + this.get('currentPath'));
+                    });
+                    this.send('openModal', '#modal-upload');
+                }
             });
-
-            nwInput.click();
 
             appInsights.trackEvent('uploadBlob');
         },
@@ -326,34 +317,34 @@ export default Ember.Controller.extend({
                 subDirectories = this.get('subDirectories'),
                 selectedBlobs = blobs.filterBy('selected', true),
                 selectedDirectories = subDirectories.filter(directory => directory.selected),
+                dialog = requireNode('remote').require('dialog'),
                 getBlobPromises = [],
-                self = this,
-                nwInput;
+                self = this;
 
             appInsights.trackEvent('downloadBlobs');
 
-            /**
-             * Action-scope download function
-             */
+            // Action-scope download function
+            var streamBlobs = function (path) {
+                if (path) {
+                    self.get('uploaddownload').send('streamBlobsToDirectory', selectedBlobs, path[0], (selectedBlobs.length === 1));
+                }
+            };
+
             var executeDownload = function () {
-                if (selectedBlobs.length > 0) {
-                    nwInput = (selectedBlobs.length > 1) ? Ember.$('#nwSaveDirectory') : Ember.$('#nwSaveInput');
+                if (targetDirectory) {
+                    return self.get('uploaddownload').send('streamBlobsToDirectory', selectedBlobs, targetDirectory, (selectedBlobs.length === 1));
+                }
 
-                    if (selectedBlobs.length === 1) {
-                        nwInput.attr('nwsaveas', selectedBlobs[0].get('name'));
-                    }
-
-                    if (!targetDirectory) {
-                        nwInput.change(function () {
-                            self.get('uploaddownload').send('streamBlobsToDirectory', selectedBlobs, this.value, (selectedBlobs.length === 1));
-                            this.value = ''; // Reset value to ensure change event always fires
-                            nwInput.off('change');
-                        });
-
-                        nwInput.click();
-                    } else {
-                        self.get('uploaddownload').send('streamBlobsToDirectory', selectedBlobs, targetDirectory, (selectedBlobs.length === 1));
-                    }
+                if (selectedBlobs.length > 1) {
+                    dialog.showOpenDialog({
+                        title: 'Save Blobs',
+                        properties: ['openDirectory']
+                    }, path => streamBlobs(path));
+                } else if (selectedBlobs.length === 1) {
+                    dialog.showSaveDialog({
+                        title: 'Save Blobs',
+                        defaultPath: selectedBlobs[0].get('name')
+                    }, path => streamBlobs(path));
                 }
             };
 

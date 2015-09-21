@@ -22,7 +22,7 @@ test('it should upload file to blob', function (assert) {
     
     Ember.run(() => {
         globals.store.find('container').then(container => {
-            ctrl.send('uploadBlobData', '/testdir/testfile.js;/testdir/testfile2.js;/testdir/testfile3.js', 'mydir1/', 'testcontainer');  
+            ctrl.send('uploadBlobData', ['/testdir/testfile.js', '/testdir/testfile2.js', '/testdir/testfile3.js'], 'mydir1/', 'testcontainer');  
         });
     });
 });
