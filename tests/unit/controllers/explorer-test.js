@@ -9,7 +9,7 @@ var globals = {
 
 moduleFor('controller:explorer', {
     // Specify the other units that are required for this test.
-    needs: ['controller:application', 'service:notifications', 'controller:uploaddownload','model:blob', 'model:container'],
+    needs: ['controller:application', 'service:notifications', 'service:nodeServices', 'controller:uploaddownload','model:blob', 'model:container'],
     teardown: function () {
         Ember.run(globals.App, globals.App.destroy);
         window.localStorage.clear();

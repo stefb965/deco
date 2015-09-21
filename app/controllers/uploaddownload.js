@@ -31,9 +31,8 @@ export default Ember.Controller.extend({
          * @param  {Array} filePaths  - Local file paths of the files to upload
          * @param  {string} azurePath - Remote Azure Storage path
          */
-        uploadBlobData: function (filePaths, azurePath, activeContainer) {
+        uploadBlobData: function (paths, azurePath, activeContainer) {
             var containerPath = azurePath.replace(/.*\:\//, ''),
-                paths = filePaths.split(';'),
                 promises = [];
 
             this.store.find('container', activeContainer).then(foundContainer => {
