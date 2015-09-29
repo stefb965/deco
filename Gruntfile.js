@@ -43,7 +43,7 @@ module.exports = function (grunt) {
         copy: {
             app: {
                 expand: true,
-                src: ['electron.js', 'package.json', 'dist/**', 'node_modules/azure-storage/**', 'node_modules/fs-extra/**'],
+                src: ['electron.js', 'package.json', 'dist/**', 'node_modules/azure-storage/**', 'node_modules/fs-extra/**', 'node_modules/electron-gh-releases/**'],
                 dest: 'electronbuildcache/'
             },
             version_file: {
