@@ -1,6 +1,6 @@
 {
   "name": "azureexplorer",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "A cross-platform tool to explore Azure Storage Accounts",
   "scripts": {
     "start": "ember electron",
@@ -80,6 +80,7 @@
   "main": "electron.js",
   "dependencies": {
     "azure-storage": "^0.4.3",
-    "fs-extra": "^0.22.1"
+    "fs-extra": "^0.22.1",
+    "electron-gh-releases": "^1.0.1"
   }
 }

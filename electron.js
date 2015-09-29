@@ -32,21 +32,52 @@ var handleSquirrelEvent = function () {
 
     var squirrelEvent = process.argv[1];
     switch (squirrelEvent) {
-        case '--squirrel-install':
-            install(app.quit);
-            return true;
-        case '--squirrel-updated':
-            install(app.quit);
-            return true;
-        case '--squirrel-obsolete':
-            app.quit();
-            return true;
-        case '--squirrel-uninstall':
-            uninstall(app.quit);
-            return true;
+    case '--squirrel-install':
+        install(app.quit);
+        return true;
+    case '--squirrel-updated':
+        install(app.quit);
+        return true;
+    case '--squirrel-obsolete':
+        app.quit();
+        return true;
+    case '--squirrel-uninstall':
+        uninstall(app.quit);
+        return true;
     }
 
     return false;
+};
+
+var checkForGitHubRelease = function () {
+    var gh_releases = require('electron-gh-releases');
+
+    var options = {
+        repo: 'azure-storage/deco',
+        currentVersion: app.getVersion()
+    }
+
+    var update = new gh_releases(options, function (auto_updater) {
+        auto_updater.on('update-downloaded', function (e, rNotes, rName, rDate, uUrl, quitAndUpdate) {
+            var dialog = require('dialog');
+            dialog.showMessageBox({
+                type: 'info',
+                buttons: ['Hooray!'],
+                title: 'Update Downloaded',
+                message: 'We found and downdloaded a new version of the Azure Storage Explorer! Once you close this dialog, Azure Storage Explorer will automatically update and restart.'
+            });
+
+            // Install the update
+            quitAndUpdate();
+        });
+    });
+
+    // Check for updates
+    update.check(function (err, status) {
+        if (!err && status) {
+            update.download();
+        }
+    });
 };
 
 app.on('window-all-closed', function onWindowAllClosed() {
@@ -59,6 +90,9 @@ app.on('ready', function onReady() {
     if (handleSquirrelEvent()) {
         return;
     }
+
+    // Check for update
+    checkForGitHubRelease();
 
     mainWindow = new BrowserWindow({
         title: 'Azure Storage Explorer',
