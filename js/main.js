@@ -2,10 +2,9 @@ var store = {
     os: null,
     downloadLink: null,
     downloadLinks: {
-        macosx: 'https://github.com/azure-storage/xplat/releases/download/v0.4.0/azure-storage-explorer_osx_040.dmg',
-        windows: 'https://github.com/azure-storage/xplat/releases/download/v0.4.0/azure-storage-explorer_win_040.msi',
-        linux: 'https://github.com/azure-storage/xplat/releases/download/v0.4.0/azure-storage-explorer_linux_040.zip',
-        windowsStandalone: 'https://github.com/azure-storage/xplat/releases/download/v0.4.0/azure-storage-explorer_win_standalone_040.zip'
+        macosx: 'https://github.com/azure-storage/deco/releases/download/0.5.0/azure-storage-explorer_osx_050.zip',
+        windows: 'https://github.com/azure-storage/deco/releases/download/0.5.0/azure-storage-explorer_win_050.exe',
+        linux: 'https://github.com/azure-storage/deco/releases/download/0.5.0/azure-storage-explorer_linux_050.zip',
     }
 };
 
