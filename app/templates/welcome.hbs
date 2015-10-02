@@ -33,7 +33,7 @@
                     <div class="col s12">
                         <br />
                         <a {{action "toggleAddNew"}} class="waves-effect waves-light btn"><i class="mdi-navigation-cancel left"></i>Cancel</a>
-                        <a {{action "addNew"}} class="waves-effect waves-light btn center"><i class="mdi-action-launch left"></i>Save & Open</a>
+                        <a {{action "addNew"}} class="waves-effect waves-light btn center"><i class="mdi-action-launch left"></i>Save</a>
                     </div>
                 {{else if editUi}}
                     <div class="col s11">
@@ -44,7 +44,7 @@
                     </div>
                     <div id="editAccountName" class="input-field col s12">
                         <i class="fa fa-server prefix"></i>
-                        {{input value=editAccountName id="edit_account_name" type="text" class="validate"}}
+                        <div class="displayOnly">{{editAccountName}}</div>
                         <label for="account_name" class="active">Storage Account Name</label>
                     </div>
                     <div id="editAccountKey" class="input-field col s12">
@@ -59,14 +59,14 @@
                     </div>
                     <div class="col s12">
                         <a {{action "toggleEdit"}} class="waves-effect waves-light btn"><i class="mdi-navigation-cancel left"></i>Cancel</a>
-                        <a {{action "edit"}} id="editSave" class="waves-effect waves-light btn"><i class="mdi-content-save left"></i>Save</a>
+                        <a {{action "edit"}} class="waves-effect waves-light btn"><i class="mdi-content-save left editSaveButton"></i>Save</a>
                     </div>
                 {{else}}
                     <div class="col s11">
                         {{view "select" value=selectedAccount content=model optionValuePath="content.id" optionLabelPath="content.name"}}
                     </div>
                     <div class="col s1 edit">
-                        <i {{action "toggleEdit"}} class="mdi-content-create"></i>
+                        <i {{action "toggleEdit"}} class="mdi-content-create editButton"></i>
                     </div>
                     <div class="col s12">
                         <a {{action "toggleAddNew"}} {{bind-attr disabed=loading}} class="waves-effect waves-light btn"><i class="mdi-content-add-circle left"></i>Add</a>

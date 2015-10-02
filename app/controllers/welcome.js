@@ -83,14 +83,15 @@ export default Ember.Controller.extend({
                     result.set('name', editAccountName);
                     result.set('key', editAccountKey);
                     result.set('dnsSuffix', editAccountDnsSuffix);
-                    result.save();
+                    result.save().then(() => {
+                        // set selection to the current account
+                        this.set('selectedAccount', this.get('selectedEditAccount'));
+                        this.send('toggleEdit');
+                    }, function (error) {
+                        this.send('error', error);
+                    });
                 }
-
-                this.send('toggleEdit');
             });
-
-            // set selection to the current account
-            this.set('selectedAccount', this.get('selectedEditAccount'));
 
             appInsights.trackEvent('EditAccount');
         },
@@ -100,20 +101,17 @@ export default Ember.Controller.extend({
 
             this.store.findRecord('account', editAccount).then(result => {
                 if (result) {
-                    result.deleteRecord();
-                    result.save();
-                }
-
-                Ember.run.schedule('destroy', () => {
-                    this.store.find('account').then(accounts => {
-                        if (!accounts || !accounts.content || accounts.content.length < 1) {
-                            this.send('toggleEdit');
-                            this.send('toggleAddNew');
-                        } else {
-                            this.send('toggleEdit');
-                        }
+                    result.destroyRecord().then(() => {
+                        this.store.find('account').then(accounts => {
+                            if (!accounts || !accounts.content || accounts.content.length < 1) {
+                                this.send('toggleEdit');
+                                this.send('toggleAddNew');
+                            } else {
+                                this.send('toggleEdit');
+                            }
+                        });
                     });
-                });
+                }
             });
 
             appInsights.trackEvent('DeleteAccount');
@@ -136,15 +134,15 @@ export default Ember.Controller.extend({
                 dnsSuffix: dnsSuffix
             });
 
-            newAccount.save();
-
-            this.send('connect', newAccount.get('id'));
-            this.set('account_name', '');
-            this.set('account_key', '');
-            this.set('dnsSuffix', '');
-
-            // set the selected account to what was just added
-            this.set('selectedAccount', this.get('account_name'));
+            newAccount.save().then(newAccount => {
+                // // this.send('connect', newAccount.get('id'));
+                // set the selected account to what was just added
+                this.set('selectedAccount', newAccount.id);
+                this.set('account_name', '');
+                this.set('account_key', '');
+                this.set('dnsSuffix', '');
+                this.send('toggleAddNew');
+            });
 
             appInsights.trackEvent('AddNewAccount');
         },
@@ -154,15 +152,13 @@ export default Ember.Controller.extend({
          * @param  {string} activeAccountId
          */
         connect: function (activeAccountId) {
-            var self = this;
-
             this.set('loading', true);
 
             if (!activeAccountId) {
                 activeAccountId = this.get('selectedAccount');
             }
 
-            this.store.findAll('account').then(function (accounts) {
+            this.store.findAll('account').then(accounts => {
                 var i,
                     account;
 
@@ -170,25 +166,24 @@ export default Ember.Controller.extend({
                     for (i = 0; i < accounts.content.length; i = i + 1) {
                         account = accounts.content[i].record;
                         if (account.id === activeAccountId) {
-                            self.set('activeConnection', account);
+                            this.set('activeConnection', account);
                             account.set('active', true);
                         } else {
                             account.set('active', false);
                         }
                     }
                 }
-
-                self.store.find('serviceSettings', activeAccountId)
+                this.store.find('serviceSettings', activeAccountId)
                     .then(settings => {
                         console.log('break here');
-                        self.set('application.serviceSettings', settings);
-                        self.transitionToRoute('explorer');
+                        this.set('application.serviceSettings', settings);
+                        this.transitionToRoute('explorer');
                     })
                     .catch((error) => {
-                        self.send('error', error);
+                        this.send('error', error);
                     })
                     .finally(() => {
-                        self.set('loading', false);
+                        this.set('loading', false);
                     });
             });
 
