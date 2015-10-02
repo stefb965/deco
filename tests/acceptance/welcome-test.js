@@ -2,6 +2,31 @@ import Ember from 'ember';
 import { module, test } from 'qunit';
 import startApp from 'azureexplorer/tests/helpers/start-app';
 
+function createNewAccount(context) {
+        Ember.run(() => {
+    let newAccount = context.store.createRecord('account', {
+        name: 'Testaccount',
+        key: 'n+ufPpP3UwY+REvC3/zqBmHt2hCDdI06tQI5HFN7XnpUR5VEKMI+8kk/ez7QLQ3Cmojt/c1Ktaug3nK8FC8AeA==',
+        dnsSuffix: '',                
+        active: true
+    });
+    newAccount.save();
+    });
+}
+
+function deleteAccounts(context) {
+        Ember.run(() => {
+        return context.store.findAll('account').then(accounts => {
+            accounts.content.forEach(account => {
+                account.record.deleteRecord(); 
+                account.save().then(() => {
+                account.record.save(); 
+            });
+        });     
+    });
+    });
+}
+
 module('Integration | Route | Welcome', {
     beforeEach: function() {
         this.application = startApp();
@@ -16,15 +41,9 @@ module('Integration | Route | Welcome', {
 
 test('visiting /welcome', function(assert) {
     visit('/welcome');
-
-    Ember.run(() => {
-        return this.store.findAll('account').then(accounts => {
-            accounts.content.forEach(account => {
-                account.record.deleteRecord(); 
-                account.record.save(); 
-            });
-        });     
-    });
+    
+    // delete any accounts
+    deleteAccounts(this);
 
     andThen(function() {
         assert.equal(currentURL(), '/welcome');
@@ -41,26 +60,26 @@ test('renders account selection div', function (assert) {
 
 test('offers creation of a new account if none exists', function (assert) {
     assert.expect(3);
-    visit('/welcome');
-
+    
+    // delete any accounts
+    deleteAccounts(this);
+    
     andThen(function () {
-        assert.equal(find('input#account_name').length, 1, 'Page contains account name input');
-        assert.equal(find('input#account_key').length, 1, 'Page contains account key input');
-        assert.equal(find('div#account_dnsSuffix').length, 1, 'Page contains account DNS suffix');
+        visit('/welcome')
+        .then(function () {
+            assert.equal(find('#account_name').length, 1, 'Page contains account name input');
+            assert.equal(find('#account_key').length, 1, 'Page contains account key input');
+            assert.equal(find('#account_dnsSuffix').length, 1, 'Page contains account DNS suffix');
+        });    
     });
+    
 });
 
 test('displays available accounts if they exist', function (assert) {
     assert.expect(1);
-
-    Ember.run(() => {
-        let newAccount = this.store.createRecord('account', {
-            name: 'Testaccount',
-            key: 'n+ufPpP3UwY+REvC3/zqBmHt2hCDdI06tQI5HFN7XnpUR5VEKMI+8kk/ez7QLQ3Cmojt/c1Ktaug3nK8FC8AeA==',
-            dnssuffix: ''
-        });
-        newAccount.save();
-    });
+    
+    // first add an account
+    createNewAccount(this);
 
     andThen(function () {
         visit('/welcome').then(function () {
@@ -72,9 +91,12 @@ test('displays available accounts if they exist', function (assert) {
 test('displays edit account inputs', function (assert) {
     assert.expect(3);
 
+    // first add an account
+    createNewAccount(this);
+
     andThen(function () {
         visit('/welcome').then(function () {
-            return click('.mdi-content-create');
+            return click('.editButton');
         }).then(function () {
             assert.equal(find('#editAccountName').length, 1, 'Page contains edit account name input');
             assert.equal(find('#editAccountKey').length, 1, 'Page contains edit account key input');
@@ -86,9 +108,12 @@ test('displays edit account inputs', function (assert) {
 test('check to see if modal error dialog is displayed', function(assert) {
     assert.expect(3);
 
+    // first add an account
+    createNewAccount(this);
+
     andThen(function () {
         visit('/welcome').then(function () {
-            // this causes the 'save and open' button to be pushed.  since we don't have any accounts in the list then the modal error should display
+            // this causes the 'save' button to be pushed.  since we don't have any accounts in the list then the modal error should display
             assert.equal(find('#modal-error').css('display'), 'none', 'Modal error dialog should not be visible');
             return click('.mdi-action-launch');
         }).then(function () {
@@ -101,21 +126,27 @@ test('check to see if modal error dialog is displayed', function(assert) {
     });
 });
 
-
 test('edited values are saved', function (assert) {
     assert.expect(1);
+    
+    var renamedAccountKey = null;
+    var self = this;
 
+    // first add an account
+    createNewAccount(this);    
+    
     andThen(function () {
         visit('/welcome').then(function () {
-            return click('.mdi-content-create');
+            return click('.editButton');
         }).then(function () {
-            return fillIn('#edit_account_key', '1+ufPpP3UwY+REvC3/zqBmHt2hCDdI06tQI5HFN7XnpUR5VEKMI+8kk/ez7QLQ3Cmojt/c1Ktaug3nK8FC8AeA==');
+            return fillIn('#edit_account_key', 'RenamedAccountKey');
         }).then(function () {
-            return fillIn('#edit_account_name', 'RenamedTestaccount');
+            return click('.editSaveButton');
         }).then(function () {
-            return click('#editSave');
-        }).then(function () {
-            assert.equal(find('option:contains("RenamedTestaccount")').length, 1, 'Page contains option with updated account name');
+            Ember.run(() => {
+                renamedAccountKey = self.store.peekAll('account').get('firstObject').get('key');
+            });
+            assert.equal(renamedAccountKey, 'RenamedAccountKey', 'Page contains option with updated account key');
         });
     });
 });

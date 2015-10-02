@@ -3,6 +3,7 @@ import contextMenu from '../utils/context-menu';
 import windowMenu from '../utils/window-menu';
 import Settings from '../models/settings';
 import stringResources from '../utils/string-resources';
+import config from '../config/environment';
 
 /**
  * Ember Application Route
@@ -102,11 +103,10 @@ export default Ember.Route.extend({
                 if (error.host) {
                     storageDnsSuffix = error.host;
                 } else {
-                    storageDnsSuffix = 'blob.core.windows.net';
+                    storageDnsSuffix = config.dnsSuffixContent[0];
                 }
 
                 if (error.code && (error.code === 'ENOTFOUND' || error.code === 'OutOfRangeInput')) {
-                    // Please check the DNS suffix is correct (leaving it blank will default to core.windows.net)')
                     this.controller.set('lastError', stringResources.storageHostConnectionErrorMessage(storageDnsSuffix));
                 } else if (error.code && error.code === 'AuthenticationFailed') {
                     this.controller.set('lastError', stringResources.storageRejectedAccountKey());
