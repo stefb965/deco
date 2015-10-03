@@ -1,10 +1,12 @@
 import Ember from 'ember';
 import config from '../config/environment';
+import accountUtils from '../utils/account';
 
 /**
  * Ember Welcome Route
  */
 export default Ember.Route.extend({
+    activeConnection: Ember.computed.alias('application.activeConnection'),
     /**
      * Get all accounts, set them as model
      */
@@ -25,10 +27,18 @@ export default Ember.Route.extend({
 
         if (!model || !model.content || model.content.length < 1) {
             return;
-        } else {
+        }
+
+        accountUtils.getActiveAccount(this.store).then(activeAccount => {
+            if (activeAccount && activeAccount.get('id')) {
+                controller.set('selectedEditAccount', activeAccount.get('id'));
+                controller.set('selectedAccount', activeAccount.get('id'));
+            }
+        }).catch(() => {
+            // default back to the first account
             controller.set('selectedEditAccount', model.content[0].id);
             controller.set('selectedAccount', model.content[0].id);
-        }
+        });
     },
 
     /**
