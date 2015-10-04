@@ -79,8 +79,8 @@
   },
   "main": "electron.js",
   "dependencies": {
-    "azure-storage": "^0.4.3",
-    "fs-extra": "^0.22.1",
-    "electron-gh-releases": "^1.0.1"
+    "azure-storage": "^0.6.0",
+    "electron-gh-releases": "^1.0.1",
+    "fs-extra": "^0.22.1"
   }
 }
