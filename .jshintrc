@@ -4,7 +4,6 @@
     "browser": true,
     "nomen": false,
     "bitwise": true,
-    "curly": true,
     "eqeqeq": true,
     "forin": true,
     "immed": true,

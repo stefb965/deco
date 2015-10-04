@@ -111,57 +111,32 @@ export default DS.Adapter.extend({
      * @return {Promise}
      */
     findQuery: function (store, type, snapshot) {
-        var self = this,
-            // null means root directory
-            prefix = (snapshot.prefix === '/') ? null : snapshot.prefix,
-            blobService,
-            listBlobsSegmentedWithPrefix;
+        var prefix = (snapshot.prefix === '/') ? null : snapshot.prefix, // null means root directory
+            name = snapshot.container.get('name'),
+            token = snapshot.container.get('currentToken');
 
-        return accountUtils.getBlobService(self.store, self.get('azureStorage'))
-            .then(blobSvc => {
-                blobService = blobSvc;
-                listBlobsSegmentedWithPrefix = Ember.RSVP.denodeify(
-                    blobService.listBlobsSegmentedWithPrefix);
+        return accountUtils.getBlobService(this.store, this.get('azureStorage')).then(blobService => {
+            let listBlobsSegmentedWithPrefix = Ember.RSVP.denodeify(blobService.listBlobsSegmentedWithPrefix);
 
-                return listBlobsSegmentedWithPrefix.call(blobService,
-                    snapshot.container.get('name'), prefix, null, {
-                        delimiter: '/'
-                    });
-            })
-            .then(result => {
-                var blobs = [];
-
-                // Fill out the blob models
-                for (var i in result.entries) {
-                    if (i % 1 === 0) {
-                        let blobModel = {
-                            id: result.entries[i].name,
-                            name: result.entries[i].name,
-                            size: parseInt(result.entries[i].properties['content-length']),
-                            type: result.entries[i].properties['content-type'],
-                            lastModified: new Date(Date.parse(result.entries[i].properties['last-modified'])),
-                            container: snapshot.container,
-                            leaseState: result.entries[i].properties.leasestate,
-                            leaseStatus: result.entries[i].properties.leasestatus,
-                            container_id: snapshot.container_id,
-                            blobType: result.entries[i].properties.blobtype,
-                            contentLanguage: result.entries[i].properties['content-language'],
-                            contentMd5: result.entries[i].properties['content-md5'],
-                            contentDisposition: result.entries[i].properties['content-disposition'],
-                            leaseID: result.entries[i].properties.leaseid,
-                            etag: result.entries[i].properties.etag
-                        };
-                        blobs.push(blobModel);
-                    }
-                }
-
-                return blobs;
-            })
-            .catch(error => {
-                Ember.Logger.error(error);
-                appInsights.trackException(error);
-                throw error;
+            return listBlobsSegmentedWithPrefix.call(blobService, name, prefix, token, {
+                delimiter: '/',
+                maxResults: 100,
+                useNagleAlgorithm: true
             });
+        }).then(result => {
+            // Save the continuation token (even if it's empty)
+            store.find('container', snapshot.container_id).then((foundContainer) => {
+                try {
+                    foundContainer.set('currentToken', result.continuationToken);
+                } catch (error) {}
+            });
+
+            return this.get('nodeServices').blobModelFromAzureResult(result, snapshot);
+        }).catch(error => {
+            Ember.Logger.error(error);
+            appInsights.trackException(error);
+            throw error;
+        });
     },
 
     /**

@@ -175,13 +175,13 @@ export default Ember.Controller.extend({
                 }
 
                 this.store.find('serviceSettings', activeAccountId).then(settings => {
-                    this.set('application.serviceSettings', settings);
-                    this.transitionToRoute('explorer');
-                })
-                .catch((error) => {
-                    this.send('error', error);
-                    this.set('loading', false);
-                });
+                        this.set('application.serviceSettings', settings);
+                        this.transitionToRoute('explorer');
+                    })
+                    .catch((error) => {
+                        this.send('error', error);
+                        this.set('loading', false);
+                    });
             });
 
             appInsights.trackEvent('Connect');

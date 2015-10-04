@@ -15,6 +15,8 @@ export default Ember.Controller.extend({
     activeConnection: Ember.computed.alias('application.activeConnection'),
     azureStorage: Ember.computed.alias('nodeServices.azureStorage'),
     fileSvc: Ember.computed.alias('nodeServices.fs'),
+    moreBlobsAvailable: Ember.computed.alias('activeContainerRecord.currentToken'),
+    blobsSorted: Ember.computed.sort('blobs', 'blobsSortProperty'),
     nodeServices: Ember.inject.service(),
 
     // Properties
@@ -45,8 +47,6 @@ export default Ember.Controller.extend({
      * all the containers matching the query.
      * @return {Promise}
      */
-    blobsSorted: Ember.computed.sort('blobs', 'blobsSortProperty'),
-
     containers: function () {
         if (!this.get('searchQuery')) {
             return this.get('model');
@@ -81,43 +81,41 @@ export default Ember.Controller.extend({
      * setting up blobs
      */
     activeContainerObserver: function () {
-        if (!this.get('containers') || !this.get('containers').get('firstObject')) {
-            return; // if there are no containers bail out (in case of empty search)
-        }
+        if (!this.get('containers') || !this.get('containers').get('firstObject')) return;
 
         if (!this.get('activeContainer')) {
             this.set('activeContainer', this.get('containers').get('firstObject').get('id'));
             this.set('activeContainerRecord', this.get('containers').get('firstObject'));
         }
 
-        var activeContainer = this.get('activeContainer'),
-            blobs = [],
-            subDirs = [];
-
-        // clear out subdirs'
         this.set('blobsLoading', true);
         this.set('subDirectories', []);
 
-        return this.store.find('container', activeContainer).then(result => {
-            if (result) {
-                result.set('blobPrefixFilter', this.get('currentPath'));
-                blobs = result.get('blobs');
+        this.store.find('container', this.get('activeContainer')).then(foundContainer => {
+            if (!foundContainer || foundContainer.isDestroying) return;
 
-                result.listDirectoriesWithPrefix(this.get('currentPath')).then(result => {
+            foundContainer.set('blobPrefixFilter', this.get('currentPath'));
+            foundContainer.get('blobs').then((foundBlobs) => {
+                this.set('blobs', foundBlobs);
+
+                foundContainer.listDirectoriesWithPrefix(this.get('currentPath')).then(result => {
+                    let subDirs = [];
+
+                    if (!result) return;
+
                     result.forEach(dir => {
                         subDirs.push({
                             name: dir.name,
                             selected: false
                         });
                     });
+
                     this.set('subDirectories', subDirs);
+                    this.set('blobsLoading', false);
                 });
-            }
 
-            this.set('blobs', blobs);
-            this.set('blobsLoading', false);
-
-            appInsights.trackMetric('BlobsInContainer', blobs.length);
+                appInsights.trackMetric('BlobsInContainer', foundBlobs.length);
+            });
         });
     }.observes('containers', 'activeContainer', 'model'),
 
@@ -141,11 +139,9 @@ export default Ember.Controller.extend({
     copySingleBlob: function (blob) {
         var activeContainer = this.get('activeContainer');
         var azureDestPath = this.get('modalCopyDestinationPath');
-        if (!azureDestPath) {
-            return;
-        }
-        azureDestPath = azureDestPath.toLowerCase();
-        this.get('uploaddownload').send('copyBlobData', blob, azureDestPath, activeContainer);
+
+        if (!azureDestPath) return;
+        this.get('uploaddownload').send('copyBlobData', blob, azureDestPath.toLowerCase(), activeContainer);
     },
 
     /**
@@ -201,19 +197,21 @@ export default Ember.Controller.extend({
          * @param  {DS.Record Container} selectedContainer - The container to be selected
          */
         switchActiveContainer: function (selectedContainer) {
-            if (selectedContainer === this.get('activeContainer')) {
-                return;
-            }
+            if (selectedContainer === this.get('activeContainer')) return;
+
             this.set('pathSegments', [{
                 name: '/'
             }]);
             this.set('allBlobSelected', false);
 
-            this.store.find('container', selectedContainer)
-                .then(container => {
-                    this.set('activeContainerRecord', container);
-                });
-            this.set('activeContainer', selectedContainer);
+            if (this.get('activeContainerRecord') && !this.get('activeContainerRecord').isDestroying) {
+                this.set('activeContainerRecord.currentToken', null);
+            }
+
+            this.store.find('container', selectedContainer).then(container => {
+                this.set('activeContainerRecord', container);
+                this.set('activeContainer', selectedContainer);
+            });
 
             appInsights.trackEvent('switchActiveContainer');
         },
@@ -247,9 +245,7 @@ export default Ember.Controller.extend({
 
             // we have recieved a literal path
             directory.name.split('/').forEach(segment => {
-                if (segment === '') {
-                    return;
-                }
+                if (segment === '') return;
 
                 pathSegs.push({
                     name: segment + '/'
@@ -348,9 +344,7 @@ export default Ember.Controller.extend({
                 }
             };
 
-            if (selectedDirectories.length < 1) {
-                return executeDownload();
-            }
+            if (selectedDirectories.length < 1) return executeDownload();
 
             this.store.find('container', this.get('activeContainer')).then(container => {
                 selectedDirectories.forEach(directory => {
@@ -400,9 +394,7 @@ export default Ember.Controller.extend({
             });
 
             // Bail out if we have nothing to copy
-            if (blobCopyCount < 1 && folderCopyCount < 1) {
-                return;
-            }
+            if (blobCopyCount < 1 && folderCopyCount < 1) return;
 
             // Setup values expected by copy modal
             if (blobCopyCount > 0 && folderCopyCount > 0) {
@@ -478,9 +470,7 @@ export default Ember.Controller.extend({
             });
 
             // Bail out if we have nothing to delete
-            if (blobDeleteCount < 1 && folderDeleteCount < 1) {
-                return;
-            }
+            if (blobDeleteCount < 1 && folderDeleteCount < 1) return;
 
             // Setup values expected by delete modal
             if (blobDeleteCount > 0 && folderDeleteCount > 0) {
@@ -493,8 +483,8 @@ export default Ember.Controller.extend({
 
             this.set('modalConfirmAction', 'deleteBlobData');
             this.set('modalDeleteText', deleteText);
-            this.send('openModal', '#modal-delete');
 
+            Ember.run.later(() => this.send('openModal', '#modal-delete'));
             appInsights.trackEvent('deleteBlobs');
         },
 
@@ -567,14 +557,11 @@ export default Ember.Controller.extend({
         addContainerData: function () {
             let name = this.get('newContainerName') ? this.get('newContainerName').toLowerCase().replace(/ /g, '-') : '';
 
-            if (!name) {
-                return;
-            }
+            if (!name) return;
 
             if (!this.containerNameIsValid(name)) {
                 this.set('application.lastError', stringResources.containerNameInvalidMessage(name));
                 this.send('openErrorModal');
-                console.log('name invalid');
                 return;
             }
 
@@ -598,20 +585,18 @@ export default Ember.Controller.extend({
         deleteContainerData: function () {
             let name = this.get('activeContainer');
 
-            if (!name) {
-                return;
-            }
+            if (!name) return;
 
             this.store.find('container', name).then(container => {
                 if (container) {
+                    let firstContainer = this.get('containers').get('firstObject').get('id');
+                    this.send('switchActiveContainer', firstContainer);
+
                     container.deleteRecord();
                     this.get('notifications').addPromiseNotification(container.save(), Notification.create({
                         type: 'DeleteContainer',
                         text: stringResources.deleteContainerMessage(name)
                     }));
-
-                    let firstContainer = this.get('containers').get('firstObject').get('id');
-                    this.send('switchActiveContainer', firstContainer);
                 }
             });
         },
@@ -631,6 +616,28 @@ export default Ember.Controller.extend({
             }
 
             this.set('blobsSortProperty', [sortProperty]);
+        },
+
+        /**
+         * Attempts to fetch more blobs for the current container, using the continuiation token
+         * feature in the Azure Storage SDK
+         */
+        loadMoreBlobs: function () {
+            if (!this.get('activeContainerRecord')) return;
+
+            this.get('activeContainerRecord').fetchMoreBlobs().then((moreBlobs) => {
+                if (!moreBlobs || !moreBlobs.content || moreBlobs.content.length === 0) return;
+
+                let currentBlobs = this.get('blobs');
+                currentBlobs.pushObjects(moreBlobs.content);
+                this.set('blobs', currentBlobs);
+
+                Ember.run.schedule('afterRender', () => {
+                    Ember.$('.tableContainer').animate({
+                        scrollTop: Ember.$('.tableContainer')[0].scrollHeight
+                    });
+                });
+            });
         }
     }
 });

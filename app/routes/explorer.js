@@ -101,6 +101,7 @@ export default Ember.Route.extend({
 
             Ember.run.next(() => {
                 controller.set('activeContainer', null);
+                controller.set('activeContainerRecord', null);
                 windowMenu.setup(false);
             });
         }
