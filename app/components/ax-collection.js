@@ -14,7 +14,6 @@ export default Ember.Component.extend({
 
     actions: {
         select: function (item) {
-            console.log(item);
             this.set('selectedValue', item);
             this.sendAction();
         }

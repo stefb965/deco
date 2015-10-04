@@ -26,7 +26,6 @@ export default Ember.Component.extend({
             return;
         }
         this.get(property).forEach(origin => {
-            console.log(origin);
             displayString += origin.get('Value') + ';';
         });
         return displayString;

@@ -46,7 +46,6 @@
     "requireParenthesesAroundIIFE": true,
     "requireSpaceAfterBinaryOperators": true,
     "requireSpaceAfterKeywords": [
-        "if",
         "else",
         "for",
         "while",

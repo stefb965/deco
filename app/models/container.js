@@ -24,7 +24,10 @@ var Container = DS.Model.extend({
     leaseState: DS.attr('string', {
         defaultValue: ''
     }),
-    publicAccessLevel: ('string', { // Public access level of the container
+    publicAccessLevel: DS.attr('string', { // Public access level of the container
+        defaultValue: null
+    }),
+    currentToken: DS.attr('string', { // If we didn't grab all blobs for this container, this is the token to fetch more records
         defaultValue: null
     }),
 
@@ -32,6 +35,8 @@ var Container = DS.Model.extend({
      * Returns all the blobs in this container, accounting for faked folders
      */
     blobs: function () {
+        this.set('currentToken', null);
+
         return this.store.find('blob', {
             container: this,
             container_id: this.get('name'),
@@ -40,32 +45,48 @@ var Container = DS.Model.extend({
     }.property().volatile(),
 
     /**
+     * Tries to fetch more blobs using a continuation token
+     */
+    fetchMoreBlobs: function () {
+        return new Ember.RSVP.Promise((resolve) => {
+            // Bail out if we couldn't fetch more blobs
+            if (!this.get('currentToken')) {
+                return resolve();
+            }
+
+            return this.store.find('blob', {
+                container: this,
+                container_id: this.get('name'),
+                prefix: this.get('blobPrefixFilter'),
+                currentToken: this.get('currentToken')
+            }).then((result) => {
+                resolve(result);
+            });
+        });
+    },
+
+    /**
      * Lists the "faked" directories for this container
      * @param  {string} prefix - Which prefix to use
      */
     listDirectoriesWithPrefix: function (prefix) {
-        var self = this;
-
-        return accountUtil.getBlobService(self.store, self.get('azureStorage'))
-            .then(blobService => {
-                var listBlobDirectoriesSegmentedWithPrefix = Ember.RSVP.denodeify(blobService.listBlobDirectoriesSegmentedWithPrefix);
-                return listBlobDirectoriesSegmentedWithPrefix.call(blobService, self.get('name'), prefix, null);
-            })
-            .then(result => {
-                var entries = [];
-                result.entries.forEach(dir => {
-                    // our own directory is not a subdirectory of itself
-                    // azure api will return it though - so filter it
-                    if (dir.name !== prefix) {
-                        entries.push(dir);
-                    }
-                });
-
-                return entries;
-            })
-            .catch(error => {
-                appInsights.trackException(error);
+        return accountUtil.getBlobService(this.store, this.get('azureStorage')).then(blobService => {
+            var listBlobDirectoriesSegmentedWithPrefix = Ember.RSVP.denodeify(blobService.listBlobDirectoriesSegmentedWithPrefix);
+            return listBlobDirectoriesSegmentedWithPrefix.call(blobService, this.get('name'), prefix, null);
+        }).then(result => {
+            var entries = [];
+            result.entries.forEach(dir => {
+                // our own directory is not a subdirectory of itself
+                // azure api will return it though - so filter it
+                if (dir.name !== prefix) {
+                    entries.push(dir);
+                }
             });
+
+            return entries;
+        }).catch(error => {
+            appInsights.trackException(error);
+        });
     },
 
     /**
@@ -76,36 +97,30 @@ var Container = DS.Model.extend({
      */
     uploadBlob: function (path, blobName) {
         var container = this.get('name'),
-            self = this,
             speedSummary = {
                 summary: null
             };
 
-        return accountUtil.getBlobService(self.store, self.get('azureStorage'))
-            .then(blobService => {
-                var SpeedSummary = self.get('azureStorage').BlobService.SpeedSummary,
-                    createBlockBlobFromLocalFile = Ember.RSVP.denodeify(blobService.createBlockBlobFromLocalFile);
+        return accountUtil.getBlobService(this.store, this.get('azureStorage')).then(blobService => {
+            var SpeedSummary = this.get('azureStorage').BlobService.SpeedSummary,
+                createBlockBlobFromLocalFile = Ember.RSVP.denodeify(blobService.createBlockBlobFromLocalFile);
 
-                speedSummary.summary = new SpeedSummary();
+            speedSummary.summary = new SpeedSummary();
 
-                var promise = createBlockBlobFromLocalFile.call(blobService, container, blobName, path, {
-                        speedSummary: speedSummary.summary
-                    })
-                    .then(response => {
-                        return response.entries;
-                    })
-                    .catch(error => {
-                        appInsights.trackException(error);
-                    });
-
-                return {
-                    promise: promise,
-                    speedSummary: speedSummary
-                };
-            })
-            .catch(error => {
+            var promise = createBlockBlobFromLocalFile.call(blobService, container, blobName, path, {
+                speedSummary: speedSummary.summary
+            }).then(response => {
+                return response.entries;
+            }).catch(error => {
                 appInsights.trackException(error);
             });
+            return {
+                promise: promise,
+                speedSummary: speedSummary
+            };
+        }).catch(error => {
+            appInsights.trackException(error);
+        });
     },
 
     /**
@@ -116,30 +131,29 @@ var Container = DS.Model.extend({
      * @return {object} - An object containing a promise and SpeedSummary tracking object
      */
     copyBlob: function (sourceUri, targetContainerName, targetBlobName) {
-        var self = this,
-            speedSummary = {
-                summary: null
-            };
-        return accountUtil.getBlobService(self.store, self.get('azureStorage'))
-            .then(blobService => {
-                var SpeedSummary = self.get('azureStorage').BlobService.SpeedSummary;
-                speedSummary.summary = new SpeedSummary();
+        var speedSummary = {
+            summary: null
+        };
 
-                return {
-                    promise: new Ember.RSVP.Promise(function (resolve, reject) {
-                        blobService.startCopyBlob(sourceUri, targetContainerName, targetBlobName, {
-                            speedSummary: speedSummary.summary
-                        }, (err, result, response) => {
-                            if (!err) {
-                                return resolve(response.entries);
-                            } else {
-                                return reject(err);
-                            }
-                        });
-                    }),
-                    speedSummary: speedSummary
-                };
-            });
+        return accountUtil.getBlobService(this.store, this.get('azureStorage')).then(blobService => {
+            var SpeedSummary = this.get('azureStorage').BlobService.SpeedSummary;
+            speedSummary.summary = new SpeedSummary();
+
+            return {
+                promise: new Ember.RSVP.Promise(function (resolve, reject) {
+                    blobService.startCopyBlob(sourceUri, targetContainerName, targetBlobName, {
+                        speedSummary: speedSummary.summary
+                    }, (err, result, response) => {
+                        if (!err) {
+                            return resolve(response.entries);
+                        } else {
+                            return reject(err);
+                        }
+                    });
+                }),
+                speedSummary: speedSummary
+            };
+        });
     },
 
     /**
@@ -147,15 +161,12 @@ var Container = DS.Model.extend({
      * @param {string}             permissionLevel BLOB|OFF|CONTAINER
      */
     setAccessControlLevel: function (permissionLevel) {
-        var self = this;
-
-        return accountUtil.getBlobService(self.store, self.get('azureStorage'))
-            .then(blobService => {
-                var setContainerAcl = Ember.RSVP.denodeify(blobService.setContainerAcl);
-                Ember.Logger.debug('setting container access level to: ');
-                Ember.Logger.debug(self.get('azureStorage').BlobUtilities.BlobContainerPublicAccessType[permissionLevel]);
-                return setContainerAcl.call(blobService, self.get('name'), null, self.get('azureStorage').BlobUtilities.BlobContainerPublicAccessType[permissionLevel]);
-            });
+        return accountUtil.getBlobService(this.store, this.get('azureStorage')).then(blobService => {
+            var setContainerAcl = Ember.RSVP.denodeify(blobService.setContainerAcl);
+            Ember.Logger.debug('setting container access level to: ');
+            Ember.Logger.debug(this.get('azureStorage').BlobUtilities.BlobContainerPublicAccessType[permissionLevel]);
+            return setContainerAcl.call(blobService, this.get('name'), null, this.get('azureStorage').BlobUtilities.BlobContainerPublicAccessType[permissionLevel]);
+        });
     },
 
     /**
@@ -163,13 +174,10 @@ var Container = DS.Model.extend({
      * @return {ContainerResult} - An object containing the details of the container and permissions level
      */
     getAccessControlLevel: function () {
-        var self = this;
-
-        return accountUtil.getBlobService(self.store, self.get('azureStorage'))
-            .then(blobService => {
-                var getContainerAcl = Ember.RSVP.denodeify(blobService.getContainerAcl);
-                return getContainerAcl.call(blobService, self.get('name'));
-            });
+        return accountUtil.getBlobService(this.store, this.get('azureStorage')).then(blobService => {
+            var getContainerAcl = Ember.RSVP.denodeify(blobService.getContainerAcl);
+            return getContainerAcl.call(blobService, this.get('name'));
+        });
     },
 
     azureStorage: Ember.computed.alias('nodeServices.azureStorage')

@@ -150,7 +150,7 @@ test('it should reset path segments when switching containers', function (assert
 });
 
 test('it should change directory based on path segment', function (assert) {
-    var ctrl = combinedStart(assert, globals, 34, this.subject()),
+    var ctrl = combinedStart(assert, globals, 35, this.subject()),
         sentChangeAction = false,
         sentPathSegmentChangeAction = false;
 
@@ -189,7 +189,7 @@ test('it should change directory based on path segment', function (assert) {
 });
 
 test('it should change subdirectories', function (assert) {
-    var ctrl = combinedStart(assert, globals, 34, this.subject()),
+    var ctrl = combinedStart(assert, globals, 35, this.subject()),
         sentChangeAction = false,
         sentChangeUpAction = false;
 
@@ -262,30 +262,27 @@ test('it should delete all but 1 blobs', function (assert) {
 
     ctrl.set('searchQuery', 'testcontainer');
     ctrl.addObserver('blobs', ctrl, () => {
-        ctrl.get('blobs').then(blobs => {
-            initialBlobCount = blobs.get('length');
+        var blobs = ctrl.get('blobs');
+        initialBlobCount = blobs.get('length');
 
-            blobs.forEach(function (blob) {
-                if (count > 2) {
-                    return;
-                }
+        blobs.forEach(function (blob) {
+            if (count > 2) {
+                return;
+            }
 
-                blob.set('selected', true);
-                count++;
-            });
-
-            // bind to the record array as it changes
-            ctrl.addObserver('blobs.@each', ctrl, () => {
-                ctrl.get('blobs').then(blobs => {
-                    blobCount += 1;
-                    if (blobCount === 3) {
-                        assert.ok(blobs.get('length') === initialBlobCount - 3);
-                    }
-                });
-            });
-
-            ctrl.send('deleteBlobData');
+            blob.set('selected', true);
+            count++;
         });
+
+        // bind to the record array as it changes
+        ctrl.addObserver('blobs.@each', ctrl, () => {
+            blobCount += 1;
+            if (blobCount === 3) {
+                assert.ok(blobs.get('length') === initialBlobCount - 3);
+            }
+        });
+
+        ctrl.send('deleteBlobData');
     });
 
     Ember.run(() => {
@@ -296,18 +293,13 @@ test('it should delete all but 1 blobs', function (assert) {
 });
 
 test('it should delete no blobs', function (assert) {
-    var ctrl = combinedStart(assert, globals, 13, this.subject()),
-        initialBlobCount;
+    var ctrl = combinedStart(assert, globals, 13, this.subject());
 
     ctrl.set('searchQuery', 'testcontainer');
     ctrl.addObserver('blobs', ctrl, () => {
-        ctrl.get('blobs').then(blobs => {
-            initialBlobCount = blobs.get('length');
-            ctrl.send('deleteBlobData');
-            return ctrl.get('blobs');
-        }).then(blobs => {
-            assert.ok(blobs.get('length') === initialBlobCount);
-        });
+        let initialBlobCount = ctrl.get('blobs').get('length');
+        ctrl.send('deleteBlobData');
+        assert.ok(ctrl.get('blobs').get('length') === initialBlobCount);
     });
 
     Ember.run(() => {
@@ -325,29 +317,27 @@ test('it should copy a selected blob from one container to another', function (a
     ctrl.set('modalCopyDestinationPath', 'testcontainer3');
 
     ctrl.addObserver('blobs', ctrl, () => {
-        ctrl.get('blobs')
-            .then(blobs => {
-                var count = 0;
-                blobs.forEach(function (blob) {
-                    if (count > 0) {
-                        return;
-                    }
-                    blob.set('selected', true);
-                    count++;
-                    blob.getLink().then(result => {
-                        uri = result.url;
-                        
-                        ctrl.get('containers').then((containers) => {
-                            containers.forEach((container) => {
-                                if (container.id === 'testcontainer') {
-                                    container.copyBlob(uri, 'testcontainer3', 'test-blob-1.mp4');
-                                }
-                            });
-                        });
+        let blobs = ctrl.get('blobs');
+        let count = 0;
+
+        blobs.forEach(function (blob) {
+            if (count > 0) return;
+            
+            blob.set('selected', true);
+            count++;
+            blob.getLink().then(result => {
+                uri = result.url;
+                
+                ctrl.get('containers').then((containers) => {
+                    containers.forEach((container) => {
+                        if (container.id === 'testcontainer') {
+                            container.copyBlob(uri, 'testcontainer3', 'test-blob-1.mp4');
+                        }
                     });
                 });
             });
         });
+    });
 
     Ember.run(() => {
         ctrl.get('containers').then(() => {

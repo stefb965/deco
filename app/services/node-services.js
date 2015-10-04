@@ -43,5 +43,43 @@ export default Ember.Service.extend({
                 }
             });
         });
+    },
+
+    /**
+     * Takes an Azure Storage SDK Result and turns it into an array of blob models
+     * @param  {[object]} result   Azure Storage SDK's result
+     * @param  {object} snapshot   Ember Data snapshot
+     * @return {Promise}
+     */
+    blobModelFromAzureResult: function (result, snapshot) {
+        return new Ember.RSVP.Promise(function (resolve) {
+            var blobs = [];
+
+            // Fill out the blob models
+            for (var i in result.entries) {
+                if (i % 1 === 0) {
+                    let blobModel = {
+                        id: result.entries[i].name,
+                        name: result.entries[i].name,
+                        size: parseInt(result.entries[i].properties['content-length']),
+                        type: result.entries[i].properties['content-type'],
+                        lastModified: new Date(Date.parse(result.entries[i].properties['last-modified'])),
+                        container: snapshot.container,
+                        leaseState: result.entries[i].properties.leasestate,
+                        leaseStatus: result.entries[i].properties.leasestatus,
+                        container_id: snapshot.container_id,
+                        blobType: result.entries[i].properties.blobtype,
+                        contentLanguage: result.entries[i].properties['content-language'],
+                        contentMd5: result.entries[i].properties['content-md5'],
+                        contentDisposition: result.entries[i].properties['content-disposition'],
+                        leaseID: result.entries[i].properties.leaseid,
+                        etag: result.entries[i].properties.etag
+                    };
+                    blobs.push(blobModel);
+                }
+            }
+
+            resolve(blobs);
+        });
     }
 });
