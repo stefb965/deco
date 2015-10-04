@@ -4,6 +4,14 @@ div.folder {
     height: calc(100vh - 64px);
 }
 
+div.explorer-container {
+    background: #fff;
+}
+
+div.explorer-container.loading {
+    opacity: 0.3;
+}
+
 .folder {
     background-color: $primary-color;
 
@@ -67,6 +75,28 @@ div.folder {
 }
 
 .files {
+    div.blobsLoading {
+        position: absolute;
+        height: calc(100vh - 64px);
+        width: calc(100vw - 255px);;
+        z-index: 100;
+        pointer-events: none;
+        
+        div.background {
+            background: #fff;
+            height: calc(100vh - 64px);
+            width: calc(100vw - 255px);
+        }
+
+        div.loadingMessage {
+            height: 200px;
+            margin: auto;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            text-align: center;
+        }
+    }
+
     div.container {
         background-color: #fff;
         height: calc(100vh - 64px);
