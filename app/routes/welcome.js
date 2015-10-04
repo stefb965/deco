@@ -69,6 +69,7 @@ export default Ember.Route.extend({
          */
         didTransition: function () {
             this.controller.send('selectize');
+            this.controller.set('loading', false);
         },
 
         /**
