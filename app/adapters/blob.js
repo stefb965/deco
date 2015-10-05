@@ -131,7 +131,32 @@ export default DS.Adapter.extend({
                 } catch (error) {}
             });
 
-            return this.get('nodeServices').blobModelFromAzureResult(result, snapshot);
+            return new Ember.RSVP.Promise(function (resolve) {
+                var blobs = [];
+
+                // Fill out the blob models
+                result.entries.forEach(entry => {
+                    blobs.push({
+                        id: entry.name,
+                        name: entry.name,
+                        size: parseInt(entry.properties['content-length']),
+                        type: entry.properties['content-type'],
+                        lastModified: new Date(Date.parse(entry.properties['last-modified'])),
+                        container: snapshot.container,
+                        leaseState: entry.properties.leasestate,
+                        leaseStatus: entry.properties.leasestatus,
+                        container_id: snapshot.container_id,
+                        blobType: entry.properties.blobtype,
+                        contentLanguage: entry.properties['content-language'],
+                        contentMd5: entry.properties['content-md5'],
+                        contentDisposition: entry.properties['content-disposition'],
+                        leaseID: entry.properties.leaseid,
+                        etag: entry.properties.etag
+                    });
+                });
+
+                resolve(blobs);
+            });
         }).catch(error => {
             Ember.Logger.error(error);
             appInsights.trackException(error);
