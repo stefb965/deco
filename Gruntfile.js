@@ -37,7 +37,7 @@ module.exports = function (grunt) {
                 }]
             },
             target: {
-                dest: './builds/storageexplorer-darwin-x64/storageexplorer.dmg'
+                dest: './builds/Azure Storage Explorer-darwin-x64/storageexplorer.dmg'
             }
         },
         copy: {
@@ -108,7 +108,7 @@ module.exports = function (grunt) {
         electron: {
             osx: {
                 options: {
-                    name: 'storageexplorer',
+                    name: 'Azure Storage Explorer',
                     platform: 'darwin',
                     arch: 'x64',
                     dir: 'electronbuildcache',

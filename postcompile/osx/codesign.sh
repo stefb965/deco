@@ -37,7 +37,7 @@ codesign --deep --force --verify --verbose --sign "$identity" "$app"
 
 
 echo "### Zipping app"
-ditto -c -k --sequesterRsrc --keepParent ./builds/storageexplorer-darwin-x64/storageexplorer.app/ ./builds/storageexplorer-osx.zip
+ditto -c -k --sequesterRsrc --keepParent "./builds/Azure Storage Explorer-darwin-x64/Azure Storage Explorer.app/" ./builds/storageexplorer-osx.zip
 
 echo "### verifying signature",
 codesign -vvvv -d "$app"
