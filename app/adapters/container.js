@@ -124,13 +124,12 @@ export default DS.Adapter.extend({
             })
             .then(data => {
                 var containerModels = [];
-                for (var i in data.entries) {
-                    if (i % 1 === 0) {
-                        containerModels.push(this._entryToContainer(data.entries[i]));
-                    }
-                }
-
-                return containerModels;
+                return new Ember.RSVP.Promise(resolve => {
+                    data.entries.forEach(entry => {
+                        containerModels.push(this._entryToContainer(entry));
+                    });
+                    resolve(containerModels);
+                });
             })
             .catch(error => {
                 Ember.Logger.error(error);
