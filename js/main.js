@@ -2,9 +2,9 @@ var store = {
     os: null,
     downloadLink: null,
     downloadLinks: {
-        macosx: 'https://github.com/azure-storage/deco/releases/download/0.5.0/azure-storage-explorer_osx_050.zip',
-        windows: 'https://github.com/azure-storage/deco/releases/download/0.5.0/azure-storage-explorer_win_050.exe',
-        linux: 'https://github.com/azure-storage/deco/releases/download/0.5.0/azure-storage-explorer_linux_050.zip',
+        macosx: 'https://github.com/azure-storage/deco/releases/download/0.5.1/azure-storage-explorer_osx_051.zip',
+        windows: 'https://github.com/azure-storage/deco/releases/download/0.5.1/azure-storage-explorer_win_051.exe',
+        linux: 'https://github.com/azure-storage/deco/releases/download/0.5.1/azure-storage-explorer_linux_051.zip',
     }
 };
 
@@ -35,7 +35,7 @@ function setupDownloadButton() {
     } else {
         button.text('Download');
     }
-    
+
 }
 
 setupDownloadButton();
