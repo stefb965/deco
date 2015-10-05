@@ -91,8 +91,8 @@ app.on('ready', function onReady() {
         return;
     }
 
-    // Check for update
-    checkForGitHubRelease();
+    // Check for update - enable only when properly tested
+    // checkForGitHubRelease();
 
     mainWindow = new BrowserWindow({
         title: 'Azure Storage Explorer',
