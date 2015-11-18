@@ -7,17 +7,16 @@
         <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
         <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
         <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     </head>
     <body>
         <section class="page-header">
-            <h1 class="project-name">Azure Storage Explorer</h1>
+            <h1 class="project-name">Microsoft Azure Storage Explorer</h1>
             <h2 class="project-tagline">
-            for OS X, Linux, and Windows (and it's free!)
+            for OS X and Windows (and it's free!)
             </h2>
-            <a id="mainDownload" href="#releases" class="btn hidden">Download</a>
-            <a id="mainDownload" href="#releases" class="btn hidden">Other Platforms</a>
-            <a href="https://github.com/azure-storage/deco" class="btn">Source on GitHub</a>
+            <a href="http://go.microsoft.com/fwlink/?LinkId=708343" class="btn">Download for Windows</a>
+            <a href="http://go.microsoft.com/fwlink/?LinkId=708342" class="btn">Download for Mac</a>
         </section>
         <section class="main-content">
             <h1>
@@ -26,51 +25,56 @@
             </a>Manage Your Storage Accounts like a Pro
             </h1>
             <p>
-            <img src="https://raw.githubusercontent.com/azure-storage/deco/764e4e379101a7f8b39633b25580a203929471cd/imgs/screenshot.png" alt=""></p>
-            <p>
-                Project Deco: A file explorer for your Azure <a href="http://azure.microsoft.com/en-us/documentation/articles/storage-introduction/">Blob Storage</a>
-                accounts, enabling you to easily work with your assets and containers from any platform. Create and delete containers, upload, download, and delete whole folders and files, preview media assets - with the free Azure Storage Explorer, you're in full control of your assets.
+                <img src="./imgs/screenshot.png" height="600px" alt="Screenshot">
             </p>
-            <h1><a id="releases" class="anchor" href="#releases" aria-hidden="true"></a>Download</h1>
-            <p>The latest available version is 0.5.1. While we are still working on the app, we invite you to check it out:</p>
-            <div class="downloads">
-                <div>
-                    <i class="fa fa-apple"></i>
-                    <a href="https://github.com/azure-storage/deco/releases/download/0.5.1/azure-storage-explorer_osx_051.zip">Mac OS X</a>
+            <p>
+                Microsoft Azure Storage Explorer (Preview) is a standalone tool to easily work with your Azure Storage Accounts. This preview release enables you to easily work with Blob Storage: create and delete containers; upload, download, and delete blobs, and search across all your containers and your blobs.  For developers and ops, there are more advanced issues to work with SAS keys and Policies. With the free Storage Explorer, you’re in full control of your assets.
+            </p>
+            <div>
+                <div id="features">
+                    <h1>Features</h1>
+                    <p id="featuresOpener">Click to see the full feature list <i class="fa fa-hand-pointer-o"></i></p>
                 </div>
-                <div>
-                    <i class="fa fa-linux"></i>
-                    <a href="https://github.com/azure-storage/deco/releases/download/0.5.1/azure-storage-explorer_linux_051.zip">Linux</a>
-                </div>
-                <div>
-                    <i class="fa fa-windows"></i>
-                    <a href="https://github.com/azure-storage/deco/releases/download/0.5.1/azure-storage-explorer_win_051.exe">Windows</a>
-                </div>
+                <ul id="featuresList" style="display: none">
+                    <li>Features (under collapsible area, or could link to another page if it’s easier)</li>
+                    <li>Mac OS X and Windows versions</li>
+                    <li>Sign in to view your Storage Accounts – use your Org Account, Microsoft Account, 2FA, etc</li>
+                    <li>Add Storage Accounts by account name and key</li>
+                    <li>Local development storage (Windows-only)</li>
+                    <li>ARM and Classic resource support</li>
+                    <li>Create and delete blobs, queues, or tables</li>
+                    <li>Search for specific blobs, queues, or tables</li>
+                    <li>Explore the contents of blob containers</li>
+                    <li>View and navigate through directories</li>
+                    <li>Upload, download, and delete blobs and folders</li>
+                    <li>Generate SAS keys</li>
+                    <li>Manage and create Stored Access Policies</li>
+                    <li>Search for blobs by prefix</li>
+                    <li>Drag ‘n drop files to upload or download</li>
+                </ul>
             </div>
         </section>
         <section class="main-content secondary-content">
-            <h1><a id="devbuilds" class="anchor" href="#releases" aria-hidden="true"></a>Development Builds</h1>
-            <p>These builds are automatically created using the latest source code. They might contain more features than the official release, but they may contain some surprise bugs.</p>
-            <div class="downloads">
-                <div>
-                    <i class="fa fa-apple"></i>
-                    <a href="https://azurestoragexplat.blob.core.windows.net/builds/live/darwin64/build.zip">Mac OS X</a>
-                </div>
-                <div>
-                    <i class="fa fa-linux"></i>
-                    <a href="https://azurestoragexplat.blob.core.windows.net/builds/live/linux32/build.zip">Linux</a>
-                </div>
-                <div>
-                    <i class="fa fa-windows"></i>
-                    <a href="https://azurestoragexplat.blob.core.windows.net/builds/live/win32/build.zip">Windows</a>
-                </div>
+            <div id="issues">
+                <h1>Known Issues</h1>
+                <p id="issuesOpener">Click to see the full list of known issues <i class="fa fa-hand-pointer-o"></i></p>
             </div>
+            <ul id="issuesList" style="display: none"> 
+                <li>Cannot view/take actions on Queues or Tables besides creation and deletion</li>
+                <li>After reentering credentials, you may need to manually refresh Storage Explorer to show your Storage Account</li>
+                <li>Activity log entries may sometimes remain in an "in progress" state when an error occurs, and the error is not displayed</li>
+                <li>When setting blob container public access level, the new value is not updated until you re-set the focus on the container. Also, the dialog always defaults to "No public access", and not the actual current value.</li>
+                <li>Cannot rename blobs from blob download dialog</li>
+                <li>Uploading or download a large number of blobs (500+) may sometimes cause the app to have a white screen</li>
+                <li>No keyboard shortcut to delete blobs - must use delete action on toolbar or context menu command</li>
+            </ul>
+            <section class="main-content secondary-content">
+                <h1>Project Deco</h1>
+                <p>Looking for the old Linux or the open-source version? <a href="http://github.com/azure-storage/deco">It's still available on GitHub!</a></p>
+            </section>
             <footer class="site-footer">
                 <span class="site-footer-owner">
-                    Maintained by <a href="https://github.com/sedouard">Steven Edouard</a>, <a href="https://github.com/felixrieseberg">Felix Rieseberg</a>, and <a href="https://ritazh.com/">Rita Zhang</a>. (C) 2015 Copyright Microsoft Corporation.
-                </span>
-                <span class="site-footer-credits">
-                    Released under the MIT license. See <a href="https://github.com/azure-storage/deco">source code</a> for details.
+                    (C) 2015 Copyright Microsoft Corporation
                 </span>
             </footer>
         </section>

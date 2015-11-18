@@ -23,3 +23,5 @@ testem.log
 /cache
 /nwbuildcache
 /webkitbuilds
+/electronbuildcache
+/builds

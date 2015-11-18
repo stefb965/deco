@@ -211,8 +211,7 @@ a:hover
 .main-content img
 {
     max-width: 120%;
-    margin-left: -10%;
-}
+    }
 .main-content h1,
 .main-content h2,
 .main-content h3,
@@ -225,7 +224,7 @@ a:hover
     margin-top: 2rem;
     margin-bottom: 1rem;
 
-    color: #8ac340;
+    color: #56A9FA;
 }
 .main-content p
 {
@@ -394,7 +393,7 @@ a:hover
 
         max-width: 64rem;
         margin: 0 auto;
-        padding: 2rem 6rem;
+        padding: 2rem 6rem 0rem 6rem;
     }
 }
 
@@ -467,4 +466,16 @@ a:hover
     display: inline-block;
     font-size: 2em;
     margin-right: 40px;
+}
+
+.main-content ul {
+    text-align: left;
+}
+
+#features, #issues {
+    cursor: pointer;
+}
+
+.site-footer {
+    padding-bottom: 2rem;
 }
