@@ -17,6 +17,7 @@
             </h2>
             <a href="http://go.microsoft.com/fwlink/?LinkId=708343" class="btn">Download for Windows</a>
             <a href="http://go.microsoft.com/fwlink/?LinkId=708342" class="btn">Download for Mac</a>
+            <a href="http://go.microsoft.com/fwlink/?LinkId=722418" class="btn">Download for Linux</a>
         </section>
         <section class="main-content">
             <h1>
@@ -28,7 +29,7 @@
                 <img src="./imgs/screenshot.png" height="600px" alt="Screenshot">
             </p>
             <p>
-                Microsoft Azure Storage Explorer (Preview) is a standalone tool to easily work with your Azure Storage Accounts. This preview release enables you to easily work with Blob Storage: create and delete containers; upload, download, and delete blobs, and search across all your containers and your blobs.  For developers and ops, there are more advanced issues to work with SAS keys and Policies. With the free Storage Explorer, you’re in full control of your assets.
+                Microsoft Azure Storage Explorer (Preview) is a standalone tool to easily work with your Azure Storage Accounts. This preview release enables you to easily work with Blob Storage: create and delete containers; upload, download, and delete blobs, and search across all your containers and your blobs.  For developers and ops, there are more advanced issues to work with SAS keys and Policies. With the free Storage Explorer, you’re in full control of your assets. (Updated 01/11/2016)
             </p>
             <div>
                 <div id="features">
@@ -36,9 +37,11 @@
                     <p id="featuresOpener">Click to see the full feature list <i class="fa fa-hand-pointer-o"></i></p>
                 </div>
                 <ul id="featuresList" style="display: none">
-                    <li>Mac OS X and Windows versions</li>
+                    <li>Mac OS X, Windows, and Linux versions (New in v0.7.20160107)</li>
                     <li>Sign in to view your Storage Accounts – use your Org Account, Microsoft Account, 2FA, etc</li>
-                    <li>Add Storage Accounts by account name and key</li>
+                    <li>Add Storage Accounts by account name and key, as well as custom endpoints (New in v0.7.20160107)</li>
+                    <li>Add Storage Accounts for Azure China (New in v0.7.20160107)</li>
+                    <li>Add blob containers with SAS key (New in v0.7.20160107)</li>
                     <li>Local development storage (Windows-only)</li>
                     <li>ARM and Classic resource support</li>
                     <li>Create and delete blobs, queues, or tables</li>
@@ -46,6 +49,8 @@
                     <li>Explore the contents of blob containers</li>
                     <li>View and navigate through directories</li>
                     <li>Upload, download, and delete blobs and folders</li>
+                    <li>Open and view the contents text and picture blobs (New in v0.7.20160107)</li>
+                    <li>View and edit blob properties and metadata</li>
                     <li>Generate SAS keys</li>
                     <li>Manage and create Stored Access Policies</li>
                     <li>Search for blobs by prefix</li>
@@ -59,17 +64,34 @@
                 <p id="issuesOpener">Click to see the full list of known issues <i class="fa fa-hand-pointer-o"></i></p>
             </div>
             <ul id="issuesList" style="display: none"> 
-                <li>Cannot view/take actions on Queues or Tables besides creation and deletion</li>
-                <li>After reentering credentials, you may need to manually refresh Storage Explorer to show your Storage Account</li>
+                <li>Cannot view/take actions on Queues or Tables (coming soon!)</li>
+                <li>Linux install needs gcc version updated or upgraded – steps to upgrade are below:
+                    <ul>
+                        <li>sudo add-apt-repository ppa:ubuntu-toolchain-r/test</li>
+                        <li>sudo apt-get update</li>
+                        <li>sudo apt-get upgrade</li>
+                        <li>sudo apt-get dist-upgrade</li>
+                    </ul>
+                </li>
+                <li>After reentering credentials, you may need to manually refresh Storage Explorer to show your Storage <li>Account</li>
                 <li>Activity log entries may sometimes remain in an "in progress" state when an error occurs, and the error is not displayed</li>
-                <li>When setting blob container public access level, the new value is not updated until you re-set the focus on the container. Also, the dialog always defaults to "No public access", and not the actual current value.</li>
                 <li>Cannot rename blobs from blob download dialog</li>
-                <li>Uploading or download a large number of blobs (500+) may sometimes cause the app to have a white screen</li>
-                <li>No keyboard shortcut to delete blobs - must use delete action on toolbar or context menu command</li>
+                <li><del>When setting blob container public access level, the new value is not updated until you re-set the focus on the container. Also, the dialog always defaults to "No public access", and not the actual current value.</del> (Fixed with v0.7.20160107)</li>
+                <li><del>Uploading or download a large number of blobs (500+) may sometimes cause the app to have a white screen</del> (Fixed with v0.7.20160107)</li>
+                <li><del>No keyboard shortcut to delete blobs - must use delete action on toolbar or context menu command</del> (Fixed with v0.7.20160107)</li>
+            </ul>
+            <div id="issues">
+                <h1>Major Bug Fixes (v0.7.20160107)</h1>
+            </div>
+            <ul id="issuesList" style="display: none"> 
+                <li>Better overall keyboard/accessibility and UI support</li>
+                <li>Local storage continues to be available even if user credentials has expired</li>
+                <li>SAS dialog supports input validation</li>
+                <li>When an opened blob container is deleted, the blob explorer on the right side is closed</li>
             </ul>
             <section class="main-content secondary-content">
                 <h1>Project Deco</h1>
-                <p>Looking for the old Linux or the open-source version? <a href="http://github.com/azure-storage/deco">It's still available on GitHub!</a></p>
+                <p>Looking for the old open-source version? <a href="https://github.com/azure-storage/deco/releases">It's still available on GitHub!</a></p>
             </section>
             <footer class="site-footer">
                 <span class="site-footer-owner">
