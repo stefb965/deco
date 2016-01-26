@@ -28,6 +28,20 @@ function init() {
             opener.slideDown();
         }
     });
+   
+   $('#fixes').click(function () {
+        var fixes = $('#fixesList'),
+            opener = $('#fixesOpener');
+
+        if (fixes.is(':hidden')) {
+            fixes.slideDown();
+            opener.slideUp();
+        } else {
+            fixes.slideUp();
+            opener.slideDown();
+        }
+    }); 
+    
 };
 
 init();
