@@ -110,6 +110,7 @@ a:hover
     background-color: #003c6c;
     background-image: url('../imgs/header.png');
     background-size: cover;
+    max-height: 320px;
 }
 
 @media screen and (min-width: 64em)
@@ -138,7 +139,7 @@ a:hover
 
 .project-name
 {
-    margin-top: 0;
+    margin-top: -30px;
     margin-bottom: .1rem;
 }
 
@@ -468,7 +469,7 @@ a:hover
     text-align: left;
 }
 
-#features, #issues {
+#features, #issues, #fixes {
     cursor: pointer;
 }
 
