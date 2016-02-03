@@ -20,6 +20,9 @@
         <a id="windowsDonwload" href="http://go.microsoft.com/fwlink/?LinkId=708343" class="btn" style="display: none;">Download for Windows</a>
         <a id="osxDownload" href="http://go.microsoft.com/fwlink/?LinkId=708342" class="btn" style="display: none;">Download for Mac</a>
         <a id="linuxDownload" href="http://go.microsoft.com/fwlink/?LinkId=722418" class="btn" style="display: none;">Download for Linux</a>
+        <div class="header-bottom">
+            <a href="releasenotes.html">Release Notes</a>
+        </div>
     </section>
     <section class="main-content">
         <h2>
@@ -34,39 +37,33 @@
             Microsoft Azure Storage Explorer (Preview) is a standalone app from Microsoft that allows you to easily work with Azure Storage
             data. The Preview release currently supports Azure Blobs only. Tables, queues, and files are coming soon. (Last edited January 25, 2016)
         </p>
-        <div>
-            <div id="features">
-                <h1>Features</h1>
-                <p id="featuresOpener">Click to see the full feature list <i class="fa fa-hand-pointer-o"></i></p>
-            </div>
-            <ul id="featuresList" style="display: none">
-                <li>Mac OS X, Linux, and Windows versions (New in v0.7.20160107)</li>
-                <li>Sign in to view your Storage Accounts – use your Org Account, Microsoft Account, 2FA, etc</li>
-                <li>Add Storage Accounts by account name and key, as well as custom endpoints (New in v0.7.20160107)</li>
-                <li>Add Storage Accounts for Azure China (New in v0.7.20160107)</li>
-                <li>Add blob containers with Shared Access Signatures (SAS) key (New in v0.7.20160107)</li>
-                <li>Local development storage (use storage emulator, Windows-only)</li>
-                <li>ARM and Classic resource support</li>
-                <li>Create and delete blobs, queues, or tables</li>
-                <li>Search for specific blobs, queues, or tables</li>
-                <li>Explore the contents of blob containers</li>
-                <li>View and navigate through directories</li>
-                <li>Upload, download, and delete blobs and folders</li>
-                <li>Open and view the contents text and picture blobs (New in v0.7.20160107)</li>
-                <li>View and edit blob properties and metadata</li>
-                <li>Generate SAS keys</li>
-                <li>Manage and create Stored Access Policies (SAP)</li>
-                <li>Search for blobs by prefix</li>
-                <li>Drag ‘n drop files to upload or download</li>
-            </ul>
-        </div>
     </section>
     <section class="main-content secondary-content">
-        <div id="issues">
-            <h1>Known Issues</h1>
-            <p id="issuesOpener">Click to see the full list of known issues <i class="fa fa-hand-pointer-o"></i></p>
-        </div>
-        <ul id="issuesList" style="display: none">
+        <h1>Features</h1>
+        <ul id="featuresList">
+            <li>Mac OS X, Linux, and Windows versions (New in v0.7.20160107)</li>
+            <li>Sign in to view your Storage Accounts – use your Org Account, Microsoft Account, 2FA, etc</li>
+            <li>Add Storage Accounts by account name and key, as well as custom endpoints (New in v0.7.20160107)</li>
+            <li>Add Storage Accounts for Azure China (New in v0.7.20160107)</li>
+            <li>Add blob containers with Shared Access Signatures (SAS) key (New in v0.7.20160107)</li>
+            <li>Local development storage (use storage emulator, Windows-only)</li>
+            <li>ARM and Classic resource support</li>
+            <li>Create and delete blobs, queues, or tables</li>
+            <li>Search for specific blobs, queues, or tables</li>
+            <li>Explore the contents of blob containers</li>
+            <li>View and navigate through directories</li>
+            <li>Upload, download, and delete blobs and folders</li>
+            <li>Open and view the contents text and picture blobs (New in v0.7.20160107)</li>
+            <li>View and edit blob properties and metadata</li>
+            <li>Generate SAS keys</li>
+            <li>Manage and create Stored Access Policies (SAP)</li>
+            <li>Search for blobs by prefix</li>
+            <li>Drag ‘n drop files to upload or download</li>
+        </ul>
+    </section>
+    <section class="main-content secondary-content">
+        <h1>Known Issues</h1>
+        <ul id="issuesList">
             <li>Cannot view/take actions on Queues or Tables (coming soon!)</li>
             <li>Linux install needs gcc version updated or upgraded – steps to upgrade are below:
                 <ul>
@@ -76,26 +73,13 @@
                     <li>sudo apt-get dist-upgrade</li>
                 </ul>
             </li>
-            <li>After reentering credentials, you may need to manually refresh Storage Explorer to show your Storage
-                <li>Account</li>
-                <li>Activity log entries may sometimes remain in an "in progress" state when an error occurs, and the error is
-                    not displayed</li>
-                <li>Cannot rename blobs from blob download dialog</li>
-                <li><del>When setting blob container public access level, the new value is not updated until you re-set the focus on the container. Also, the dialog always defaults to "No public access", and not the actual current value.</del>                    (Fixed with v0.7.20160107)</li>
-                <li><del>Uploading or download a large number of blobs (500+) may sometimes cause the app to have a white screen</del>                    (Fixed with v0.7.20160107)</li>
-                <li><del>No keyboard shortcut to delete blobs - must use delete action on toolbar or context menu command</del>                    (Fixed with v0.7.20160107)</li>
-        </ul>
-    </section>
-    <section class="main-content secondary-content">
-        <div id="fixes">
-            <h1>Major Bug Fixes (v0.7.20160107)</h1>
-            <p id="fixesOpener">Click to see the full list of major bug fixes in this release <i class="fa fa-hand-pointer-o"></i></p>
-        </div>
-        <ul id="fixesList" style="display: none">
-            <li>Better overall keyboard/accessibility and UI support</li>
-            <li>Local storage continues to be available even if user credentials has expired</li>
-            <li>SAS dialog supports input validation</li>
-            <li>When an opened blob container is deleted, the blob explorer on the right side is closed</li>
+            <li>After reentering credentials, you may need to manually refresh Storage Explorer to show your Storage</li>
+            <li>Account</li>
+            <li>Activity log entries may sometimes remain in an "in progress" state when an error occurs, and the error is not displayed</li>
+            <li>Cannot rename blobs from blob download dialog</li>
+            <li><del>When setting blob container public access level, the new value is not updated until you re-set the focus on the container. Also, the dialog always defaults to "No public access", and not the actual current value.</del> (Fixed with v0.7.20160107)</li>
+            <li><del>Uploading or download a large number of blobs (500+) may sometimes cause the app to have a white screen</del> (Fixed with v0.7.20160107)</li>
+            <li><del>No keyboard shortcut to delete blobs - must use delete action on toolbar or context menu command</del> (Fixed with v0.7.20160107)</li>
         </ul>
     </section>
     <section class="main-content secondary-content">
