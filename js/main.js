@@ -17,18 +17,24 @@ function init() {
     
     switch(os) {
         case 'linux':
-            $('#linuxDownload').show();
+            $('#linuxDownloadBtn').show();
+            $('#osxDownloadLink').show();
+            $('#windowsDownloadLink').show();
             break;
         case 'osx':
-            $('#osxDownload').show();
+            $('#osxDownloadBtn').show();
+            $('#linuxDownloadLink').show();
+            $('#windowsDownloadLink').show();
             break;
         case 'windows':
-            $('#windowsDonwload').show();
+            $('#windowsDownloadBtn').show();
+            $('#linuxDownloadLink').show();
+            $('#osxDownloadLink').show();
             break;
         default: 
-            $('#linuxDownload').show();
-            $('#osxDownload').show();
-            $('#windowsDonwload').show();                                  
+            $('#linuxDownloadBtn').show();
+            $('#osxDownloadBtn').show();
+            $('#windowsDownloadBtn').show();                                  
     }
 };
 
