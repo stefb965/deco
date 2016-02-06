@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Microsoft Azure Storage Explorer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <section class="page-header">
+        <h1 class="project-name">Microsoft Azure Storage Explorer</h1>
+        <h2 class="project-tagline">
+            for OS X, Linux, and Windows (and it's free)
+        </h2>
+        <a id="windowsDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=708343" class="btn" style="display: none;">Download for Windows</a>
+        <a id="osxDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=708342" class="btn" style="display: none;">Download for Mac</a>
+        <a id="linuxDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=722418" class="btn" style="display: none;">Download for Linux</a>
+        <div class="header-bottom">
+            <span id="windowsDownloadLink" style="display: none;"><a href="http://go.microsoft.com/fwlink/?LinkId=708343">Download for Windows</a> /</span> 
+            <span id="osxDownloadLink" style="display: none;"><a href="http://go.microsoft.com/fwlink/?LinkId=708342">Download for Mac</a> /</span> 
+            <span id="linuxDownloadLink" style="display: none;"><a href="http://go.microsoft.com/fwlink/?LinkId=722418">Download for Linux</a> /</span> 
+            <a href="releasenotes.html">Release Notes</a>
+        </div>
+    </section>
+    <section class="main-content">
+        <div class="release-notes">
+            <h1>Release Notes</h1>
+            
+            <div class="release">
+                <div class="date">02/03/2016</div>      
+                <h2>Version 0.7.20160129.1</h2>         
+                
+                <h3>Fixes</h3>
+                <ul>
+                    <li>Improved overall performance when uploading, downloading and copying blobs</li>
+                </ul>
+            </div>
+            
+            <div class="release">
+                <div class="date">01/14/2016</div>      
+                <h2>Version  0.7.20160105.0</h2>         
+                
+                <h3>New</h3>
+                <ul>
+                    <li>Linux support (parity features to OSX)</li>
+                    <li>Add blob containers with Shared Access Signatures (SAS) key</li>
+                    <li>Add Storage Accounts for Azure China</li>
+                    <li>Add Storage Accounts with custom endpoints</li>
+                    <li>Open and view the contents text and picture blobs</li>
+                    <li>View and edit blob properties and metadata</li>
+                </ul>
+                
+                <h3>Fixes</h3>
+                <ul>
+                    <li>Fixed: uploading or download a large number of blobs (500+) may sometimes cause the app to have a white screen</li>
+                    <li>Fixed: when setting blob container public access level, the new value is not updated until you re-set the focus on the container. Also, the dialog always defaults to "No public access", and not the actual current value.</li>
+                    <li>Better overall keyboard/accessibility and UI support</li>
+                    <li>Breadcrumbs history text wraps when it's long with white space</li>
+                    <li>SAS dialog supports input validation</li>
+                    <li>Local storage continues to be available even if user credentials has expired</li>
+                    <li>When an opened blob container is deleted, the blob explorer on the right side is closed</li>
+                </ul>
+                
+                <h3>Known Issues</h3>
+                <ul>
+                    <li>Linux install needs gcc version updated or upgraded – steps to upgrade are below:
+                        <ul>
+                            <li>sudo add-apt-repository ppa:ubuntu-toolchain-r/test</li>
+                            <li>sudo apt-get update</li>
+                            <li>sudo apt-get upgrade</li>
+                            <li>sudo apt-get dist-upgrade</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="release">
+                <div class="date">11/18/2015</div>      
+                <h2>Version 0.7.20151116.0</h2>         
+                
+                <h3>New</h3>
+                <ul>
+                    <li>Mac OS X, and Windows versions</li>
+                    <li>Sign in to view your Storage Accounts – use your Org Account, Microsoft Account, 2FA, etc</li>
+                    <li>Local development storage (use storage emulator, Windows-only)</li>
+                    <li>ARM and Classic resource support</li>
+                    <li>Create and delete blobs, queues, or tables</li>
+                    <li>Search for specific blobs, queues, or tables</li>
+                    <li>Explore the contents of blob containers</li>
+                    <li>View and navigate through directories</li>
+                    <li>Upload, download, and delete blobs and folders</li>
+                    <li>View and edit blob properties and metadata</li>
+                    <li>Generate SAS keys</li>
+                    <li>Manage and create Stored Access Policies (SAP)</li>
+                    <li>Search for blobs by prefix</li>
+                    <li>Drag ‘n drop files to upload or download</li>                                
+                </ul>
+
+                <h3>Known Issues</h3>
+                <ul>
+                    <li>When setting blob container public access level, the new value is not updated until you re-set the focus on the container</li>
+                    <li>When you open the dialog to set the public access level, it always shows "No public access" as the default, and not the actual current value</li>
+                    <li>Cannot rename downloaded blobs</li>
+                    <li>Activity log entries will sometimes get "stuck" in an in progress state when an error occurs, and the error is not displayed</li>
+                    <li>Sometimes crashes or turns completely white when trying to upload or download a large number of blobs</li>
+                    <li>Sometimes canceling a copy operation does not work</li>
+                    <li>During creating a container (blob/queue/table), if you input an invalid name and proceed to create another under a different container type you cannot get focus on the new type</li>
+                    <li>Can't create new folder or rename folder</li>
+                </ul>
+            </div>            
+        </div>
+    </section>
+    
+    <footer class="site-footer">
+        <span class="site-footer-owner">
+            (C) 2016 Copyright Microsoft Corporation
+        </span>
+    </footer>
+    
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="./js/main.js"></script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-70322134-1', 'auto');
+          ga('send', 'pageview');
+    </script>
+</body>
+
+</html>

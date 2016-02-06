@@ -113,6 +113,16 @@ a:hover
     max-height: 320px;
 }
 
+    .page-header a
+    {
+        color: #fff;
+        
+    }
+    
+    .page-header .header-bottom {
+        font-size: 0.8em;
+    }
+
 @media screen and (min-width: 64em)
 {
     .page-header
@@ -425,8 +435,8 @@ a:hover
 .site-footer-owner
 {
     font-weight: bold;
-
     display: block;
+    margin-left: 32px;
 }
 
 .site-footer-credits
@@ -469,10 +479,33 @@ a:hover
     text-align: left;
 }
 
-#features, #issues, #fixes {
-    cursor: pointer;
-}
-
 .site-footer {
     padding-bottom: 2rem;
 }
+
+.release-notes {
+    text-align: left;
+}
+    .release-notes h1 {
+        margin-bottom: 20px;
+    }
+    
+    .release-notes h2 {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+    
+    .release-notes .date {
+        font-size: 0.8em;
+        margin: 0px;
+    }
+
+    .release-notes h3 {
+        margin-left: 18px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .release-notes .release {
+        margin-bottom: 50px;
+    }
