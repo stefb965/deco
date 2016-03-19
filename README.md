@@ -1,5 +1,5 @@
 # Azure Cross-Platform Storage Explorer
-[![Build status](https://ci.appveyor.com/api/projects/status/w68c92bbeyirixh4?svg=true)](https://ci.appveyor.com/project/felixrieseberg/deco) [![Build Status](https://travis-ci.org/azure-storage/deco.svg)](https://travis-ci.org/azure-storage/deco) [![Code Climate](https://codeclimate.com/github/azure-storage/deco/badges/gpa.svg)](https://codeclimate.com/github/azure-storage/deco)
+[![Build status](https://ci.appveyor.com/api/projects/status/w68c92bbeyirixh4?svg=true)](https://ci.appveyor.com/project/felixrieseberg/deco) [![Build Status](https://travis-ci.org/Azure/deco.svg)](https://travis-ci.org/Azure/deco) [![Code Climate](https://codeclimate.com/github/Azure/deco/badges/gpa.svg)](https://codeclimate.com/github/Azure/deco)
 
 > ## Use the New Major Version!
 > If you're on Windows or Mac OS X, go and use our new major version - the [Microsoft Azure Storage Explorer](http://www.storageexplorer.com). It's the official successor to Project Deco and superior in many ways. 
