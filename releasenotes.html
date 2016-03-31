@@ -49,11 +49,17 @@
                     <li>Updated look and feel</li>
                 </ul>
                 
+                <h3>Fixes</h3>
+                <ul>
+                    <li>Performance and reliability improvements</li>
+                </ul>
+                
                 <h3>Known Issues & Mitigations</h3>
                 <ul>
                     <li>Download of large blob files does not work correctly - we recommend using AzCopy while we address this issue</li>
                     <li>Account credentials will not be retrieved nor cached if the home folder cannot be found or cannot be written to</li>
-                    <li>Account credentials will not be retrieved nor cached if the home folder cannot be found or cannot be written to</li>
+                    <li>If we are adding, editing, or importing an entity that has a property with an ambiguously numeric value, such as “1” or “1.0”, and the user tries to send it as an Edm.String, the value will come back through the client API as an Edm.Double</li>
+                    <li>When importing CSV files with multiline records, the data may get chopped or scrambled</li>
                 </ul>            
             </div>
             
