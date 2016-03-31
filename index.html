@@ -48,30 +48,56 @@
     <section class="main-content secondary-content">
         <h1>Features</h1>
         <ul id="featuresList">
-            <li>Mac OS X, Linux, and Windows versions</li>
-            <li>Sign in to view your Storage Accounts – use your Org Account, Microsoft Account, 2FA, etc</li>
-            <li>Add Storage Accounts by account name and key, as well as custom endpoints</li>
-            <li>Add Storage Accounts for Azure China</li>
-            <li>Add blob containers with Shared Access Signatures (SAS) key</li>
-            <li>Local development storage (use storage emulator, Windows-only)</li>
-            <li>ARM and Classic resource support</li>
-            <li>Create and delete blobs, queues, or tables</li>
-            <li>Search for specific blobs, queues, or tables</li>
-            <li>Explore the contents of blob containers</li>
-            <li>View and navigate through directories</li>
-            <li>Upload, download, and delete blobs and folders</li>
-            <li>Open and view the contents text and picture blobs</li>
-            <li>View and edit blob properties and metadata</li>
-            <li>Generate SAS keys</li>
-            <li>Manage and create Stored Access Policies (SAP)</li>
-            <li>Search for blobs by prefix</li>
-            <li>Drag ‘n drop files to upload or download</li>
+            <li>Main Features
+                <ul>
+                    <li>Mac OS X, Linux, and Windows versions</li>
+                    <li>Sign in to view your Storage Accounts – use your Org Account, Microsoft Account, 2FA, etc</li>
+                    <li>Connect to Storage Accounts using:
+                        <ul>
+                            <li>Account name and Key</li>
+                            <li>Custom endpoints (including Azure China)</li>
+                            <li>SAS URI for Storage Accounts</li>
+                        </ul>
+                    </li>
+                    <li>ARM and Classic Storage support</li>
+                    <li>Generate SAS keys for blobs, blob containers, queues, or tables</li>
+                    <li>Connect to blob containers, queues, or tables with Shared Access Signatures (SAS) key</li>
+                    <li>Manage Stored Access Policies for blob containers, queues, and tables</li>
+                    <li>Local development storage with Storage Emulator (Windows-only)</li>
+                    <li>Create and delete blob containers, queues, or tables</li>
+                    <li>Search for specific blobs, queues, or tables</li>
+                </ul>
+            </li>
+            <li>Blobs
+                <ul>
+                    <li>View blobs and navigate through directories</li>
+                    <li>Upload, download, and delete blobs and folders</li>
+                    <li>Open and view the contents text and picture blobs</li>
+                    <li>View and edit blob properties and metadata</li>
+                    <li>Search for blobs by prefix</li>
+                    <li>Drag ‘n drop files to upload</li>
+                </ul>
+            </li>
+            <li>Tables
+                <ul>
+                    <li>View and query entities with ODATA</li>
+                    <li>Insert prewritten queries with "Add Query" button</li>
+                    <li>Add, edit, delete entities</li>
+                </ul>
+            </li>
+            <li>Main Features
+                <ul>
+                    <li>Peek most recent 32 messages</li>
+                    <li>Add, dequeue, view messages</li>
+                    <li>Clear queue</li>
+                </ul>
+            </li>
         </ul>
     </section>
     <section class="main-content secondary-content">
         <h1>Known Issues</h1>
         <ul id="issuesList">
-            <li>Cannot view/take actions on Queues or Tables (coming soon!)</li>
+            <li>Download of large blob files does not work correctly - we recommend using AzCopy while we address this issue</li>
             <li>Linux install needs gcc version updated or upgraded – steps to upgrade are below:
                 <ul>
                     <li>sudo add-apt-repository ppa:ubuntu-toolchain-r/test</li>
@@ -81,6 +107,7 @@
                 </ul>
             </li>
             <li>After reentering credentials, you may need to manually refresh Storage Explorer to show your Storage Accounts</li>
+            <li>Importing CSV files to tables may have unexpected behavior for multiline files and certain entity values - see <a href="releasenotes.html">Release Notes</a> for more details</li>
         </ul>
     </section>
     <section class="main-content secondary-content">
