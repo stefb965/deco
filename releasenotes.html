@@ -63,6 +63,7 @@
                 <h3>Known Issues</h3>
                 <ul>
                     <li>$metrics tables are not visible for Blob Storage accounts</li>
+                    <li>Queue messages added programmatically may not be displayed correctly if the messages are encoded using Base64 encoding</li>
                 </ul>   
                 
             </div>
@@ -85,9 +86,7 @@
                 <ul>
                     <li>Tables: Adding, editing, or importing an entity that has a property with an ambiguously numeric value, such as “1” or “1.0”, and the user tries to send it as an Edm.String, the value will come back through the client API as an Edm.Double</li>
                 </ul>   
-                
             </div>
-
             <div class="release">
                 <div class="date">03/31/2016</div>      
                 <h2>Version 0.7.20160325.0</h2>         
