@@ -14,6 +14,40 @@
     url('../font/ws/weblysleekuisb.svg#WeblySleek') format('svg'); /* Legacy iOS */
 }
 
+.head-nav-right {
+   float: right;
+   display: inline-block;
+}
+
+.head-nav-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.head-nav-item {
+    display: inline-block;
+    margin: 0 0 0 -6px;
+    padding: 0;
+}
+
+.head-nav-item a {
+    font-size: 14px;
+    color: #ccc;
+    padding: 14px 15px;
+    margin: 0;
+}
+
+.head-nav-item-selected a {
+    background-color: #232323;
+}
+
+.head-nav-item a:hover {
+    text-decoration: none;
+    background-color: #232323;
+    height: 100%;
+}
+
 body
 {
     font-family: 'Segoe UI', 'WeblySeek', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -554,9 +588,9 @@ header .logo
 
 .column_logo
 {
-    width: 100%;
     padding-left: .9375rem;
     padding-right: .9375rem;
+    display: inline-block;
 }
 
 .row_logo
