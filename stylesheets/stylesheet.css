@@ -106,7 +106,6 @@ a:hover
     background-color: black;
     background-image: url('../imgs/storage-containers.jpg');
     background-size: cover;
-    max-height: 320px;
 }
 
     .page-header a
