@@ -88,10 +88,7 @@ a:hover
     .btn
     {
         font-size: .9rem;
-
         display: block;
-
-        width: 100%;
         padding: .75rem;
     }
     .btn + .btn
@@ -115,9 +112,9 @@ a:hover
     .page-header a
     {
         color: #fff;
-        
+
     }
-    
+
     .page-header .header-bottom {
         font-size: 1em;
     }
@@ -224,7 +221,7 @@ a:hover
 .main-content h5,
 .main-content h6
 {
-    font-weight: normal;    
+    font-weight: normal;
     margin-bottom: 1rem;
     color: #56A9FA;
 }
@@ -442,7 +439,7 @@ a:hover
     margin-bottom: -1rem;
     margin-left: auto;
     margin-right: auto;
- 
+
 }
 
 .footer-divider
@@ -506,12 +503,12 @@ a:hover
     .release-notes h1 {
         margin-bottom: 20px;
     }
-    
+
     .release-notes h2 {
         margin-top: 0px;
         margin-bottom: 0px;
     }
-    
+
     .release-notes .date {
         font-size: 0.8em;
         margin: 0px;
@@ -522,7 +519,7 @@ a:hover
         margin-top: 10px;
         margin-bottom: 10px;
     }
-    
+
     .release-notes .release {
         margin-bottom: 50px;
     }
@@ -532,7 +529,7 @@ a:hover
     background-color:rgba(41,165,222,1);
     color: white;
     text-align: center;
-      
+
     font: 1.1rem 'Segoe UI', 'WeblySeek', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: normal;
     padding-bottom: 10px;
@@ -548,7 +545,7 @@ a:hover
         color: white;
         font-size: 1.5rem;
     }
-    
+
 header .logo
 {
     display: block;
