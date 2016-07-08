@@ -75,7 +75,7 @@
     <section class="page-header">
         <h1 class="project-name">Microsoft Azure Storage Explorer</h1>
         <h2 class="project-tagline">
-            for OS X, Linux, and Windows (and it's free)
+            for macOS, Linux, and Windows (and it's free)
         </h2>
         <a id="windowsDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=708343" class="btn" style="display: none;">Download for Windows</a>
         <a id="osxDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=708342" class="btn" style="display: none;">Download for Mac</a>
@@ -91,8 +91,8 @@
         <div class="release-notes">
             <h1>Release Notes</h1>
             <div class="release">
-                <div class="date">07/06/2016</div>
-                <h2>Version 0.8.1</h2>
+                <div class="date">07/07/2016</div>
+                <h2>Version 0.8.2</h2>
 
                 <!--<iframe width="250" height="150" src="https://www.youtube.com/embed/ycfQhKztSIY" frameborder="0" allowfullscreen></iframe>-->
                 <h3>New</h3>
@@ -106,7 +106,7 @@
                 </ul>
 
                 <h3>Fixes</h3>
-                 <ul>
+                <ul>
                     <li>Fixed: queue messages inserted with .NET or Java libraries are not properly decoded from base64</li>
                     <li>Fixed: $metrics tables are not shown for Blob Storage accounts</li>
                     <li>Fixed: tables node does not work for local (Development) storage</li>
@@ -114,7 +114,47 @@
 
                 <h3>Known Issues</h3>
                 <ul>
-                    <li>OS X install may require elevated permissions</li>
+                    <li>macOS install may require elevated permissions</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <div class="row-divider"> </div>
+
+    <section class="main-content">
+        <div class="release-notes">
+            <div class="release">
+                <div class="date">06/15/2016</div>
+                <h2>Version 0.8.0</h2>
+
+                <iframe width="250" height="150" src="https://www.youtube.com/embed/ycfQhKztSIY" frameborder="0" allowfullscreen></iframe>
+                <iframe width="250" height="150" src="https://www.youtube.com/embed/k4_kOUCZ0WA" frameborder="0" allowfullscreen></iframe>
+                <iframe width="250" height="150" src="https://www.youtube.com/embed/3zEXJcGdl_k" frameborder="0" allowfullscreen></iframe>
+
+                <h3>New</h3>
+                <ul>
+                    <li>File share support: viewing, uploading, downloading, copying files and directories, SAS URIs (create
+                        and connect)</li>
+                    <li>Improved user experience for connecting to Storage with SAS URIs or account keys</li>
+                    <li>Export table query results</li>
+                    <li>Table column reordering and customization</li>
+                    <li>Viewing $logs blob containers and $metrics tables for Storage Accounts with enabled metrics</li>
+                    <li>Improved export and import behavior, now includes property value type</li>
+                </ul>
+
+                <h3>Fixes</h3>
+                <ul>
+                    <li>Fixed: uploading or downloading large blobs can result in incomplete uploads/downloads</li>
+                    <li>Fixed: editing, adding, or importing an entity with a numeric string value ("1") will convert it to double</li>
+                    <li>Fixed: Unable to expand the table node in the local development environment</li>
+                </ul>
+
+                <h3>Known Issues</h3>
+                <ul>
+                    <li>$metrics tables are not visible for Blob Storage accounts</li>
+                    <li>Queue messages added programmatically may not be displayed correctly if the messages are encoded using
+                        Base64 encoding</li>
                 </ul>
             </div>
         </div>
@@ -177,7 +217,8 @@
                 <h3>Known Issues & Mitigations</h3>
                 <ul>
                     <li>Download of large blob files does not work correctly - we recommend using AzCopy while we address this
-                        issue</li>
+                        issue
+                    </li>
                     <li>Account credentials will not be retrieved nor cached if the home folder cannot be found or cannot be
                         written to</li>
                     <li>If we are adding, editing, or importing an entity that has a property with an ambiguously numeric value,
@@ -226,7 +267,8 @@
                 <h3>Fixes</h3>
                 <ul>
                     <li>Fixed: uploading or download a large number of blobs (500+) may sometimes cause the app to have a white
-                        screen</li>
+                        screen
+                    </li>
                     <li>Fixed: when setting blob container public access level, the new value is not updated until you re-set
                         the focus on the container. Also, the dialog always defaults to "No public access", and not the actual
                         current value.</li>
@@ -262,7 +304,7 @@
 
                 <h3>New</h3>
                 <ul>
-                    <li>Mac OS X, and Windows versions</li>
+                    <li>macOS, and Windows versions</li>
                     <li>Sign in to view your Storage Accounts – use your Org Account, Microsoft Account, 2FA, etc</li>
                     <li>Local development storage (use storage emulator, Windows-only)</li>
                     <li>ARM and Classic resource support</li>
