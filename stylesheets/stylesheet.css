@@ -34,7 +34,7 @@
 .head-nav-item a {
     font-size: 14px;
     color: #ccc;
-    padding: 14px 15px;
+    padding: 13px 15px;
     margin: 0;
 }
 
@@ -594,6 +594,11 @@ a:hover
         font-size: 1.5rem;
     }
 
+    .whatsNew h3
+    {
+        color: white;
+    }
+    
 header .logo
 {
     display: block;
