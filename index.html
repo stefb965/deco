@@ -103,13 +103,15 @@
         <div class="date" align="center">08/03/2016</div>
         <h2 class="whatsNew">Version 0.8.3</h2>
 
+        <iframe class="single-video" src="https://www.youtube.com/embed/HeGW-jkSd9Y" frameborder="0" allowfullscreen></iframe>
+
         <ul>
             <li>New
                 <ul>
                     <li>Rename containers, tables, file shares</li>
                     <li>Improved Query builder experience</li>
                     <li>Ability to save and load queries</li>    
-                    <li>Direct links to storage accounts or containers, queues, tables, or file shares for sharing and easily accessing your resources (Windows-only - MacOS support coming soon!)</li>
+                    <li>Direct links to storage accounts or containers, queues, tables, or file shares for sharing and easily accessing your resources (Windows-only - macOS support coming soon!)</li>
                     <li>Ability to manage and configure CORS rules</li>          
                 </ul>
             </li>
@@ -125,7 +127,8 @@
                     <li>Sometimes the UI might appear frozen - maximizing the window helps resolve this issue</li>
                     <li>macOS install may require elevated permissions</li>
                     <li>Account settings panel may show that you need to reenter credentials in order to filter subscriptions</li>
-                    <li>Renaming File shares does not preserve quota; renaming blobs/files and folders/directories does not preserve metadata or snapshots</li>
+                    <li>Renaming file shares, blob containers, and tables does not preserve metadata or other properties on the container, such as file share quota, public access level or access policies</li>
+                    <li>Renaming blobs (individually or inside a renamed blob container) does not preserve snapshots. All other properties and metadata for blobs, files and entities are preserved during a rename</li>    
                 </ul>
             </li>
         </ul>
@@ -159,7 +162,7 @@
                     <li>Create and delete blob containers, queues, or tables</li>
                     <li>View $logs blob containers and $metrics tables
                         <li>Search for specific blobs, queues, tables or file shares</li>
-                    <li>Direct links to storage accounts or containers, queues, tables, or file shares for sharing and easily accessing your resources (Windows-only - MacOS support coming soon!)</li>
+                    <li>Direct links to storage accounts or containers, queues, tables, or file shares for sharing and easily accessing your resources (Windows-only - macOS support coming soon!)</li>
                     <li>Rename blob containers, tables, file shares</li>   
                     <li>Ability to manage and configure CORS rules</li>
                     <li>Easily copy primary and secondary key for Storage Accounts</li>
@@ -221,9 +224,10 @@
         <h1>Known Issues</h1>
         <ul id="issuesList">
             <li>Sometimes the UI might appear frozen - maximizing the window helps resolve this issue</li>
-            <li>MacOS install may require elevated permissions</li>
+            <li>macOS install may require elevated permissions</li>
             <li>Account settings panel may show that you need to reenter credentials in order to filter subscriptions</li>
-            <li>Renaming File shares does not preserve quota; renaming blobs/files and folders/directories does not preserve metadata or snapshots</li>
+            <li>Renaming file shares, blob containers, and tables does not preserve metadata or other properties on the container, such as file share quota, public access level or access policies</li>
+            <li>Renaming blobs (individually or inside a renamed blob container) does not preserve snapshots. All other properties and metadata for blobs, files and entities are preserved during a rename</li>
             <li>Linux install needs gcc version updated or upgraded – steps to upgrade are below:
                 <ul>
                     <li>sudo add-apt-repository ppa:ubuntu-toolchain-r/test</li>
