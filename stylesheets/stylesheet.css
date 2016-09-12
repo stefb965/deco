@@ -33,18 +33,18 @@
 
 .head-nav-item a {
     font-size: 14px;
-    color: #ccc;
+    color: #fff;
     padding: 13px 15px;
     margin: 0;
 }
 
 .head-nav-item-selected a {
-    background-color: #232323;
+   background-color: #383e41;
 }
 
 .head-nav-item a:hover {
     text-decoration: none;
-    background-color: #232323;
+    background-color: #606c71;
     height: 100%;
 }
 

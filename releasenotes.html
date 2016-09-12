@@ -94,6 +94,33 @@
     <section class="whatsNew main-content">
         <div class="release-notes">
             <div class="release">
+                <div class="date">09/12/2016</div>
+                <h2>Version 0.8.4</h2>
+
+                <h3>New</h3>
+                <ul>
+                    <li>Generate direct links to storage accounts, containers, queues, tables, or file shares for sharing and easy access to your resources - Windows and Mac OS support</li>
+                    <li>Search for your blob containers, tables, queues, file shares, or storage accounts from the search box</li>
+                    <li>You can now group clauses in the table query builder</li>    
+                    <li>Rename and copy/paste blob containers, file shares, tables, blobs, blob folders, files and directories from within SAS-attached accounts and containers</li>
+                    <li>Renaming and copying blob containers and file shares now preserve properties and metadata</li>               
+                </ul>
+                <h3>Fixes</h3>
+                <ul>
+                    <li>Fixed: cannot edit table entities if they contain booleans or binary properties</li>
+                </ul>
+
+                <h3>Known Issues</h3>
+                <ul>
+                    <li>Search handles searching across roughly 50,000 nodes - after this, performance may be impacted</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="main-content">
+        <div class="release-notes">
+            <div class="release">
                 <div class="date">08/03/2016</div>
                 <h2>Version 0.8.3</h2>
 
@@ -119,10 +146,13 @@
                     <li>Account settings panel may show that you need to reenter credentials in order to filter subscriptions</li>
                     <li>Renaming file shares, blob containers, and tables does not preserve metadata or other properties on the container, such as file share quota, public access level or access policies</li>
  	                <li>Renaming blobs (individually or inside a renamed blob container) does not preserve snapshots. All other properties and metadata for blobs, files and entities are preserved during a rename</li>
+                    <li>Copying or renaming resources does not work within SAS-attached accounts</li>
                 </ul>
             </div>
         </div>
     </section>
+
+    <div class="row-divider"> </div>
 
     <section class="main-content">
         <div class="release-notes">
