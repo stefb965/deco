@@ -94,6 +94,37 @@
     <section class="whatsNew main-content">
         <div class="release-notes">
             <div class="release">
+                <div class="date">10/03/2016</div>
+                <h2>Version 0.8.5</h2>
+
+                <h3>New</h3>
+                <ul>
+                    <li>Can now use Portal-generated SAS keys to attach to Storage Accounts and resources</li>               
+                </ul>
+                <h3>Fixes</h3>
+                <ul>
+                    <li>Fixed: race condition during search sometimes caused nodes to become non-expandable</li>
+                    <li>Fixed: "Use HTTP" doesn't work when connecting to Storage Accounts with account name and key</li>
+                    <li>Fixed: SAS keys (specially Portal-generated ones) return a "trailing slash" error</li>
+                    <li>Fixed: table import issues</li>
+                        <ul>
+                            <li>Sometimes partition key and row key were reversed</li>
+                            <li>Uable to read "null" Partition Keys</li>
+                        </ul>
+                </ul>
+
+                <h3>Known Issues</h3>
+                <ul>
+                    <li>Search handles searching across roughly 50,000 nodes - after this, performance may be impacted</li>
+                    <li>Azure Stack doesn't currently support Files, so trying to expand Files will show an error</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="main-content">
+        <div class="release-notes">
+            <div class="release">
                 <div class="date">09/12/2016</div>
                 <h2>Version 0.8.4</h2>
 
@@ -119,6 +150,8 @@
             </div>
         </div>
     </section>
+
+    <div class="row-divider"> </div>
 
     <section class="main-content">
         <div class="release-notes">

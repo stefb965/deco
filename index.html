@@ -100,31 +100,33 @@
 
     <section class="whatsNew main-content">
         <h1 class="whatsNew">What's New</h1>
-        <div class="date" align="center">09/12/2016</div>
-        <h2 class="whatsNew">Version 0.8.4</h2>
-
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/cr5tOGyGrIQ" frameborder="0" allowfullscreen></iframe>
+        <div class="date" align="center">10/03/2016</div>
+        <h2 class="whatsNew">Version 0.8.5</h2>
 
         <ul>
             <li>New
                 <ul>
-                    <li>Generate direct links to storage accounts, containers, queues, tables, or file shares for sharing and easy access to your resources - Windows and Mac OS support</li>
-                    <li>Search for your blob containers, tables, queues, file shares, or storage accounts from the search box</li>
-                    <li>You can now group clauses in the table query builder</li>    
-                    <li>Rename and copy/paste blob containers, file shares, tables, blobs, blob folders, files and directories from within SAS-attached accounts and containers</li>
-                    <li>Renaming and copying blob containers and file shares now preserve properties and metadata</li>          
+                    <li>Can now use Portal-generated SAS keys to attach to Storage Accounts and resources</li>
                 </ul>
             </li>
 
             <li>Fixes
                 <ul>
-                    <li>Fixed: cannot edit table entities if they contain booleans or binary properties</li>
+                    <li>Fixed: race condition during search sometimes caused nodes to become non-expandable</li>
+                    <li>Fixed: "Use HTTP" doesn't work when connecting to Storage Accounts with account name and key</li>
+                    <li>Fixed: SAS keys (specially Portal-generated ones) return a "trailing slash" error</li>
+                    <li>Fixed: table import issues</li>
+                        <ul>
+                            <li>Sometimes partition key and row key were reversed</li>
+                            <li>Uable to read "null" Partition Keys</li>
+                        </ul>
                 </ul>
             </li>
 
             <li>Known Issues
                 <ul>
                     <li>Search handles searching across roughly 50,000 nodes - after this, performance may be impacted</li>
+                    <li>Azure Stack doesn't currently support Files, so trying to expand Files will show an error</li>
                 </ul>
             </li>
         </ul>
@@ -220,11 +222,11 @@
         <h1>Known Issues</h1>
         <ul id="issuesList">
             <li>Search handles searching across roughly 50,000 nodes - after this, performance may be impacted</li>
-            <li>Sometimes the UI might appear frozen - maximizing the window helps resolve this issue</li>
+            <li>Sometimes the UI might appear frozen - resizing the window helps resolve this issue</li>
             <li>macOS install may require elevated permissions</li>
             <li>Account settings panel may show that you need to reenter credentials in order to filter subscriptions</li>
             <li>Renaming blobs (individually or inside a renamed blob container) does not preserve snapshots. All other properties and metadata for blobs, files and entities are preserved during a rename</li>
-            <li>Copying or renaming resources does not work within SAS-attached accounts</li>
+            <li>Azure Stack doesn't currently support Files, so trying to expand Files will show an error</li>
             <li>Linux install needs gcc version updated or upgraded – steps to upgrade are below:
                 <ul>
                     <li>sudo add-apt-repository ppa:ubuntu-toolchain-r/test</li>
