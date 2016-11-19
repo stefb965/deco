@@ -75,15 +75,15 @@
     <section class="page-header">
         <h1 class="project-name">Microsoft Azure Storage Explorer</h1>
         <h2 class="project-tagline">
-            for macOS, Linux, and Windows (and it's free)
+            for macOS, Linux, and Windows
         </h2>
-        <a id="windowsDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=708343" class="btn" style="display: none;">Download for Windows</a>
-        <a id="osxDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=708342" class="btn" style="display: none;">Download for Mac</a>
-        <a id="linuxDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=722418" class="btn" style="display: none;">Download for Linux</a>
+        <a id="windowsDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=708343" class="btn" style="display: none;">Free download for Windows ></a>
+        <a id="osxDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=708342" class="btn" style="display: none;">Free download for Mac ></a>
+        <a id="linuxDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=722418" class="btn" style="display: none;">Free download for Linux ></a>
         <div class="header-bottom">
-            <span id="windowsDownloadLink" style="display: none;"><a href="http://go.microsoft.com/fwlink/?LinkId=708343">Download for Windows</a> /</span>
-            <span id="osxDownloadLink" style="display: none;"><a href="http://go.microsoft.com/fwlink/?LinkId=708342">Download for Mac</a> /</span>
-            <span id="linuxDownloadLink" style="display: none;"><a href="http://go.microsoft.com/fwlink/?LinkId=722418">Download for Linux</a></span>
+            <span id="windowsDownloadLink" style="display: none;"><a href="http://go.microsoft.com/fwlink/?LinkId=708343">Free download for Windows</a> /</span>
+            <span id="osxDownloadLink" style="display: none;"><a href="http://go.microsoft.com/fwlink/?LinkId=708342">Free download for Mac </a> /</span>
+            <span id="linuxDownloadLink" style="display: none;"><a href="http://go.microsoft.com/fwlink/?LinkId=722418">Free download for Linux </a></span>
         </div>
     </section>
     <section class="main-content">
@@ -100,33 +100,59 @@
 
     <section class="whatsNew main-content">
         <h1 class="whatsNew">What's New</h1>
-        <div class="date" align="center">10/03/2016</div>
-        <h2 class="whatsNew">Version 0.8.5</h2>
+        <div class="date" align="center">11/18/2016</div>
+        <h2 class="whatsNew">Version 0.8.6</h2>
 
         <ul>
+
+            <p>
+                It has been a year since we first released the Microsoft Azure Storage Explorer last year. Thank you all for using our product and providing valuable feedback. We also appreciate the fact that many of you have recommended our product to your co-workers and friends. We listened to your feedback. In this release we have worked hard to address the reported issues and to implement frequently requested features. We still have work to do, but we hope that our enriched feature set and enhanced stability in this release will enable you to be more productive with your tasks and work. Thank you!
+            </p>
+
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/Me4Y4jxoer8" frameborder="0" allowfullscreen></iframe>
+
+            <p></p>
+
             <li>New
                 <ul>
-                    <li>Can now use Portal-generated SAS keys to attach to Storage Accounts and resources</li>
+                    <li>You can now pin most frequently used services to the Quick Access for easy navigation</li>
+                    <li>You can now open multiple editors in different tabs. Single click to open a temporary tab; double click to open a permanent tab. You can also click on the temporary tab to make it a permanent tab</li>
+                    <li>We have made noticeable performance and stability improvements for uploads and downloads, especially for large files on fast machines</li>
+                    <li>Empty "virtual" folders can now be created in blob containers</li>
+                    <li>We have re-introduced scoped search with our new enhanced substring search, so you now have two options for searching:
+                        <ul>
+                          <li>Global search - just enter a search term into the search textbox</li>
+                          <li>Scoped search - click the magnifying glass icon next to a node, then add a search term to the end of the path, or right-click and select "Search from Here"</li>
+                        </ul>  
+                    <li>We have added various themes: Light (default), Dark, High Contrast Black, and High Contrast White. Go to Edit -> Themes to change your theming preference</li>
+                    <li>You can modify Blob and file properties</li>
+                    <li>We now support encoded (base64) and unencoded queue messages</li>
+                    <li>On Linux, a 64-bit OS is now required. For this release we only support 64-bit Ubuntu 16.04.1 LTS</li>
+                    <li>We have updated our logo!</li>
                 </ul>
             </li>
 
             <li>Fixes
                 <ul>
-                    <li>Fixed: race condition during search sometimes caused nodes to become non-expandable</li>
-                    <li>Fixed: "Use HTTP" doesn't work when connecting to Storage Accounts with account name and key</li>
-                    <li>Fixed: SAS keys (specially Portal-generated ones) return a "trailing slash" error</li>
-                    <li>Fixed: table import issues</li>
-                        <ul>
-                            <li>Sometimes partition key and row key were reversed</li>
-                            <li>Uable to read "null" Partition Keys</li>
-                        </ul>
+                    <li>Fixed: Screen freezing problems</li>
+                    <li>Fixed: Enhanced security</li>
+                    <li>Fixed: Sometimes duplicate attached accounts could appear</li>
+                    <li>Fixed: A blob with an undefined content type could generate an exception</li>
+                    <li>Fixed: Opening the Query Panel on an empty table was not possible</li>
+                    <li>Fixed: Varies bugs in Search</li>
+                    <li>Fixed: Increased the number of resources loaded from 50 to 100 when clicking "Load More"</li>
+                    <li>Fixed: On first run, if an account is signed into, we now select all subscriptions for that account by default</li>
                 </ul>
             </li>
 
             <li>Known Issues
                 <ul>
-                    <li>Search handles searching across roughly 50,000 nodes - after this, performance may be impacted</li>
-                    <li>Azure Stack doesn't currently support Files, so trying to expand Files will show an error</li>
+                    <li>This release of the Storage Explorer does not run on Ubuntu 14.04</li>
+                    <li>To open multiple tabs for the same resource, do not continuously click on the same resource. Click on another resource and then go back and then click on the original resource to open it again in another tab</li>
+                    <li>Quick Access only works with subscription based items. Local resources or resources attached via key or SAS token are not supported in this release</li>
+                    <li>It may take Quick Access a few seconds to navigate to the target resource, depending on how many resources you have</li>
+                    <li>Having more than 3 groups of blobs or files uploading at the same time may cause errors</li>
+                    <li>Search handles searching across roughly 50,000 nodes - after this, performance may be impacted or may cause unhandled exception</li>
                 </ul>
             </li>
         </ul>
@@ -166,6 +192,13 @@
                     <li>Easily copy primary and secondary key for Storage Accounts</li>
                     <li>MD5 checks on upload and download for data integrity and consistency</li>
                     <li>Search for your blob containers, tables, queues, file shares, or storage accounts from the seach box</li>
+                    <li>You can now pin most frequently used services to the Quick Access for easy navigation</li>
+                    <li>You can now open multiple editors in different tabs. Single click to open a temporary tab; double click to open a permanent tab. You can also click on the temporary tab to make it a permanent tab</li>
+                    <li>Noticeable performance and stability improvements for uploads and downloads, especially for large files on fast machines</li>
+                    <li>We are re-introducing the enhanced scoped search and added the concept of scoping.  Enter the path to a node via the hover icon, right click -> "Search From Here", or manually to scope that node. Once scoped, you can add a search term to the end of the path to deep search starting from that node</li>
+                    <li>We have added various themes: Light (default), Dark, High Contrast Black, and High Contrast White. Go to Edit -> Themes to change your theming preference</li>
+                    <li>On Linux, a 64-bit OS is now required</li>
+                    <li>We have updated our logo!</li>
                 </ul>
                 </li>
                 <li>Blobs
@@ -178,6 +211,8 @@
                         <li>Create and break leases for blobs and blob containers</li>
                         <li>Drag ‘n drop files to upload</li>
                         <li>Rename blobs and folders</li>
+                        <li>Empty "virtual" folders can now be created in blob containers</li>
+                        <li>You can modify the Blob and file properties</li>
                     </ul>
                 </li>
                 <li>Tables
@@ -194,6 +229,7 @@
                         <li>Peek most recent 32 messages</li>
                         <li>Add, dequeue, view messages</li>
                         <li>Clear queue</li>
+                        <li>We made it possible for you to decide whether you want to encode/decode your queue messages</li>
                     </ul>
                 </li>
                 <li>File Shares
@@ -212,7 +248,8 @@
     <section class="main-content secondary-content">
         <h1>Bug Fixes</h1>
         <ul id="fixList">
-            <li>Fixed: cannot edit table entities if they contain booleans or binary properties</li>
+              <li>Fixed: Screen freezing problems</li>
+              <li>Fixed: Enhanced security</li>
         </ul>
     </section>
 
@@ -222,12 +259,11 @@
         <h1>Known Issues</h1>
         <ul id="issuesList">
             <li>Search handles searching across roughly 50,000 nodes - after this, performance may be impacted</li>
-            <li>Sometimes the UI might appear frozen - resizing the window helps resolve this issue</li>
             <li>macOS install may require elevated permissions</li>
             <li>Account settings panel may show that you need to reenter credentials in order to filter subscriptions</li>
             <li>Renaming blobs (individually or inside a renamed blob container) does not preserve snapshots. All other properties and metadata for blobs, files and entities are preserved during a rename</li>
             <li>Azure Stack doesn't currently support Files, so trying to expand Files will show an error</li>
-            <li>Linux install needs gcc version updated or upgraded – steps to upgrade are below:
+            <li>Linux 14.04 install needs gcc version updated or upgraded – steps to upgrade are below:
                 <ul>
                     <li>sudo add-apt-repository ppa:ubuntu-toolchain-r/test</li>
                     <li>sudo apt-get update</li>
