@@ -75,15 +75,15 @@
     <section class="page-header">
         <h1 class="project-name">Microsoft Azure Storage Explorer</h1>
         <h2 class="project-tagline">
-            for macOS, Linux, and Windows (and it's free)
+            for macOS, Linux, and Windows
         </h2>
-        <a id="windowsDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=708343" class="btn" style="display: none;">Download for Windows</a>
-        <a id="osxDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=708342" class="btn" style="display: none;">Download for Mac</a>
-        <a id="linuxDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=722418" class="btn" style="display: none;">Download for Linux</a>
+        <a id="windowsDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=708343" class="btn" style="display: none;">Free download for Windows ></a>
+        <a id="osxDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=708342" class="btn" style="display: none;">Free download for Mac ></a>
+        <a id="linuxDownloadBtn" href="http://go.microsoft.com/fwlink/?LinkId=722418" class="btn" style="display: none;">Free download for Linux ></a>
         <div class="header-bottom">
-            <span id="windowsDownloadLink" style="display: none;"><a href="http://go.microsoft.com/fwlink/?LinkId=708343">Download for Windows</a> /</span>
-            <span id="osxDownloadLink" style="display: none;"><a href="http://go.microsoft.com/fwlink/?LinkId=708342">Download for Mac</a> /</span>
-            <span id="linuxDownloadLink" style="display: none;"><a href="http://go.microsoft.com/fwlink/?LinkId=722418">Download for Linux</a></span>
+            <span id="windowsDownloadLink" style="display: none;"><a href="http://go.microsoft.com/fwlink/?LinkId=708343">Free download for Windows </a> /</span>
+            <span id="osxDownloadLink" style="display: none;"><a href="http://go.microsoft.com/fwlink/?LinkId=708342">Free download for Mac</a> /</span>
+            <span id="linuxDownloadLink" style="display: none;"><a href="http://go.microsoft.com/fwlink/?LinkId=722418">Free download for Linux</a></span>
         </div>
     </section>
 
@@ -91,7 +91,57 @@
         <h1>Release Notes</h1>
     </section>
 
-    <section class="whatsNew main-content">
+ <section class="whatsNew main-content">
+        <div class="release-notes">
+            <div class="release">
+                <div class="date">11/18/2016</div>
+                <h2>Version 0.8.6</h2>
+
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/Me4Y4jxoer8" frameborder="0" allowfullscreen></iframe>
+
+                <h3>New</h3>
+                <ul>
+                    <li>You can now pin most frequently used services to the Quick Access for easy navigation</li>
+                    <li>You can now open multiple editors in different tabs. Single click to open a temporary tab; double click to open a permanent tab. You can also click on the temporary tab to make it a permanent tab</li>
+                    <li>We have made noticeable performance and stability improvements for uploads and downloads, especially for large files on fast machines</li>
+                    <li>Empty "virtual" folders can now be created in blob containers</li>
+                    <li>We have re-introduced scoped search with our new enhanced substring search, so you now have two options for searching:
+                        <ul>
+                          <li>Global search - just enter a search term into the search textbox</li>
+                          <li>Scoped search - click the magnifying glass icon next to a node, then add a search term to the end of the path, or right-click and select "Search from Here"</li>
+                        </ul>  
+                    <li>We have added various themes: Light (default), Dark, High Contrast Black, and High Contrast White. Go to Edit -> Themes to change your theming preference</li>
+                    <li>You can modify Blob and file properties</li>
+                    <li>We now support encoded (base64) and unencoded queue messages</li>
+                    <li>On Linux, a 64-bit OS is now required. For this release we only support 64-bit Ubuntu 16.04.1 LTS</li>
+                    <li>We have updated our logo!</li>            
+                </ul>
+                <h3>Fixes</h3>
+                <ul>
+                    <li>Fixed: Screen freezing problems</li>
+                    <li>Fixed: Enhanced security</li>
+                    <li>Fixed: Sometimes duplicate attached accounts could appear</li>
+                    <li>Fixed: A blob with an undefined content type could generate an exception</li>
+                    <li>Fixed: Opening the Query Panel on an empty table was not possible</li>
+                    <li>Fixed: Varies bugs in Search</li>
+                    <li>Fixed: Increased the number of resources loaded from 50 to 100 when clicking "Load More"</li>
+                    <li>Fixed: On first run, if an account is signed into, we now select all subscriptions for that account by default</li>
+                </ul>
+
+                <h3>Known Issues</h3>
+                <ul>
+                    <li>This release of the Storage Explorer does not run on Ubuntu 14.04</li>
+                    <li>To open multiple tabs for the same resource, do not continuously click on the same resource. Click on another resource and then go back and then click on the original resource to open it again in another tab</li>
+                    <li>Quick Access only works with subscription based items. Local resources or resources attached via key or SAS token are not supported in this release</li>
+                    <li>It may take Quick Access a few seconds to navigate to the target resource, depending on how many resources you have</li>
+                    <li>Having more than 3 groups of blobs or files uploading at the same time may cause errors</li>
+                    <li>Search handles searching across roughly 50,000 nodes - after this, performance may be impacted or may cause unhandled exception</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="main-content">
         <div class="release-notes">
             <div class="release">
                 <div class="date">10/03/2016</div>
@@ -121,6 +171,8 @@
             </div>
         </div>
     </section>
+
+  <div class="row-divider"> </div>
 
     <section class="main-content">
         <div class="release-notes">
