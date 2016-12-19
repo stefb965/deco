@@ -94,11 +94,48 @@
  <section class="whatsNew main-content">
         <div class="release-notes">
             <div class="release">
+                <div class="date">12/16/2016</div>
+                <h2>Version 0.8.7</h2>
+
+                <iframe class="single-video" src="https://www.youtube.com/embed/Me4Y4jxoer8" frameborder="0" allowfullscreen></iframe>
+
+                <h3>New</h3>
+
+                <ul>
+                    <li>You can choose how to resolve conflicts at the beginning of an update, download or copy session in the Activities window</li>
+                    <li>Hover over a tab to see the full path of the storage resource</li>
+                    <li>When you click on a tab, it synchronizes with its location in the left side navigation pane</li>     
+                </ul>
+
+                <h3>Fixes</h3>
+                <ul>
+                     <li>Fixed: Storage Explorer is now a trusted app on Mac</li>
+                    <li>Fixed: Ubuntu 14.04 is again supported</li>
+                    <li>Fixed: Sometimes the add account UI flashed when loading subscriptions</li>
+                    <li>Fixed: Sometimes not all storage resources were listed in the left side navigation pane</li>
+                    <li>Fixed: The action pane sometimes displayed empty actions</li>
+                    <li>Fixed: The window size from the last closed session is now retained</li>
+                    <li>Fixed: You can open multiple tabs for the same resource using the context menu</li>
+                </ul>
+
+                <h3>Known Issues</h3>
+                <ul>
+                    <li>Quick Access only works with subscription based items. Local resources or resources attached via key or SAS token are not supported in this release</li>
+                    <li>It may take Quick Access a few seconds to navigate to the target resource, depending on how many resources you have</li>
+                    <li>Having more than 3 groups of blobs or files uploading at the same time may cause errors</li>
+                    <li>Search handles searching across roughly 50,000 nodes - after this, performance may be impacted or may cause unhandled exception</li>
+                    <li>For the first time using the Storage Explorer on macOS, you might see multiple prompts asking for user's permission to access keychain. We suggest you select Always Allow so the prompt won't show up again</li>
+                </ul>
+            </div>
+        </div>
+   </section>
+
+   <section class="main-content">
+        <div class="release-notes">
+            <div class="release">
                 <div class="date">11/18/2016</div>
                 <h2>Version 0.8.6</h2>
-
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/Me4Y4jxoer8" frameborder="0" allowfullscreen></iframe>
-
+           
                 <h3>New</h3>
                 <ul>
                     <li>You can now pin most frequently used services to the Quick Access for easy navigation</li>
@@ -140,6 +177,8 @@
             </div>
         </div>
     </section>
+
+    <div class="row-divider"> </div>
 
     <section class="main-content">
         <div class="release-notes">
