@@ -94,6 +94,56 @@
     <section class="whatsNew main-content">
         <div class="release-notes">
             <div class="release">
+                <div class="date">04/04/2017</div>
+                <h2>Version 0.8.10</h2>
+
+                <h3>New</h3>
+
+                <ul>
+                    <li>Storage Explorer will now automatically close when you install an update from the update notification</li>
+                    <li>In-place quick access provides an enhanced experience for working with your frequently accessed resources</li>
+                    <li>In the Blob Container editor, you can now see which virtual machine a leased blob belongs to</li>
+                    <li>You can now collapse the left side panel</li>
+                    <li>Discovery now runs at the same time as download</li>
+                    <li>Use Statistics in the Blob Container, File Share, and Table editors to see the size of your resource or selection</li>
+                    <li>You can now sign-in to Azure Active Directory (AAD) based Azure Stack accounts</li>
+                    <li>You can now upload archive files over 32MB to Premium storage accounts</li>
+                    <li>Improved accessibility support</li>
+                    <li>You can now add trusted Base-64 encoded X.509 SSL certificates by going to Edit -> SSL Certificates -> Import Certificates</li>
+                </ul>
+
+                <h3>Fixes</h3>
+                <ul>
+                    <li>Fixed: after refreshing an account’s credentials, the tree view would sometimes not automatically refresh</li>
+                    <li>Fixed: generating a SAS for emulator queues and tables would result in an invalid URL</li>
+                    <li>Fixed: premium storage accounts can now be expanded while a proxy is enabled</li>
+                    <li>Fixed: the apply button on the accounts management page would not work if you had 1 or 0 accounts selected</li>
+                </ul>
+
+                <h3>Known Issues</h3>
+                <ul>
+                    <li>After upgrading to 0.8.10, you will need to refresh all of your credentials.</li>
+                    <li>While zoomed in or out, the zoom level may momentarily reset to the default level.</li>
+                    <li>Having more than 3 groups of blobs or files uploading at the same time may cause errors.</li>
+                    <li>The account settings panel may show that you need to reenter credentials in order to filter subscriptions.</li>
+                    <li>Renaming blobs (individually or inside a renamed blob container) does not preserve snapshots. All other properties and metadata for blobs, files and entities are preserved during a rename.</li>
+                    <li>Although Azure Stack doesn't currently support Files Shares, a File Shares node still appears under an attached Azure Stack storage account.
+                    <li>Ubuntu 14.04 install needs gcc version updated or upgraded – steps to upgrade are below:</li>
+                        <ul>
+                            <li>sudo add-apt-repository ppa:ubuntu-toolchain-r/test</li>
+                            <li>sudo apt-get update</li>
+                            <li>sudo apt-get upgrade</li>
+                            <li>sudo apt-get dist-upgrade</li>
+                        </ul>
+                    </li>
+                 </ul>
+            </div>
+        </div>
+    </section>
+
+  <section class="main-content">
+        <div class="release-notes">
+            <div class="release">
                 <div class="date">02/23/2017</div>
                 <h2>Version 0.8.9 / 0.8.8</h2>
 
@@ -131,6 +181,8 @@
             </div>
         </div>
     </section>
+
+  <div class="row-divider"> </div>
 
     <section class="main-content">
         <div class="release-notes">
@@ -170,6 +222,8 @@
             </div>
         </div>
    </section>
+
+  <div class="row-divider"> </div>
 
    <section class="main-content">
         <div class="release-notes">
